@@ -1,0 +1,51 @@
+@import "../../../styles/variables.scss";
+
+.main-login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; // Ocupa toda a altura da tela
+  background: url('/assets/background-login.png') no-repeat;
+  background-size: cover;
+  background-position: center;
+  margin: 0;
+}
+
+.box-center{
+  background-color: $background-image;
+  display: flex;
+  justify-content: space-between; // Distribui os itens à esquerda e à direita
+  align-items: center;
+  border-radius: 40px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  width: 1300px;
+  height: 660px;
+}
+
+.left-login {
+  width: 50%; // Usa 50% do espaço do box-center
+  height: 100%; // Ocupa toda a altura do box-center
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.box-login {
+  width: 50%; // Usa 50% do espaço do box-center
+  height: 100%; // Ocupa toda a altura do box-center
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 40px;
+  background-color: $background-login;
+
+  .right-login {
+    width: 100%; // Dentro do box-login, o right-login ocupa toda a largura
+    height: 100%; // Ocupa toda a altura
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+}
