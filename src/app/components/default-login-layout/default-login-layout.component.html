@@ -5,9 +5,11 @@
     </div>
     <div class="box-login">
       <div class="right-login">
-        <h1></h1>
-        <h2></h2>
-        <button></button>
+        <h1>{{ title }}</h1>
+        <h2>{{ subtitle }}</h2>
+        <ng-content></ng-content>
+        <span> {{ txtLink }}</span>
+        <button> {{btnText}} </button>
       </div>
     </div>
   </div>

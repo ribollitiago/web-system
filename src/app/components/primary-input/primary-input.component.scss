@@ -1,0 +1,43 @@
+@import "../../../styles/variables.scss";
+
+.input-wrapper {
+  font-size: 15px;
+  text-align: start;
+
+  .input-content {
+    position: relative; /* Para posicionar o .icon dentro do input */
+    width: 100%;
+    display: flex;
+
+    input {
+      padding: 18px 44px 18px 18px; /* Ajusta o padding para acomodar o ícone no lado direito */
+      width: 100%;
+
+      border-radius: 12px;
+      border: 1px solid $input-color;
+      background-color: transparent;
+
+      color: $text-color;
+    }
+
+    .icon {
+      position: absolute; /* Para flutuar dentro do input */
+      top: 50%;
+      right:4.5px; /* Distância do lado direito do input */
+      transform: translateY(-50%); /* Centraliza verticalmente */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      width: 44px; /* Tamanho do quadrado flutuante */
+      height: 44px;
+      border-radius: 8px;
+      background-color: $input-color;
+
+      img {
+        height: 20px; /* Tamanho do ícone */
+        width: 20px;
+      }
+    }
+  }
+}
