@@ -2,7 +2,8 @@
   title="Sign In"
   subtitle="Log in to your account"
   btnText="Login Account"
-  txtLink="Forgot Password?">
+  txtLink="Forgot Password?"
+  (submit)="submit()">
   <form [formGroup]="loginForm">
     <app-primary-input
       formControlName="email"
