@@ -3,13 +3,16 @@
 
   <div class="input-content">
     <input
-      [type]="type"
+      [type]="fieldTextType ? 'text' : 'password'"
       [placeholder]="placeholder"
       [value]="value"
       (input)="onInput($event)"
-      />
-      <div class="icon">
-        <ng-content></ng-content>
-      </div>
+    />
+    <div *ngIf="isPassword" class="toggle-icon" (click)="toggleFieldTextType()">
+      <img [src]="fieldTextType ? 'assets/svg/icon/eye-off.svg' : 'assets/svg/icon/eye-on.svg'" alt="Toggle Password Visibility">
+    </div>
+    <div class="icon">
+      <ng-content></ng-content>
+    </div>
   </div>
 </div>

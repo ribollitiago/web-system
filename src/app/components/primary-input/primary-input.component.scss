@@ -5,12 +5,12 @@
   text-align: start;
 
   .input-content {
-    position: relative; /* Para posicionar o .icon dentro do input */
+    position: relative;
     width: 100%;
     display: flex;
 
     input {
-      padding: 18px 44px 18px 18px; /* Ajusta o padding para acomodar o ícone no lado direito */
+      padding: 18px 44px 18px 18px;
       width: 100%;
 
       border-radius: 12px;
@@ -21,22 +21,41 @@
     }
 
     .icon {
-      position: absolute; /* Para flutuar dentro do input */
+      position: absolute;
       top: 50%;
-      right:4.5px; /* Distância do lado direito do input */
-      transform: translateY(-50%); /* Centraliza verticalmente */
+      right: 4.5px;
+      transform: translateY(-50%);
       display: flex;
       justify-content: center;
       align-items: center;
 
-      width: 44px; /* Tamanho do quadrado flutuante */
+      width: 44px;
       height: 44px;
       border-radius: 8px;
       background-color: $input-color;
 
       img {
-        height: 20px; /* Tamanho do ícone */
+        height: 20px;
         width: 20px;
+      }
+    }
+
+    .toggle-icon {
+      position: absolute;
+      top: 50%;
+      right: 70px;
+      /* Ajuste a posição conforme necessário */
+      transform: translateY(-50%);
+      width: 24px;
+      height: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+
+      img {
+        width: 24px;
+        height: 24px;
       }
     }
   }

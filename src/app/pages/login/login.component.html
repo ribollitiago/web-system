@@ -8,14 +8,16 @@
       formControlName="email"
       inputName="email"
       type="email"
-      placeholder="Enter your email">
+      placeholder="Enter your email"
+      [isPassword]="false">
       <img src="assets/svg/icon/email.svg" alt>
     </app-primary-input>
     <app-primary-input
       formControlName="password"
       inputName="password"
       type="password"
-      placeholder="Enter your password">
+      placeholder="Enter your password"
+      [isPassword]="true">
       <img src="assets/svg/icon/password.svg" alt>
     </app-primary-input>
   </form>
