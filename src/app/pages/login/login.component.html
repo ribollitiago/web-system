@@ -3,7 +3,10 @@
   subtitle="Log in to your account"
   btnText="Login Account"
   txtLink="Forgot Password?"
-  (submit)="submit()">
+
+  (submit)="submit()"
+  (navigate)="navigate()"
+  >
   <form [formGroup]="loginForm">
     <app-primary-input
       formControlName="email"

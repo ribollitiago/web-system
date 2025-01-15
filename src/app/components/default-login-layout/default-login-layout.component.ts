@@ -14,7 +14,13 @@ export class DefaultLoginLayoutComponent {
 
   @Output("submit") onSubmit = new EventEmitter();
 
+  @Output("navigate") onNavigate = new EventEmitter();
+
   submit() {
     this.onSubmit.emit();
+  }
+
+  navigate() {
+    this.onNavigate.emit();
   }
 }
