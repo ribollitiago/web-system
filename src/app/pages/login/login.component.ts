@@ -1,21 +1,29 @@
 import { Component } from '@angular/core';
-import { DefaultLoginLayoutComponent } from '../../components/default-login-layout/default-login-layout.component';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common'; // Importe o CommonModule
 import { LoginService } from '../../services/login.service';
 import { ToastrService } from 'ngx-toastr';
+import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
+import { DefaultLoginLayoutComponent } from '../../components/default-login-layout/default-login-layout.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [DefaultLoginLayoutComponent, ReactiveFormsModule, PrimaryInputComponent],
+  imports: [
+    CommonModule, // Adicione o CommonModule aqui
+    DefaultLoginLayoutComponent,
+    PrimaryInputComponent,
+    ReactiveFormsModule
+  ],
   providers: [LoginService],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
-  loginForm!: FormGroup;
+  loginForm: FormGroup;
+  forgotPasswordForm: FormGroup;
+  showForgotPasswordForm: boolean = false;
 
   constructor(
     private router: Router,
@@ -24,21 +32,31 @@ export class LoginComponent {
   ) {
     this.loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [Validators.required, Validators.minLength(6)]),
-    })
+      password: new FormControl('', [Validators.required, Validators.minLength(6)])
+    });
+
+    this.forgotPasswordForm = new FormGroup({
+      email: new FormControl('', [Validators.required, Validators.email])
+    });
   }
 
   submit() {
+    if (this.showForgotPasswordForm) {
+      this.submitForgotPassword();
+    } else {
+      this.submitLogin();
+    }
+  }
+
+  submitLogin() {
     const email = this.loginForm.value.email;
     const password = this.loginForm.value.password;
-  
+
     if (this.loginForm.valid) {
       this.loginService.login(email, password).subscribe({
         next: (user) => {
-
           if (user) {
             console.log('Uid:', user.uid);
-  
             this.toastService.success('Login realizado com sucesso!');
           }
         },
@@ -50,9 +68,20 @@ export class LoginComponent {
     } else {
       this.toastService.error('Por favor, insira um e-mail e senha válidos.');
     }
-  }  
+  }
+
+  submitForgotPassword() {
+    const email = this.forgotPasswordForm.value.email;
+
+    if (this.forgotPasswordForm.valid) {
+      console.log('Email para recuperação:', email);
+      this.toastService.success('Email de recuperação enviado com sucesso!');
+    } else {
+      this.toastService.error('Por favor, insira um e-mail válido.');
+    }
+  }
 
   navigate() {
-    this.router.navigate(["forgot-password"])
+    this.showForgotPasswordForm = !this.showForgotPasswordForm;
   }
 }

@@ -1,13 +1,13 @@
 <app-default-login-layout
-  title="Sign In"
-  subtitle="Log in to your account"
-  btnText="Login Account"
-  txtLink="Forgot Password?"
+  [title]="showForgotPasswordForm ? 'Forgot Password' : 'Sign In'"
+  [subtitle]="showForgotPasswordForm ? 'Enter your email to recover your password' : 'Log in to your account'"
+  [btnText]="showForgotPasswordForm ? 'Send Recovery Email' : 'Login Account'"
+  [txtLink]="showForgotPasswordForm ? 'Back to Login' : 'Forgot Password?'"
 
   (submit)="submit()"
   (navigate)="navigate()"
-  >
-  <form [formGroup]="loginForm">
+>
+  <form [formGroup]="loginForm" *ngIf="!showForgotPasswordForm">
     <app-primary-input
       formControlName="email"
       inputName="email"
@@ -23,6 +23,17 @@
       placeholder="Enter your password"
       [isPassword]="true">
       <img src="assets/svg/icon/password.svg" alt>
+    </app-primary-input>
+  </form>
+
+  <form [formGroup]="forgotPasswordForm" *ngIf="showForgotPasswordForm">
+    <app-primary-input
+      formControlName="email"
+      inputName="email"
+      type="email"
+      placeholder="Enter your email"
+      [isPassword]="false">
+      <img src="assets/svg/icon/email.svg" alt>
     </app-primary-input>
   </form>
 </app-default-login-layout>
