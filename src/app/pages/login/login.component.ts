@@ -74,12 +74,21 @@ export class LoginComponent {
     const email = this.forgotPasswordForm.value.email;
 
     if (this.forgotPasswordForm.valid) {
-      console.log('Email para recuperação:', email);
-      this.toastService.success('Email de recuperação enviado com sucesso!');
+      this.loginService.recoverPassword(email).subscribe({
+        next: () => {
+          console.log('Email para recuperação:', email);
+          this.toastService.success('Email de recuperação enviado com sucesso!');
+        },
+        error: (err) => {
+          console.error('Erro ao tentar recuperar senha:', err);
+          this.toastService.error('Erro ao enviar email de recuperação. Tente novamente.');
+        }
+      });
     } else {
       this.toastService.error('Por favor, insira um e-mail válido.');
     }
   }
+
 
   navigate() {
     this.showForgotPasswordForm = !this.showForgotPasswordForm;
