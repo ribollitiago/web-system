@@ -6,6 +6,7 @@ import { LoginService } from '../../services/login.service';
 import { ToastrService } from 'ngx-toastr';
 import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
 import { DefaultLoginLayoutComponent } from '../../components/default-login-layout/default-login-layout.component';
+import { TranslationService } from '../../services/translate.service';
 
 @Component({
   selector: 'app-login',
@@ -25,17 +26,18 @@ export class LoginComponent {
   forgotPasswordForm: FormGroup;
   showForgotPasswordForm: boolean = false;
 
-  title = 'Sign In';
-  subtitle = 'Log in to your account';
-  btnText = 'Login Account';
-  txtLink = 'Forgot Password';
-  placeholderEmail = 'Enter your email';
-  placeholderPassword = 'Enter your password';
+  title: string = '';
+  subtitle: string = '';
+  btnText: string = '';
+  txtLink: string = '';
+  placeholderEmail: string = '';
+  placeholderPassword: string = '';
 
   constructor(
     private router: Router,
     private loginService: LoginService,
-    private toastService: ToastrService
+    private toastService: ToastrService,
+    private translationService: TranslationService
   ) {
     this.loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
@@ -45,6 +47,21 @@ export class LoginComponent {
     this.forgotPasswordForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email])
     });
+  }
+
+  async ngOnInit() {
+    await this.translationService.setLanguage('en_us');
+    this.loadTranslations();
+  }
+
+  loadTranslations() {
+    const section = 'Login_form';
+    this.title = this.translationService.getTranslation('titleLgn', section);
+    this.subtitle = this.translationService.getTranslation('subtitleLgn', section);
+    this.btnText = this.translationService.getTranslation('btnLoginLgn', section);
+    this.txtLink = this.translationService.getTranslation('linkForgotPasswordLgn', section);
+    this.placeholderEmail = this.translationService.getTranslation('inputEmailLgn', section);
+    this.placeholderPassword = this.translationService.getTranslation('inputPasswordLgn', section);
   }
 
   submit() {
@@ -100,9 +117,23 @@ export class LoginComponent {
   navigate() {
     this.showForgotPasswordForm = !this.showForgotPasswordForm;
 
-    this.title = this.showForgotPasswordForm ? 'Forgot Password' : 'Sign In';
-    this.subtitle = this.showForgotPasswordForm ? 'Enter your email to recover your password' : 'Log in to your account';
-    this.btnText = this.showForgotPasswordForm ? 'Send Recovery Email' : 'Login Account';
-    this.txtLink = this.showForgotPasswordForm ? 'Back to Login' : 'Forgot Password';
+    const section = 'Login_form';
+    this.title = this.translationService.getTranslation(
+      this.showForgotPasswordForm ? 'titleFgt' : 'titleLgn',
+      section
+    );
+    this.subtitle = this.translationService.getTranslation(
+      this.showForgotPasswordForm ? 'subtitleFgt' : 'subtitleLgn',
+      section
+    );
+    this.btnText = this.translationService.getTranslation(
+      this.showForgotPasswordForm ? 'btnLoginFgt' : 'btnLoginLgn',
+      section
+    );
+    this.txtLink = this.translationService.getTranslation(
+      this.showForgotPasswordForm ? 'linkForgotPasswordFgt' : 'linkForgotPasswordLgn',
+      section
+    );
+
   }
 }
