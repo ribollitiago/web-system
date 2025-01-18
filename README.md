@@ -8,4 +8,4 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 
 ## System Link
 
-[Access the system here](https://www.figma.com/proto/Qb5YsGSR1AcT9ONUHKk526/System-Web?node-id=1-5&t=Z0pGnRgHZapHDYrB-1)
+[Access the system here](https://gtsystem.netlify.app)
