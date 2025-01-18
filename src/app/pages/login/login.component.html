@@ -1,9 +1,10 @@
 <app-default-login-layout
-  [title]="showForgotPasswordForm ? 'Forgot Password' : 'Sign In'"
-  [subtitle]="showForgotPasswordForm ? 'Enter your email to recover your password' : 'Log in to your account'"
-  [btnText]="showForgotPasswordForm ? 'Send Recovery Email' : 'Login Account'"
-  [txtLink]="showForgotPasswordForm ? 'Back to Login' : 'Forgot Password?'"
-
+  [title]="title"
+  [subtitle]="subtitle"
+  [btnText]="btnText"
+  [txtLink]="txtLink"
+  [placeholderEmail]="placeholderEmail"
+  [placeholderPassword]="placeholderPassword"
   (submit)="submit()"
   (navigate)="navigate()"
 >
@@ -12,7 +13,7 @@
       formControlName="email"
       inputName="email"
       type="email"
-      placeholder="Enter your email"
+      [placeholder]="placeholderEmail"
       [isPassword]="false">
       <img src="assets/svg/icon/email.svg" alt>
     </app-primary-input>
@@ -20,7 +21,7 @@
       formControlName="password"
       inputName="password"
       type="password"
-      placeholder="Enter your password"
+      [placeholder]="placeholderPassword"
       [isPassword]="true">
       <img src="assets/svg/icon/password.svg" alt>
     </app-primary-input>
@@ -31,7 +32,7 @@
       formControlName="email"
       inputName="email"
       type="email"
-      placeholder="Enter your email"
+      [placeholder]="placeholderEmail"
       [isPassword]="false">
       <img src="assets/svg/icon/email.svg" alt>
     </app-primary-input>

@@ -11,7 +11,7 @@ import { DefaultLoginLayoutComponent } from '../../components/default-login-layo
   selector: 'app-login',
   standalone: true,
   imports: [
-    CommonModule, // Adicione o CommonModule aqui
+    CommonModule,
     DefaultLoginLayoutComponent,
     PrimaryInputComponent,
     ReactiveFormsModule
@@ -24,6 +24,13 @@ export class LoginComponent {
   loginForm: FormGroup;
   forgotPasswordForm: FormGroup;
   showForgotPasswordForm: boolean = false;
+
+  title = 'Sign In';
+  subtitle = 'Log in to your account';
+  btnText = 'Login Account';
+  txtLink = 'Forgot Password';
+  placeholderEmail = 'Enter your email';
+  placeholderPassword = 'Enter your password';
 
   constructor(
     private router: Router,
@@ -92,5 +99,10 @@ export class LoginComponent {
 
   navigate() {
     this.showForgotPasswordForm = !this.showForgotPasswordForm;
+
+    this.title = this.showForgotPasswordForm ? 'Forgot Password' : 'Sign In';
+    this.subtitle = this.showForgotPasswordForm ? 'Enter your email to recover your password' : 'Log in to your account';
+    this.btnText = this.showForgotPasswordForm ? 'Send Recovery Email' : 'Login Account';
+    this.txtLink = this.showForgotPasswordForm ? 'Back to Login' : 'Forgot Password';
   }
 }

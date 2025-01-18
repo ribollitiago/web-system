@@ -1,0 +1,15 @@
+{
+  "Login_form": {
+    "titleLgn": "Sign In",
+    "subtitleLgn": "Log in to your account",
+    "inputEmailLgn": "Enter your email",
+    "inputPasswordLgn": "Enter your password",
+    "linkForgotPasswordLgn": "Forgot Password?",
+    "btnLoginLgn": "Login account",
+    "titleFgt": "Forgot Password",
+    "subtitleFgt": "Enter your email to recover password",
+    "inputEmailFgt": "Enter your email",
+    "linkForgotPasswordFgt": "Login here",
+    "btnLoginFgt": "Send Recovery Email"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "Login_form": {
+
+    "titleLgn": "Entrar",
+    "subtitleLgn": "Faça login na sua conta",
+    "inputEmailLgn": "Insira seu e-mail",
+    "inputPasswordLgn": "Insira sua senha",
+    "linkForgotPasswordLgn": "Esqueceu a senha?",
+    "btnLoginLgn": "Entrar",
+
+    "titleFgt": "Esqueceu a Senha",
+    "subtitleFgt": "Insira seu e-mail para recuperar a senha",
+    "inputEmailFgt": "Insira seu e-mail",
+    "linkForgotPasswordFgt": "Entrar aqui",
+    "btnLoginFgt": "Enviar E-mail de Recuperação"
+  }
+}

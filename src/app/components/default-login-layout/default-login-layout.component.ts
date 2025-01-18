@@ -11,6 +11,8 @@ export class DefaultLoginLayoutComponent {
   @Input() subtitle: string = "";
   @Input() btnText: string = "";
   @Input() txtLink: string = "";
+  @Input() placeholderEmail: string = '';
+  @Input() placeholderPassword: string = '';
 
   @Output("submit") onSubmit = new EventEmitter();
 
