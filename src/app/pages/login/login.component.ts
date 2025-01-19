@@ -50,8 +50,9 @@ export class LoginComponent {
   }
 
   async ngOnInit() {
-    await this.translationService.setLanguage('en_us');
-    this.loadTranslations();
+    this.translationService.language$.subscribe(() => {
+      this.loadTranslations();
+    });
   }
 
   loadTranslations() {
@@ -70,6 +71,14 @@ export class LoginComponent {
     } else {
       this.submitLogin();
     }
+    
+    // const teste = this.translationService;
+    // if (teste.getCurrentLanguage() === 'en_us') {
+    //   teste.setLanguage('en_us')
+    // }
+    // else {
+    //   teste.setLanguage('pt_br');
+    // }
   }
 
   submitLogin() {

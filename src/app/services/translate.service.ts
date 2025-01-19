@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -6,19 +7,42 @@ import { Injectable } from '@angular/core';
 export class TranslationService {
   private translations: any = {};
   private currentLanguage = 'en_us';
-  constructor() {}
+  private languageSubject = new BehaviorSubject<string>(this.currentLanguage);
+
+  constructor() {
+    const savedLanguage = localStorage.getItem('language');
+    if (savedLanguage) {
+      this.currentLanguage = savedLanguage;
+    } else {
+      const browserLanguage = navigator.language.split('-')[0];
+      this.currentLanguage = browserLanguage === 'pt' ? 'pt_br' : 'en_us';
+    }
+
+    this.setLanguage(this.currentLanguage);
+  }
+
+  getCurrentLanguage(): string {
+    return this.currentLanguage;
+  }
+
+  get language$() {
+    return this.languageSubject.asObservable();
+  }
 
   async setLanguage(language: string) {
     this.currentLanguage = language;
+    localStorage.setItem('language', language);
+
     try {
-      const response = await import(`../../../public/assets/i18n/${language}.json`)
+      const response = await import(`../../../public/assets/i18n/${language}.json`);
       this.translations = response;
+
+      this.languageSubject.next(language);
     } catch (error) {
       console.error(`Erro ao carregar o arquivo de tradução para o idioma: ${language}`, error);
     }
   }
 
-  // Método para obter a tradução de uma chave
   getTranslation(key: string, section: string): string {
     return this.translations[section]?.[key] || key;
   }
