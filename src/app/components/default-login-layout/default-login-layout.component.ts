@@ -1,8 +1,11 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { DefaultDropdownComponent } from '../default-dropdown/default-dropdown.component';
 
 @Component({
   selector: 'app-default-login-layout',
-  imports: [],
+  imports: [
+    DefaultDropdownComponent
+  ],
   templateUrl: './default-login-layout.component.html',
   styleUrl: './default-login-layout.component.scss'
 })

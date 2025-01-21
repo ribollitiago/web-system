@@ -9,6 +9,7 @@
   background-size: cover;
   background-position: center;
   margin: 0;
+  flex-direction: column;
 }
 
 .box-center {
@@ -36,9 +37,11 @@
     justify-content: center;
     align-items: center;
 
-    padding: 110px 76px;
+    padding: 0px 76px;
     border-radius: 40px;
     background-color: $background-login;
+    position: relative;
+
 
     .right-login {
       width: 100%;
@@ -94,7 +97,13 @@
 
         cursor: pointer;
       }
-    }
 
+      .select {
+        position: absolute;  // Fixado na parte inferior
+        bottom: 0;           // Alinhado ao fundo do .box-login
+        right: calc(0px - 50px);  // Compensa o padding-right da .box-login
+        padding: 10px;        // Ajuste conforme necessário
+      }
+    }
   }
 }
