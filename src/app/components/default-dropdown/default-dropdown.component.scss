@@ -6,13 +6,6 @@
   align-items: flex-start; // Alinha o label à esquerda
 }
 
-.select-label {
-  font-size: 5px;  // Define o tamanho pequeno para o label
-  font-weight: 400;
-  color: $text-color;  // Usa a cor de texto definida no seu projeto
-  margin-bottom: 5px;  // Espaçamento entre o label e o select
-}
-
 .select-wrapper {
   font-size: 13px;
   font-weight: 400;
