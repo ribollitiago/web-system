@@ -8,6 +8,7 @@ export class TranslationService {
   private translations: any = {};
   private currentLanguage = 'en_us';
   private languageSubject = new BehaviorSubject<string>(this.currentLanguage);
+  private languageLoadedSubject = new BehaviorSubject<boolean>(false);
 
   constructor() {
     const savedLanguage = localStorage.getItem('language');
@@ -18,7 +19,7 @@ export class TranslationService {
       this.currentLanguage = browserLanguage === 'pt' ? 'pt_br' : 'en_us';
     }
 
-    this.setLanguage(this.currentLanguage);
+    this.setLanguage(this.currentLanguage); 
   }
 
   getCurrentLanguage(): string {
@@ -27,6 +28,10 @@ export class TranslationService {
 
   get language$() {
     return this.languageSubject.asObservable();
+  }
+
+  get languageLoaded$() {
+    return this.languageLoadedSubject.asObservable();
   }
 
   async setLanguage(language: string) {
@@ -38,6 +43,7 @@ export class TranslationService {
       this.translations = response;
 
       this.languageSubject.next(language);
+      this.languageLoadedSubject.next(true);
     } catch (error) {
       console.error(`Erro ao carregar o arquivo de tradução para o idioma: ${language}`, error);
     }

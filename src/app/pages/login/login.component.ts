@@ -71,14 +71,6 @@ export class LoginComponent {
     } else {
       this.submitLogin();
     }
-    
-    // const teste = this.translationService;
-    // if (teste.getCurrentLanguage() === 'en_us') {
-    //   teste.setLanguage('en_us')
-    // }
-    // else {
-    //   teste.setLanguage('pt_br');
-    // }
   }
 
   submitLogin() {
