@@ -16,7 +16,7 @@ export class LoginService {
       if (user) {
 
         sessionStorage.setItem('refresh-token', user.refreshToken);
-
+        this.router.navigate(['/home']);
         return { uid: user.uid };
       }
       throw new Error('User not found');
@@ -30,15 +30,20 @@ export class LoginService {
     return this.fireauth.authState;
   }
 
+  isLoggedIn(): boolean {
+    return !!sessionStorage.getItem('refresh-token'); // Retorna true se o token existir
+  }
+
+
   logout() {
     return this.fireauth.signOut().then(() => {
-      sessionStorage.removeItem('auth-token');
-      sessionStorage.removeItem('username');
+      sessionStorage.clear(); // Remove todos os dados armazenados
       this.router.navigate(['/login']);
     }).catch((err) => {
       console.error('Logout Error:', err);
     });
   }
+
 
   recoverPassword(email: string) {
     return from(this.fireauth.sendPasswordResetEmail(email).then(() => {

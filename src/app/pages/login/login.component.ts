@@ -53,6 +53,10 @@ export class LoginComponent {
     this.translationService.language$.subscribe(() => {
       this.loadTranslations();
     });
+    const token = sessionStorage.getItem('refresh-token');
+    if (token) {
+      this.router.navigate(['home']); // Redireciona para home se já estiver logado
+    }
   }
 
   loadTranslations() {
