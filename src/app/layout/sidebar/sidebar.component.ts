@@ -1,15 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Output, Input } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { PrimaryInputComponent } from "../../components/primary-input/primary-input.component";
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule, PrimaryInputComponent],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss'
 })
 export class SidebarComponent {
+  placeholderSearch: string = 'Search...';
+
   @Input() isLeftSidebarCollapsed: boolean = false;
   @Output() changeIsLeftSidebarCollapsed = new EventEmitter<boolean>();
 
@@ -23,4 +26,6 @@ export class SidebarComponent {
     this.isLeftSidebarCollapsed = !this.isLeftSidebarCollapsed;
     this.changeIsLeftSidebarCollapsed.emit(this.isLeftSidebarCollapsed);
   }
+
+
 }

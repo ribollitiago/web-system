@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common'; // Importe o CommonModule
 import { LoginService } from '../../services/login.service';
 import { ToastrService } from 'ngx-toastr';
 import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
-import { DefaultLoginLayoutComponent } from '../../components/default-login-layout/default-login-layout.component';
+import { DefaultLoginLayoutComponent } from '../../layout/default-login-layout/default-login-layout.component';
 import { TranslationService } from '../../services/translate.service';
 
 @Component({

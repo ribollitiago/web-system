@@ -1,12 +1,23 @@
 //default login e login page
-$background-login: #121212;
-$background-image: black;
+$login-bg: #121212;
+$image-bg: black;
 $title-color: #fff;
 $text-color: #fff;
 $subtitle-color: #8C8C8C;
 $input-color: #fff;
 $placeholder-input-color: #555555;
-$button-color: #018BE3;
-$button-text-color: #fff;
+$btn-color: #018BE3;
+$btn-text-color: #fff;
 
-
+//sidebar
+$sidenav-bg: #121212;
+$sidenav-width: 300px;
+$sidenav-collapsed-width: 80px;
+$logo-bg: #fff;
+$logo-size: 40px;
+$btn-size: 18px;
+$text-color: #f3f3f3;
+$text-hover-color: #000;
+$active-bg: #fff;
+$shadow-color: #8690a3;
+$divider-color: #363636;

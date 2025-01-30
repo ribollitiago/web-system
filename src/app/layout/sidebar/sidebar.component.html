@@ -1,22 +1,41 @@
 <div class="sidenav" [class.sidenav-collapsed]="isLeftSidebarCollapsed">
   <div class="logo-container">
     <button class="logo" (click)="toggleSidebar()">
-      <img src="assets/svg/icon/menu.svg" alt="Menu">
+      <img src="assets/svg/icon/menu.svg" class="nav-icon" alt="Menu" />
+      <!-- Added class -->
     </button>
-    <div class="logo-text" *ngIf="!isLeftSidebarCollapsed">App</div>
-    <button class="btn-close" (click)="toggleSidebar()" *ngIf="!isLeftSidebarCollapsed">
-      <img src="assets/svg/icon/close.svg" alt="Menu">
+
+    <button
+      class="btn-close"
+      (click)="toggleSidebar()"
+      *ngIf="!isLeftSidebarCollapsed"
+    >
+      <img src="assets/svg/icon/close.svg" class="nav-icon" alt="Close" />
+      <!-- Added class -->
     </button>
   </div>
+  <app-primary-input
+    class="search-input"
+    [placeholder]="placeholderSearch">
+    <img src="assets/svg/icon/search.svg" alt>
+  </app-primary-input>
+  <div class="divider"></div>
   <div class="sidenav-nav">
     @for (item of items; track $index){
-      <li class="sidenav-nav-item">
-        <a class="sidenav-nav-link" [routerLink]="item.routeLink"
-           routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-          <img class="sidenav-link-icon" [src]="item.icon" [alt]="item.label">
-          <span class="sidenav-link-text" *ngIf="!isLeftSidebarCollapsed">{{ item.label }}</span>
-        </a>
-      </li>
+    <li class="sidenav-nav-item">
+      <a
+        class="sidenav-nav-link"
+        [routerLink]="item.routeLink"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <img class="sidenav-link-icon" [src]="item.icon" [alt]="item.label" />
+        <!-- No extra class -->
+        <span class="sidenav-link-text" *ngIf="!isLeftSidebarCollapsed">{{
+          item.label
+        }}</span>
+      </a>
+    </li>
     }
   </div>
 </div>

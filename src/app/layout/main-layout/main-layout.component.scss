@@ -1,11 +1,11 @@
 .content {
   margin-left: 285px; // Expanded sidebar width
   transition: margin-left 0.3s ease;
-  padding: 20px;
+  padding: 50px;
 
   // Collapsed state (both manual and automatic)
   &.collapsed {
-    margin-left: 100px; // Minimum margin when closed
+    margin-left: 65px; // Minimum margin when closed
   }
 
   // Mobile responsive adjustments
@@ -13,6 +13,6 @@
     &.collapsed {
       margin-left: 100px !important; // Force 100px even on mobile
     }
-    padding: 10px; // Adjust other mobile styles as needed
+    padding: 30px; // Adjust other mobile styles as needed
   }
 }

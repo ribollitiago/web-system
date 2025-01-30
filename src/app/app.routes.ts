@@ -4,6 +4,7 @@ import { AuthGuard } from './auth.guard';
 import { HomeComponent } from './pages/home/home.component'; // Add this
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
 import { RegisterComponent } from './pages/register/register.component';
+import { UsersComponent } from './pages/users/users.component';
 
 export const routes: Routes = [
   {
@@ -17,6 +18,7 @@ export const routes: Routes = [
     children: [
       { path: 'home', component: HomeComponent },
       { path: 'register', component: RegisterComponent },
+      { path: 'users', component: UsersComponent },
       { path: '', redirectTo: '/home', pathMatch: 'full' },
     ]
   },

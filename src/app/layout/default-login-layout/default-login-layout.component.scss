@@ -13,7 +13,7 @@
 }
 
 .box-center {
-  background-color: $background-image;
+  background-color: $image-bg;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -39,7 +39,7 @@
 
     padding: 0px 76px;
     border-radius: 40px;
-    background-color: $background-login;
+    background-color: $login-bg;
     position: relative;
 
 
@@ -92,8 +92,8 @@
         border: none;
         font-size: 14px;
         font-weight: 600;
-        color: $button-text-color;
-        background-color: $button-color;
+        color: $btn-text-color;
+        background-color: $btn-color;
 
         cursor: pointer;
       }
