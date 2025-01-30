@@ -8,17 +8,18 @@
     <button
       class="btn-close"
       (click)="toggleSidebar()"
-      *ngIf="!isLeftSidebarCollapsed"
-    >
+      *ngIf="!isLeftSidebarCollapsed">
       <img src="assets/svg/icon/close.svg" class="nav-icon" alt="Close" />
       <!-- Added class -->
     </button>
   </div>
-  <app-primary-input
+  <app-search-input
     class="search-input"
-    [placeholder]="placeholderSearch">
+    [placeholder]="placeholderSearch"
+    [isCollapsed]="isLeftSidebarCollapsed"
+    (iconClick)="handleSearchIconClick()">
     <img src="assets/svg/icon/search.svg" alt>
-  </app-primary-input>
+  </app-search-input>
   <div class="divider"></div>
   <div class="sidenav-nav">
     @for (item of items; track $index){
@@ -27,13 +28,15 @@
         class="sidenav-nav-link"
         [routerLink]="item.routeLink"
         routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }"
-      >
-        <img class="sidenav-link-icon" [src]="item.icon" [alt]="item.label" />
+        [routerLinkActiveOptions]="{ exact: true }">
+        <span
+          class="sidenav-link-icon"
+          [style.mask-image]="'url(' + item.icon + ')'"
+          [attr.aria-label]="item.label"></span>
         <!-- No extra class -->
         <span class="sidenav-link-text" *ngIf="!isLeftSidebarCollapsed">{{
           item.label
-        }}</span>
+          }}</span>
       </a>
     </li>
     }

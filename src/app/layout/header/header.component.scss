@@ -1,0 +1,13 @@
+@import "../../../styles/variables.scss";
+
+.header-top {
+  background: $sb-bg;
+  width: 100vw;
+  height: 60px;
+  position: fixed;
+  top:0;
+  left: 0;
+  z-index: 1000;
+
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}

@@ -1,7 +1,10 @@
+@import "../../../styles/variables.scss";
+
 .content {
   margin-left: 285px; // Expanded sidebar width
   transition: margin-left 0.3s ease;
-  padding: 50px;
+  padding: 53px 15px;
+  background: $bg-main;
 
   // Collapsed state (both manual and automatic)
   &.collapsed {
@@ -11,8 +14,8 @@
   // Mobile responsive adjustments
   @media (max-width: 768px) {
     &.collapsed {
-      margin-left: 100px !important; // Force 100px even on mobile
+      margin-left: 65px !important; // Force 100px even on mobile
     }
-    padding: 30px; // Adjust other mobile styles as needed
+    padding: 53px 15px; // Adjust other mobile styles as needed
   }
 }

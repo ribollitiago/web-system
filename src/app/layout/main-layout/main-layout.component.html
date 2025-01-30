@@ -1,8 +1,8 @@
-<app-header></app-header>
 <app-sidebar
   [isLeftSidebarCollapsed]="isLeftSidebarCollapsed()"
   (changeIsLeftSidebarCollapsed)="changeIsLeftSidebarCollapsed($event)"
 ></app-sidebar>
+<app-header></app-header>
 <div class="content" [class.collapsed]="isLeftSidebarCollapsed()">
   <router-outlet></router-outlet>
 </div>
