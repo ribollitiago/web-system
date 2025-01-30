@@ -1,0 +1,8 @@
+<app-header></app-header>
+<app-sidebar
+  [isLeftSidebarCollapsed]="isLeftSidebarCollapsed()"
+  (changeIsLeftSidebarCollapsed)="changeIsLeftSidebarCollapsed($event)"
+></app-sidebar>
+<div class="content" [class.collapsed]="isLeftSidebarCollapsed()">
+  <router-outlet></router-outlet>
+</div>

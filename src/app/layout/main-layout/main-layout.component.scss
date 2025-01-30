@@ -1,0 +1,18 @@
+.content {
+  margin-left: 285px; // Expanded sidebar width
+  transition: margin-left 0.3s ease;
+  padding: 20px;
+
+  // Collapsed state (both manual and automatic)
+  &.collapsed {
+    margin-left: 100px; // Minimum margin when closed
+  }
+
+  // Mobile responsive adjustments
+  @media (max-width: 768px) {
+    &.collapsed {
+      margin-left: 100px !important; // Force 100px even on mobile
+    }
+    padding: 10px; // Adjust other mobile styles as needed
+  }
+}

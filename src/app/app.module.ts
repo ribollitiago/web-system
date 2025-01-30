@@ -11,7 +11,6 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { LoginComponent } from './pages/login/login.component';
 import { AppComponent } from './app.component';
-import { MainComponent } from './pages/main/main.component';
 
 @NgModule({
   declarations: [
@@ -25,8 +24,7 @@ import { MainComponent } from './pages/main/main.component';
     FormsModule,
     RouterModule,
     AppRoutingModule,
-    LoginComponent,
-    MainComponent
+    LoginComponent
   ],
   // bootstrap array removed as AppComponent is standalone
 })

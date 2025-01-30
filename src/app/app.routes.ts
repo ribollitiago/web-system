@@ -1,25 +1,27 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login.component';
 import { AuthGuard } from './auth.guard';
-import { MainComponent } from './pages/main/main.component';
+import { HomeComponent } from './pages/home/home.component'; // Add this
+import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
+import { RegisterComponent } from './pages/register/register.component';
 
 export const routes: Routes = [
-  {
-    path: '',
-    redirectTo: '/home', // Redireciona para /home
-    pathMatch: 'full',
-  },
   {
     path: 'login',
     component: LoginComponent,
   },
   {
-    path: 'home',
-    component: MainComponent,
-    canActivate: [AuthGuard], // Protege a rota
+    path: '',
+    component: MainLayoutComponent,
+    canActivate: [AuthGuard],
+    children: [
+      { path: 'home', component: HomeComponent },
+      { path: 'register', component: RegisterComponent },
+      { path: '', redirectTo: '/home', pathMatch: 'full' },
+    ]
   },
   {
-    path: '**', // Rota fallback (quando nenhuma outra corresponde)
+    path: '**',
     redirectTo: '/home',
   },
 ];

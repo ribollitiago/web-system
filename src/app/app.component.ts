@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TranslationService } from './services/translate.service';
 import { CommonModule } from '@angular/common';
+import { SidebarComponent } from './layout/sidebar/sidebar.component';
+import { HeaderComponent } from "./layout/header/header.component";
 
 @Component({
   selector: 'app-root',
