@@ -2,46 +2,47 @@
 
 .sidenav {
   background: $sb-bg;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease; // Increased transition time for smoother effect
   position: fixed;
   z-index: 1100;
   top: 0;
   width: $sb-width;
   height: 100vh;
-  padding: 30px;
+  padding: 20px 20px;
 
   &-collapsed {
     width: $sb-collapsed-width;
-    padding: 30px 20px;
+    padding: 20px 20px; // Adjusted padding for collapsed state
 
     .logo-text,
-    .btn-close,
     .sidenav-link-text {
       opacity: 0;
-      pointer-events: none;
-      transition: all 0.2s ease;
+      visibility: hidden; // Use visibility to maintain layout
+      transition: opacity 0.5s ease, visibility 0.5s ease;
     }
 
     .sidenav-nav-link {
       justify-content: center;
-      padding: 0;
+      transition: all 0.3s ease;
     }
 
     .sidenav-link-icon {
-      margin-right: 0 !important;
       flex-shrink: 0;
+      transition: all 0.3s ease;
     }
 
     .search-input {
+      margin-bottom: 22px !important;
       .input-content {
         justify-content: center;
 
         input {
           opacity: 0;
-          pointer-events: none;
+          visibility: hidden;
           width: 0;
           padding: 0;
           border: none;
+          transition: opacity 0.2s ease, visibility 0.2s ease;
         }
 
         .icon {
@@ -61,9 +62,10 @@
     gap: 1rem;
     width: 100%;
     margin-bottom: 20px;
+    justify-content: space-between;
 
-    .logo {
-      background: $sb-logo-bg;
+    .menu {
+      background: transparent;
       border-radius: 12px;
       padding: 0.313rem;
       width: $sb-logo-size;
@@ -73,10 +75,16 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      transition: all 0.3s ease;
 
       img {
         width: 18px;
         height: auto;
+        filter: brightness(0) invert(1);
+      }
+
+      &:hover {
+        background-color: $sb-hover-bg;
       }
     }
 
@@ -85,26 +93,7 @@
       font-weight: 700;
       color: $sb-text-color;
       white-space: nowrap;
-      transition: all 0.5s ease;
-    }
-
-    .btn-close {
-      margin-left: auto;
-      cursor: pointer;
-      width: $sb-btn-size;
-      height: $sb-btn-size;
-      border-radius: 50%;
-      background-color: transparent;
-      border: none;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: all 0.5s ease;
-
-      img {
-        width: 100%;
-        height: auto;
-      }
+      transition: opacity 0.3s ease, visibility 0.3s ease; // Consistent transition
     }
   }
 
@@ -143,29 +132,31 @@
       color: $sb-text-color;
       text-decoration: none;
       border-radius: 12px;
-      transition: all 0.3s ease;
       padding: 13px;
+      transition: all 0.3s ease;
 
       .sidenav-link-icon {
         width: 18px;
         height: 18px;
-        background-color: currentColor; // Inherits parent's color
+        background-color: currentColor;
         display: inline-block;
         mask-repeat: no-repeat;
         mask-position: center;
         mask-size: contain;
+        flex-shrink: 0;
+        transition: all 0.3s ease;
       }
 
       .sidenav-link-text {
         margin-left: 1rem;
         font-weight: 300;
         font-size: 15px;
-
+        transition: opacity 0.3s ease, visibility 0.3s ease; // Consistent transition
       }
 
       &:hover .sidenav-link-text {
         font-weight: 400 !important;
-        color: $sb-text-color
+        color: $sb-text-color;
       }
     }
 
@@ -190,5 +181,4 @@
       font-weight: 600 !important;
     }
   }
-
 }

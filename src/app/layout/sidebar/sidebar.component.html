@@ -1,16 +1,13 @@
 <div class="sidenav" [class.sidenav-collapsed]="isLeftSidebarCollapsed">
   <div class="logo-container">
-    <button class="logo" (click)="toggleSidebar()">
-      <img src="assets/svg/icon/menu.svg" class="nav-icon" alt="Menu" />
-      <!-- Added class -->
-    </button>
-
-    <button
-      class="btn-close"
-      (click)="toggleSidebar()"
-      *ngIf="!isLeftSidebarCollapsed">
-      <img src="assets/svg/icon/close.svg" class="nav-icon" alt="Close" />
-      <!-- Added class -->
+    <div class="logo-text" *ngIf="!isLeftSidebarCollapsed">GT System</div>
+    <button class="menu" (click)="toggleSidebar()">
+      <img
+    [src]="isLeftSidebarCollapsed ?
+           'assets/svg/icon/sidebar/sidebar-open.svg' :
+           'assets/svg/icon/sidebar/sidebar-close.svg'"
+    class="nav-icon"
+    alt="Menu" />
     </button>
   </div>
   <app-search-input
