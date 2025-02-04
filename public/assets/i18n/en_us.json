@@ -11,5 +11,31 @@
     "inputEmailFgt": "Enter your email",
     "linkForgotPasswordFgt": "Login here",
     "btnLoginFgt": "Send Recovery Email"
+  },
+  "Sidebar": {
+    "inputSearch": "Search...",
+    "linkHome": "Home",
+    "linkRegister": "Register",
+    "linkUsers": "Users"
+  },
+  "Register_Page": {
+    "title": "Register New User",
+    "subtitle": "Register a new user to use the system",
+    "stepOne": "Personal Information",
+    "stepTwo": "Permissions",
+    "stepThree": "Extra Information",
+    "titleName": "Name",
+    "inputName": "Enter Name",
+    "titleEmail": "Email",
+    "inputEmail": "Enter Email",
+    "titlePhone": "Phone",
+    "inputPhone": "Enter Phone Number",
+    "titleDocument": "CPF Document",
+    "inputDocument": "Enter CPF",
+    "titlePassword": "Password",
+    "inputPassword": "Enter Password",
+    "titleConfirmPassword": "Confirm Password",
+    "inputPasswordConfirm": "Confirm Password",
+    "btnRegister": "Next Step"
   }
 }

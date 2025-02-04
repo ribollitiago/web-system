@@ -1,40 +1,60 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Output, Input, ViewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { PrimaryInputComponent } from "../../components/primary-input/primary-input.component";
 import { SearchInputComponent } from "../../components/search-input/search-input.component";
+import { TranslationService } from '../../services/translate.service';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
   imports: [RouterModule, CommonModule, SearchInputComponent],
   templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.scss'
+  styleUrl: './sidebar.component.scss',
+  providers: [TranslationService]
 })
 export class SidebarComponent {
-handleIconClick() {
-throw new Error('Method not implemented.');
-}
-  placeholderSearch: string = 'Search...';
-
   @Input() isLeftSidebarCollapsed: boolean = false;
   @Output() changeIsLeftSidebarCollapsed = new EventEmitter<boolean>();
   @ViewChild(SearchInputComponent) searchInputComponent!: SearchInputComponent;
 
-  items = [
-    { routeLink: '/home', icon: 'assets/svg/icon/home.svg', label: 'Home' },
-    { routeLink: '/register', icon: 'assets/svg/icon/register.svg', label: 'Register' },
-    { routeLink: '/users', icon: 'assets/svg/icon/users.svg', label: 'Users' }
-  ];
+  placeholderSearch: string = '';
+  linkHome: string = '';
+  linkRegister: string = '';
+  linkUsers: string = '';
+
+  items: { routeLink: string, icon: string, label: string }[] = [];
+
+  constructor(private translationService: TranslationService) {}
+
+  ngOnInit() {
+    this.translationService.language$.subscribe(() => {
+      this.loadTranslations();
+    });
+    this.loadTranslations();
+  }
+
+  loadTranslations() {
+    const section = "Sidebar";
+    try {
+      this.placeholderSearch = this.translationService.getTranslation('inputSearch', section);
+      this.linkHome = this.translationService.getTranslation('linkHome', section);
+      this.linkRegister = this.translationService.getTranslation('linkRegister', section);
+      this.linkUsers = this.translationService.getTranslation('linkUsers', section);
+
+      this.items = [
+        { routeLink: '/home', icon: 'assets/svg/icon/home.svg', label: this.linkHome },
+        { routeLink: '/register', icon: 'assets/svg/icon/register.svg', label: this.linkRegister },
+        { routeLink: '/users', icon: 'assets/svg/icon/users.svg', label: this.linkUsers }
+      ];
+    } catch (error) {
+      console.error('Error loading sidebar translations:', error);
+    }
+  }
 
   handleSearchIconClick() {
     if (this.isLeftSidebarCollapsed) {
       this.toggleSidebar();
-
-      // Wait for sidebar animation before focusing
-      setTimeout(() => {
-        this.searchInputComponent.focusInput();
-      }, 200); // Match sidebar transition duration
+      setTimeout(() => this.searchInputComponent.focusInput(), 200);
     }
   }
 
@@ -42,5 +62,4 @@ throw new Error('Method not implemented.');
     this.isLeftSidebarCollapsed = !this.isLeftSidebarCollapsed;
     this.changeIsLeftSidebarCollapsed.emit(this.isLeftSidebarCollapsed);
   }
-
 }

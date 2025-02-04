@@ -1,0 +1,136 @@
+@import "../../../../styles/variables.scss";
+
+* {
+  justify-content: center;
+  align-items: center;
+}
+
+.register-wrapper {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+
+  .register-container {
+    padding: 40px 30px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 720px;
+    height: 750px;
+    background-color: $rg-bg;
+
+    .steps {
+      width: 100%; // Take full width of parent
+      display: flex;
+      align-items: center;
+      margin-bottom: 25px;
+
+      [class^="step-"] {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0; // Prevent steps from shrinking
+        padding: 0 10px 0 10px
+      }
+
+      img {
+        width: 24px;
+        height: 24px;
+      }
+
+      h4 {
+        margin: 0;
+        font-size: 12px;
+        font-weight: 400;
+        color: $rg-step-missing;
+      }
+
+      .divider {
+        flex-grow: 1; // Occupy remaining space
+        height: 1px;
+        background-color: $sb-divider-color;
+        min-width: 20px;
+      }
+    }
+
+    .register-header {
+      width: 100%;
+      text-align: left; // Force left alignment for header
+
+      .title {
+        font-size: 24px;
+        color: $rg-title;
+        font-weight: 500;
+        margin-bottom: 15px;
+        text-align: left; // Explicit left align
+      }
+
+      .subtitle {
+        font-size: 14px;
+        color: $rg-subtitle;
+        font-weight: 300;
+        margin-bottom: 25px;
+        text-align: left; // Explicit left align
+      }
+    }
+
+    form {
+      width: 100%;
+
+      .register-form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        width: 100%;
+
+        >div {
+          width: 100%;
+        }
+
+        h3 {
+          font-size: 15px;
+          color: $rg-label;
+          font-weight: 400;
+          margin-bottom: 6px;
+          text-align: left;
+        }
+
+        app-primary-input {
+          margin-bottom: 30px;
+          width: 100%; // Force full width
+        }
+
+        .phone-and-document,
+        .password-and-confirm {
+          display: flex;
+          gap: 20px;
+          width: 100%;
+
+          >div {
+            flex: 1;
+            width: 100%;
+          }
+        }
+
+        .password,
+        .confirm-password {
+          margin-bottom: 40px;
+        }
+
+        button {
+          width: 275px;
+          padding: 18px 0;
+          margin: auto 0; // Center button horizontally
+          border-radius: 12px;
+          border: none;
+          font-size: 14px;
+          font-weight: 600;
+          color: $btn-text-color;
+          background-color: $btn-color;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}

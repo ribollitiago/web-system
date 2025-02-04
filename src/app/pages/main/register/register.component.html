@@ -1,0 +1,97 @@
+<div class="register-wrapper">
+  <div class="register-container">
+    <div class="register-header">
+      <h1 class="title">{{ title }}</h1>
+      <h2 class="subtitle">{{ subtitle }}</h2>
+    </div>
+    <div class="steps">
+      <div class="step-1">
+        <img src="assets/svg/icon/register/step-1.svg" alt>
+        <h4> {{ stepOne }}</h4>
+
+      </div>
+      <div class="divider"></div>
+      <div class="step-2">
+        <img src="assets/svg/icon/register/step-2.svg" alt>
+        <h4> {{ stepTwo }}</h4>
+
+      </div>
+      <div class="divider"></div>
+      <div class="step-3">
+        <img src="assets/svg/icon/register/step-3.svg" alt>
+        <h4> {{ stepThree }}</h4>
+      </div>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="submit()">
+      <div class="register-form">
+        <!-- Name Input -->
+        <div class="name">
+          <h3>{{ titleName }}</h3>
+          <app-primary-input
+            formControlName="name"
+            [placeholder]="placeholderName">
+            <img src="assets/svg/icon/register/user.svg" alt>
+          </app-primary-input>
+        </div>
+
+        <!-- Email Input -->
+        <div class="email">
+          <h3>{{ titleEmail }}</h3>
+          <app-primary-input
+            formControlName="email"
+            type="email"
+            [placeholder]="placeholderEmail">
+            <img src="assets/svg/icon/email.svg" alt>
+          </app-primary-input>
+        </div>
+
+        <!-- Phone & Document Inputs -->
+        <div class="phone-and-document">
+          <div class="phone">
+            <h3>{{ titlePhone }}</h3>
+            <app-primary-input
+              formControlName="phone"
+              [placeholder]="placeholderPhone">
+              <img src="assets/svg/icon/register/phone.svg" alt>
+            </app-primary-input>
+          </div>
+          <div class="document">
+            <h3>{{ titleDocument }}</h3>
+            <app-primary-input
+              formControlName="document"
+              [placeholder]="placeholderDocument">
+              <img src="assets/svg/icon/register/document.svg" alt>
+            </app-primary-input>
+          </div>
+        </div>
+
+        <!-- Password & Confirm Inputs -->
+        <div class="password-and-confirm">
+          <div class="password">
+            <h3>{{ titlePassword }}</h3>
+            <app-primary-input
+              formControlName="password"
+              type="password"
+              [placeholder]="placeholderPassword"
+              [isPassword]="true">
+              <img src="assets/svg/icon/password.svg" alt>
+            </app-primary-input>
+          </div>
+          <div class="confirm-password">
+            <h3>{{ titleConfirmPassword }}</h3>
+            <app-primary-input
+              formControlName="confirmPassword"
+              type="password"
+              [placeholder]="placeholderConfirmPassword"
+              [isPassword]="true">
+              <img src="assets/svg/icon/password.svg" alt>
+            </app-primary-input>
+          </div>
+        </div>
+        <!-- Submit Button -->
+        <button type="submit">{{ btnRegister }}</button>
+      </div>
+    </form>
+  </div>
+</div>

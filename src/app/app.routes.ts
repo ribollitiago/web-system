@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login.component';
 import { AuthGuard } from './auth.guard';
-import { HomeComponent } from './pages/home/home.component'; // Add this
+import { HomeComponent } from './pages/main/home/home.component'; // Add this
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
-import { RegisterComponent } from './pages/register/register.component';
-import { UsersComponent } from './pages/users/users.component';
+import { RegisterComponent } from './pages/main/register/register.component';
+import { UsersComponent } from './pages/main/users/users.component';
 
 export const routes: Routes = [
   {
