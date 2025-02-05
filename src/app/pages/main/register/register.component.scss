@@ -8,17 +8,24 @@
 .register-wrapper {
   padding: 30px;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 106px); // Account for top+bottom padding (53px*2)
+  width: 100%;
+  box-sizing: border-box;
 
   .register-container {
-    padding: 40px 30px;
+    padding: 40px 30px 60px 30px; // 40px top padding
     display: flex;
     flex-direction: column;
+    justify-content: flex-start; // Align content to the top
+    align-items: center; // Center content horizontally
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     width: 720px;
-    height: 750px;
+    height: fit-content;
     background-color: $rg-bg;
+    overflow-y: auto;
 
     .steps {
       width: 100%; // Take full width of parent
@@ -26,12 +33,23 @@
       align-items: center;
       margin-bottom: 25px;
 
+        .step-1 {
+
+          .step-1-txt {
+            color: $rg-step-completed;
+          }
+          img {
+            filter: $rg-svg-step-completed
+            // Adjust the filter values to match your desired color
+          }
+        }
+
       [class^="step-"] {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
         flex-shrink: 0; // Prevent steps from shrinking
-        padding: 0 10px 0 10px
+        padding: 0 5px 0 5px
       }
 
       img {
@@ -46,10 +64,16 @@
         color: $rg-step-missing;
       }
 
-      .divider {
+      .divider-1 {
         flex-grow: 1; // Occupy remaining space
         height: 1px;
-        background-color: $sb-divider-color;
+        background-color: $rg-step-completed;
+        min-width: 20px;
+      }
+      .divider-2 {
+        flex-grow: 1; // Occupy remaining space
+        height: 1px;
+        background-color: $rg-step-missing;
         min-width: 20px;
       }
     }

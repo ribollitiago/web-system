@@ -1,10 +1,12 @@
 @import "../../../styles/variables.scss";
 
 .content {
-  margin-left: 285px; // Expanded sidebar width
+  margin-left: 285px;
   transition: margin-left 0.3s ease;
   padding: 53px 15px;
   background: $bg-main;
+  min-height: 100vh; // Ensure full viewport height
+  box-sizing: border-box;
 
   // Collapsed state (both manual and automatic)
   &.collapsed {
