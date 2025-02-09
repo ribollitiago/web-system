@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { PrimaryInputComponent } from '../../../components/primary-input/primary-input.component';
 import { TranslationService } from '../../../services/translate.service';
+import { RegisterService } from '../../../services/register.service';
 
 @Component({
   selector: 'app-register',
@@ -41,7 +42,8 @@ export class RegisterComponent {
 
   constructor(
     private translationService: TranslationService,
-    private router: Router
+    private registerService: RegisterService,
+    private router: Router,
   ) {
     this.registerForm = new FormGroup({
       name: new FormControl('', [Validators.required]),
@@ -97,14 +99,28 @@ export class RegisterComponent {
     this.btnRegister = this.translationService.getTranslation('btnRegister', section);
   }
 
-  submit() {
+  async submit() {
     if (this.registerForm.valid) {
-      // Handle form submission
-      console.log('Form values:', this.registerForm.value);
-      // Add your registration logic here
+      const userData = {
+        email: this.registerForm.value.email,
+        password: this.registerForm.value.password,
+        name: this.registerForm.value.name,
+        cpf: this.registerForm.value.document,
+        phone: this.registerForm.value.phone,
+      };
+
+      this.registerService.setData(userData);
+
+      this.registerService.registerUser()
+        .then(user => {
+          console.log('Usuário registrado com sucesso:', user);
+          this.router.navigate(['/login']);
+        })
+        .catch(error => {
+          console.error('Erro ao registrar usuário:', error);
+        });
     } else {
-      // Handle form errors
-      console.log('Form has errors:', this.registerForm.errors);
+      console.log('Formulário inválido');
     }
   }
 }
