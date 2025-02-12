@@ -57,4 +57,13 @@ export class RegisterStep3Component implements OnInit{
       // Handle error
     });
   }
+
+  async return() {
+    try {
+      this.regService.setStep2Completed({});
+      this.router.navigate(['/register/permissions']);
+    } catch (error) {
+      console.error('Error navigating to Step 3:', error);
+    }
+  }
 }

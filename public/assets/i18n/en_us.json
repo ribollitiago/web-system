@@ -40,7 +40,12 @@
   },
   "Permissions_Page": {
     "title": "Permissions",
-    "subtitle": "Register the permissions for this account"
+    "subtitle": "Register the permissions for this account",
+    "inputSearch": "Search...",
+    "filterOne": "Users",
+    "filterTwo": "Routes",
+    "filterThree": "Admin"
+
   },
   "Resume_Page": {
     "title": "Resume",

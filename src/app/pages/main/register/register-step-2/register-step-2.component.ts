@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { TranslationService } from '../../../../services/translate.service';
 import { RegisterService } from '../../../../services/register.service';
 import { Router } from '@angular/router';
-import { NgForm } from '@angular/forms';
+import { SearchInputComponent } from "../../../../components/search-input/search-input.component";
 
 @Component({
   selector: 'app-register-step-2',
-  imports: [],
+  imports: [SearchInputComponent, SearchInputComponent],
   templateUrl: './register-step-2.component.html',
   styleUrl: './register-step-2.component.scss'
 })
@@ -19,6 +19,11 @@ export class RegisterStep2Component {
   stepTwo: string = '';
   stepThree: string = '';
   btnRegister: string = '';
+  inputSearch: string = '';
+  filterOne: string = '';
+  filterTwo: string = '';
+  filterThree: string = '';
+
 
   constructor(
     private translationService: TranslationService,
@@ -37,6 +42,10 @@ export class RegisterStep2Component {
     const section = 'Permissions_Page';
     this.title = this.translationService.getTranslation('title', section);
     this.subtitle = this.translationService.getTranslation('subtitle', section);
+    this.inputSearch = this.translationService.getTranslation('inputSearch', section);
+    this.filterOne = this.translationService.getTranslation('filterOne', section);
+    this.filterTwo = this.translationService.getTranslation('filterTwo', section);
+    this.filterThree = this.translationService.getTranslation('filterThree', section);
 
     const section2 = 'Register_Page';
     this.stepOne = this.translationService.getTranslation('stepOne', section2);
@@ -47,10 +56,16 @@ export class RegisterStep2Component {
 
   async submit() {
     try {
-      // Mark Step 2 as completed
       this.registerService.setStep2Completed({});
-      // Navigate to Step 3
       this.router.navigate(['/register/permissions/resume']);
+    } catch (error) {
+      console.error('Error navigating to Step 3:', error);
+    }
+  }
+  async return() {
+    try {
+      this.registerService.setStep2Completed({});
+      this.router.navigate(['/register']);
     } catch (error) {
       console.error('Error navigating to Step 3:', error);
     }

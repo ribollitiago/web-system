@@ -17,7 +17,7 @@ export class SidebarComponent {
   @Output() changeIsLeftSidebarCollapsed = new EventEmitter<boolean>();
   @ViewChild(SearchInputComponent) searchInputComponent!: SearchInputComponent;
 
-  placeholderSearch: string = '';
+  inputSearch: string = '';
   linkHome: string = '';
   linkRegister: string = '';
   linkUsers: string = '';
@@ -36,7 +36,7 @@ export class SidebarComponent {
   loadTranslations() {
     const section = "Sidebar";
     try {
-      this.placeholderSearch = this.translationService.getTranslation('inputSearch', section);
+      this.inputSearch = this.translationService.getTranslation('inputSearch', section);
       this.linkHome = this.translationService.getTranslation('linkHome', section);
       this.linkRegister = this.translationService.getTranslation('linkRegister', section);
       this.linkUsers = this.translationService.getTranslation('linkUsers', section);

@@ -41,7 +41,11 @@
   },
   "Permissions_Page": {
     "title": "Permissões",
-    "subtitle": "Registre as permissões para este usuário"
+    "subtitle": "Registre as permissões para este usuário",
+    "inputSearch": "Pesquisar...",
+    "filterOne": "Usuários",
+    "filterTwo": "Rotas",
+    "filterThree": "Admin"
   },
   "Resume_Page": {
     "title": "Resumo",
