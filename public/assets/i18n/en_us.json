@@ -37,5 +37,14 @@
     "titleConfirmPassword": "Confirm Password",
     "inputPasswordConfirm": "Confirm Password",
     "btnRegister": "Next Step"
+  },
+  "Permissions_Page": {
+    "title": "Permissions",
+    "subtitle": "Register the permissions for this account"
+  },
+  "Resume_Page": {
+    "title": "Resume",
+    "subtitle": "User registration summary",
+    "btnRegister": "Complete Sign Up"
   }
 }

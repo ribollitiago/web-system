@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { PrimaryInputComponent } from '../../../components/primary-input/primary-input.component';
-import { TranslationService } from '../../../services/translate.service';
-import { RegisterService } from '../../../services/register.service';
+import { PrimaryInputComponent } from '../../../../components/primary-input/primary-input.component';
+import { TranslationService } from '../../../../services/translate.service';
+import { RegisterService } from '../../../../services/register.service';
 
 @Component({
   selector: 'app-register',
@@ -14,10 +14,10 @@ import { RegisterService } from '../../../services/register.service';
     PrimaryInputComponent,
     ReactiveFormsModule
   ],
-  templateUrl: './register.component.html',
-  styleUrl: './register.component.scss'
+  templateUrl: './register-step-1.component.html',
+  styleUrl: './register-step-1.component.scss'
 })
-export class RegisterComponent {
+export class RegisterStep1Component {
   registerForm: FormGroup;
 
   // Translation variables
@@ -100,27 +100,31 @@ export class RegisterComponent {
   }
 
   async submit() {
-    if (this.registerForm.valid) {
-      const userData = {
-        email: this.registerForm.value.email,
-        password: this.registerForm.value.password,
-        name: this.registerForm.value.name,
-        cpf: this.registerForm.value.document,
-        phone: this.registerForm.value.phone,
-      };
+      this.registerService.setStep1Completed(true);
+      this.router.navigate(['/register/permissions']);
 
-      this.registerService.setData(userData);
 
-      this.registerService.registerUser()
-        .then(user => {
-          console.log('Usuário registrado com sucesso:', user);
-          this.router.navigate(['/login']);
-        })
-        .catch(error => {
-          console.error('Erro ao registrar usuário:', error);
-        });
-    } else {
-      console.log('Formulário inválido');
-    }
+    // if (this.registerForm.valid) {
+    //   const userData = {
+    //     email: this.registerForm.value.email,
+    //     password: this.registerForm.value.password,
+    //     name: this.registerForm.value.name,
+    //     cpf: this.registerForm.value.document,
+    //     phone: this.registerForm.value.phone,
+    //   };
+
+    //   this.registerService.setData(userData);
+
+    //   this.registerService.registerUser({})
+    //     .then(user => {
+    //       console.log('Usuário registrado com sucesso:', user);
+    //       this.router.navigate(['/login']);
+    //     })
+    //     .catch(error => {
+    //       console.error('Erro ao registrar usuário:', error);
+    //     });
+    // } else {
+    //   console.log('Formulário inválido');
+    // }
   }
 }

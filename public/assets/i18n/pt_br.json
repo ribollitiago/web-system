@@ -38,5 +38,14 @@
     "titleConfirmPassword": "Confirme a Senha",
     "inputPasswordConfirm": "Confirme a senha",
     "btnRegister": "Próximo passo"
+  },
+  "Permissions_Page": {
+    "title": "Permissões",
+    "subtitle": "Registre as permissões para este usuário"
+  },
+  "Resume_Page": {
+    "title": "Resumo",
+    "subtitle": "Resumo das informações do usuário",
+    "btnRegister": "Completar Registro"
   }
 }
