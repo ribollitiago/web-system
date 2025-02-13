@@ -154,20 +154,43 @@
     .filters {
       display: flex;
       flex-direction: row;
-      align-items: center; // Align items vertically in the center
-      justify-content: space-between; // Distribute space between items
+      align-items: center;
+      justify-content: space-between;
       margin-bottom: 20px;
+      width: 100%;
 
       button {
-        margin-right: 15px; // Optional: Add some spacing between elements
-        width: 115px;
+        flex: 0 1 150px; // Don't grow, allow shrinking, start at 200px
+        max-width: 110px; // Maximum width
+        margin-right: 15px;
         height: 28px;
         font-size: 12px;
         border-radius: 20px;
-        border: white;
+        border: 1px solid white;
+        color: white;
+        background: transparent;
+        cursor: pointer;
+        white-space: nowrap; // Prevent text wrapping
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &.selected {
+          background-color: $rg-text;
+          color: black;
+        }
+
+        &:last-child {
+          margin-right: 0; // Remove margin from the last button
+        }
       }
+
       app-search-input {
-        margin-right: 10px; // Optional: Add some spacing between elements
+        flex-grow: 1;
+        margin-right: 10px;
+
+        &:last-child {
+          margin-right: 0; // Remove margin from the last element
+        }
       }
     }
 
@@ -176,7 +199,7 @@
       flex-direction: column;
       gap: 15px;
       width: 100%;
-
+      flex-grow: 1; // Allow this section to take up remaining space
     }
 
     .btn-last {

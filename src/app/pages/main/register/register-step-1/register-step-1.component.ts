@@ -7,7 +7,7 @@ import { TranslationService } from '../../../../services/translate.service';
 import { RegisterService } from '../../../../services/register.service';
 
 @Component({
-  selector: 'app-register',
+  selector: 'app-register-step-1',
   standalone: true,
   imports: [
     CommonModule,
@@ -100,8 +100,8 @@ export class RegisterStep1Component {
   }
 
   async submit() {
-      this.registerService.setStep1Completed(true);
-      this.router.navigate(['/register/permissions']);
+      this.registerService.setCurrentStep(2); // Avança para o passo 2
+
 
 
     // if (this.registerForm.valid) {

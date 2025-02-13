@@ -26,13 +26,33 @@
       </div>
     </div>
     <div class="filters">
-      <button class="users">{{filterOne}}</button>
-      <button class="route">{{filterTwo}}</button>
-      <button class="admin">{{filterThree}}</button>
-      <app-search-input
+      <div class="filters">
+        <button
+          class="users"
+          [ngClass]="{ 'selected': selectedButton === 'users' }"
+          (click)="selectButton('users')"
+        >
+          {{ filterOne }}
+        </button>
+        <button
+          class="route"
+          [ngClass]="{ 'selected': selectedButton === 'route' }"
+          (click)="selectButton('route')"
+        >
+          {{ filterTwo }}
+        </button>
+        <button
+          class="admin"
+          [ngClass]="{ 'selected': selectedButton === 'admin' }"
+          (click)="selectButton('admin')"
+        >
+          {{ filterThree }}
+        </button>
+        <app-search-input
       [placeholder]="inputSearch">
         <img src="assets/svg/icon/search.svg" alt />
       </app-search-input>
+      </div>
     </div>
     <form (ngSubmit)="submit()">
       <div class="permissions-form">

@@ -22,7 +22,7 @@ export class RegisterStep3Component implements OnInit{
 
   constructor(
     private translationService: TranslationService,
-    private regService: RegisterService,
+    private registerService: RegisterService,
     private router: Router
   ) { }
 
@@ -31,10 +31,6 @@ export class RegisterStep3Component implements OnInit{
       this.loadTranslations();
     });
     this.loadTranslations();
-
-    if (!this.regService.isStep2Completed()) {
-      this.router.navigate(['/register/permissions']); // Redirect to Step 2 if not completed
-    }
   }
 
   loadTranslations() {
@@ -50,7 +46,7 @@ export class RegisterStep3Component implements OnInit{
   }
 
   confirmRegistration() {
-    this.regService.registerUser().then(() => {
+    this.registerService.registerUser().then(() => {
       // Redirect to home/dashboard
       this.router.navigate(['/home']);
     }).catch(error => {
@@ -59,11 +55,6 @@ export class RegisterStep3Component implements OnInit{
   }
 
   async return() {
-    try {
-      this.regService.setStep2Completed({});
-      this.router.navigate(['/register/permissions']);
-    } catch (error) {
-      console.error('Error navigating to Step 3:', error);
-    }
+    this.registerService.setCurrentStep(2);
   }
 }
