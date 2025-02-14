@@ -1,0 +1,32 @@
+{
+  "users": {
+    "logar": {
+      "title": "Editar email Web",
+      "description": "Dá o poder ao usuário de editar o emails de Usuários do Sistema Interno.",
+      "level": 3,
+      "permission": "editUserEmailWeb"
+    }
+  },
+  "route": {
+    "register": {
+      "title": "Tela Registro",
+      "description": "Acesso a tela de registro do sistema",
+      "level": 3,
+      "permission": "registerPage"
+    },
+    "users": {
+      "title": "Tela usuários",
+      "description": "Acesso a tela de usuários do sistema",
+      "level": 2,
+      "permission": "usersPage"
+    }
+  },
+  "admin": {
+    "acessoaosistema": {
+      "title": "Administrador",
+      "description": "Acesso total ao sistema",
+      "level": 1,
+      "permission": "admin"
+    }
+  }
+}

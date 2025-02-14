@@ -1,0 +1,21 @@
+input[type="checkbox"] {
+  display: none;
+}
+
+input[type="checkbox"] + label:before {
+  content: "";
+  display: inline-block;
+  height: 12px;
+  width: 12px;
+  background: url('../../../../../public/assets/svg/icon/register/step-2/check-off.svg') no-repeat;
+  background-size: 12px 13px;
+}
+
+input[type="checkbox"]:checked + label:before {
+  content: "";
+  display: inline-block;
+  height: 12px;
+  width: 12px;
+  background: url('../../../../../public/assets/svg/icon/register/step-2/check-on.svg') no-repeat;
+  background-size: 12px 13px;
+}

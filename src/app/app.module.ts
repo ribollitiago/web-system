@@ -17,6 +17,7 @@ import { RegisterStep2Component } from './pages/main/register/register-step-2/re
 import { RegisterStep3Component } from './pages/main/register/register-step-3/register-step-3.component';
 import { RegisterComponent } from './pages/main/register/register.component';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { CommonModule } from '@angular/common';
     RegisterStep1Component,
     RegisterStep2Component,
     RegisterStep3Component,
-    CommonModule
+    CommonModule,
+    HttpClientModule
   ],
 
 })

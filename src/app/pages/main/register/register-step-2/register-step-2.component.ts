@@ -4,15 +4,26 @@ import { RegisterService } from '../../../../services/register.service';
 import { Router } from '@angular/router';
 import { SearchInputComponent } from '../../../../components/search-input/search-input.component';
 import { CommonModule } from '@angular/common';
+import permissions from '../../../../../../public/assets/permissions/perm.json';
+import { Step2Filter1Component } from '../../../../components/register/step-2-filter-1/step-2-filter-1.component';
+import { Step2Filter2Component } from '../../../../components/register/step-2-filter-2/step-2-filter-2.component';
+import { Step2Filter3Component } from '../../../../components/register/step-2-filter-3/step-2-filter-3.component';
 
 @Component({
   selector: 'app-register-step-2',
-  imports: [SearchInputComponent, SearchInputComponent, CommonModule],
+  imports: [
+    SearchInputComponent,
+    SearchInputComponent,
+    Step2Filter1Component,
+    Step2Filter2Component,
+    Step2Filter3Component,
+    CommonModule,
+  ],
   templateUrl: './register-step-2.component.html',
   styleUrl: './register-step-2.component.scss',
 })
 export class RegisterStep2Component {
-  permissionsData: any = {}; // Add form model
+  routePermissions: any[] = []; // Add form model
   selectedButton: string = 'users';
 
   title: string = '';
@@ -37,6 +48,8 @@ export class RegisterStep2Component {
       this.loadTranslations();
     });
     this.loadTranslations();
+
+    this.routePermissions = Object.values(permissions.route);
   }
 
   loadTranslations() {

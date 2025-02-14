@@ -1,0 +1,49 @@
+@import "../../../../styles/variables.scss";
+
+input[type="checkbox"] {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .checkbox-container {
+    flex-basis: 100%; // Full width on smaller screens
+  }
+}
+
+.parent-container {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.checkbox-container {
+  flex: 1 1 calc(50% - 10px); // Two per row accounting for gap
+  min-width: 300px; // Minimum width before wrapping
+  // Keep existing styles
+  margin-bottom: 10px;
+  background-color: $rg-bg-checkbox;
+  padding: 10px 8px;
+  border-radius: 10px;
+
+  label {
+    font-size: 11px;
+    color: $rg-text;
+    display: flex;
+    align-items: center;
+    gap: 8px; // Adds space between text and checkbox
+  }
+}
+
+input[type="checkbox"] + label::after {
+  content: "";
+  display: inline-block;
+  height: 12px;
+  width: 12px;
+  background: url('../../../../../public/assets/svg/icon/register/step-2/check-off.svg') no-repeat;
+  background-size: 12px 13px;
+}
+
+input[type="checkbox"]:checked + label::after {
+  background: url('../../../../../public/assets/svg/icon/register/step-2/check-on.svg') no-repeat;
+}
