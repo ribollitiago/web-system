@@ -144,52 +144,77 @@
         position: absolute;
         top: 30px;
         right: 30px;
+
         width: 40px;
         height: 40px;
+        border-radius: 100%;
 
         cursor: pointer;
+
+        &:hover {
+          background-color: darken($text-color, 90%);
+        }
       }
     }
 
-    .filters {
+
+    .filters-wrapper {
       display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
-      width: 100%;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
 
-      button {
-        flex: 0 1 150px; // Don't grow, allow shrinking, start at 200px
-        max-width: 110px; // Maximum width
-        margin-right: 15px;
-        height: 28px;
-        font-size: 12px;
-        border-radius: 20px;
-        border: 1px solid white;
-        color: white;
-        background: transparent;
-        cursor: pointer;
-        white-space: nowrap; // Prevent text wrapping
-        overflow: hidden;
-        text-overflow: ellipsis;
+      .filters {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        width: 100%;
 
-        &.selected {
-          background-color: $rg-text;
-          color: black;
+        button {
+          flex: 0 1 150px; // Don't grow, allow shrinking, start at 200px
+          max-width: 110px; // Maximum width
+          margin-right: 15px;
+          height: 28px;
+          font-size: 12px;
+          border-radius: 20px;
+          border: 1px solid white;
+          color: white;
+          background: transparent;
+          cursor: pointer;
+          white-space: nowrap; // Prevent text wrapping
+          overflow: hidden;
+          text-overflow: ellipsis;
+          font-weight: 400;
+
+          &.selected {
+            background-color: $rg-text;
+            color: black;
+            font-weight: 600 !important;
+
+            &:hover {
+              background-color: darken($rg-text, 15%);
+            }
+          }
+
+          &:last-child {
+            margin-right: 0; // Remove margin from the last button
+          }
+
+          &:hover {
+            background-color: darken($rg-text, 90%);
+          }
         }
 
-        &:last-child {
-          margin-right: 0; // Remove margin from the last button
-        }
-      }
+        app-search-input {
+          flex-grow: 1;
+          margin-right: 10px;
 
-      app-search-input {
-        flex-grow: 1;
-        margin-right: 10px;
-
-        &:last-child {
-          margin-right: 0; // Remove margin from the last element
+          &:last-child {
+            margin-right: 0; // Remove margin from the last element
+          }
         }
       }
     }
@@ -213,6 +238,10 @@
       color: $btn-text-color;
       background-color: $btn-color;
       cursor: pointer;
+
+      &:hover {
+        background-color: darken($btn-color, 5%);
+      }
     }
   }
 }

@@ -267,6 +267,10 @@
           color: $btn-text-color;
           background-color: $btn-color;
           cursor: pointer;
+
+          &:hover {
+            background-color: darken($btn-color, 5%);
+          }
         }
       }
     }

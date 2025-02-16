@@ -81,6 +81,10 @@
 
         text-decoration: underline;
         cursor: pointer;
+
+        &:hover {
+          color: darken($text-color, 15%);
+        }
       }
 
       button {
@@ -96,6 +100,10 @@
         background-color: $btn-color;
 
         cursor: pointer;
+
+        &:hover {
+          background-color: darken($btn-color, 5%);
+        }
       }
 
       .select {

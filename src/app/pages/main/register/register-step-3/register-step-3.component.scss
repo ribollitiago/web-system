@@ -151,8 +151,13 @@
 
         width: 40px;
         height: 40px;
+        border-radius: 100%;
 
         cursor: pointer;
+
+        &:hover {
+          background-color: darken($text-color, 90%);
+        }
       }
     }
     .permissions-form {
@@ -173,6 +178,10 @@
       color: $btn-text-color;
       background-color: $btn-color;
       cursor: pointer;
+
+      &:hover {
+        background-color: darken($btn-color, 5%);
+      }
     }
   }
 }
