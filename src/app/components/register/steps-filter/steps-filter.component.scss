@@ -47,6 +47,29 @@ input[type="checkbox"] {
       width: 13px;
       height: 13px;
     }
+
+    .menu {
+      background: $rg-bg-hover-extra;
+      color: white;
+      padding: 5px;
+      position: absolute;
+      font-size: 12px;
+      border-radius: 8px;
+      width: 200px;
+      transform: translate(42%, -90%);
+      cursor: default;
+
+    }
+
+    .menu-title {
+      font-weight: bold;
+      padding: 3px 5px;
+
+    }
+
+    .menu-item {
+      padding: 3px 5px;
+    }
   }
 
   .extra-information:hover {

@@ -6,6 +6,7 @@ import { SearchInputComponent } from '../../../../components/search-input/search
 import { CommonModule } from '@angular/common';
 import permissions from '../../../../../../public/assets/permissions/perm.json';
 import { StepsFilterComponent } from "../../../../components/register/steps-filter/steps-filter.component";
+import { ClickOutsideDirective } from '../../../../directives/clickOutside.directive';
 
 @Component({
   selector: 'app-register-step-2',
@@ -13,7 +14,8 @@ import { StepsFilterComponent } from "../../../../components/register/steps-filt
     SearchInputComponent,
     SearchInputComponent,
     CommonModule,
-    StepsFilterComponent
+    StepsFilterComponent,
+    ClickOutsideDirective
 ],
   templateUrl: './register-step-2.component.html',
   styleUrl: './register-step-2.component.scss',

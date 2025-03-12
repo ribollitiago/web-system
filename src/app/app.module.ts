@@ -21,7 +21,6 @@ import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
-     // Declara os componentes não-standalone
   ],
   imports: [
     BrowserModule,
@@ -38,7 +37,7 @@ import { HttpClientModule } from '@angular/common/http';
     RegisterStep2Component,
     RegisterStep3Component,
     CommonModule,
-    HttpClientModule
+    HttpClientModule,
   ],
 
 })

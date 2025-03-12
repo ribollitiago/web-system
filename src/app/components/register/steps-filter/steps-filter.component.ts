@@ -49,6 +49,7 @@ export class StepsFilterComponent {
     { id: 10, name: 'admin 10', description: "extra information", critical: 'HIGH_LEVEL' },
   ];
 
+  openedMenuId: number | null = null;
 
   get currentList() {
     switch (this.selectedFilter) {
@@ -72,7 +73,11 @@ export class StepsFilterComponent {
     return mapping[critical] || 'default.svg'; // Usa 'default.svg' se o nível não estiver no mapeamento
   }
 
-  printDescription(description: string): void {
-    console.log(description);
+  toggleMenu(id: number): void {
+    this.openedMenuId = this.openedMenuId === id ? null : id;
+  }
+
+  clickedOutside(): void {
+    this.openedMenuId = null;
   }
 }
