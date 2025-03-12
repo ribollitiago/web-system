@@ -1,5 +1,5 @@
 <div class="parent-container">
-  <div class="checkbox-container" *ngFor="let item of currentList">
+  <div class="checkbox-container" *ngFor="let item of resolvedList">
     <div class="extra-information">
       <div class="extra-information">
         <div class="icon-wrapper" (click)="toggleMenu(item.id)"> <!-- Adicione o click aqui -->
@@ -8,13 +8,13 @@
         </div>
         <div class="menu" *ngIf="openedMenuId === item.id" clickOutside
           (clickOutside)="clickedOutside()">
-          <div class="menu-title">{{ item.name }}</div>
+          <div class="menu-title">{{ item.title }}</div>
           <div class="menu-item">{{ item.description }}</div>
         </div>
       </div>
       <div class="menu" *ngIf="openedMenuId === item.id" clickOutside
         (clickOutside)="clickedOutside()">
-        <div class="menu-title">{{ item.name }}</div>
+        <div class="menu-title">{{ item.title }}</div>
         <div class="menu-item">{{ item.description }}</div>
       </div>
     </div>
@@ -31,6 +31,6 @@
       </div>
     </div>
     <input [id]="'id_check_' + item.id" type="checkbox" name="nCheck" />
-    <label [for]="'id_check_' + item.id">{{ item.name }}</label>
+    <label [for]="'id_check_' + item.id">{{ item.title }}</label>
   </div>
 </div>

@@ -44,8 +44,45 @@
     "inputSearch": "Search...",
     "filterOne": "Users",
     "filterTwo": "Routes",
-    "filterThree": "Admin"
-
+    "filterThree": "Admin",
+    "permissions": {
+      "010001": {
+        "title": "Register new user",
+        "description": "Allow the registration of a new user in a basic way, it is not possible to add or remove permissions, you will not have immediate access to the system, after registration request access from a superior."
+      },
+      "010002": {
+        "title": "teste",
+        "description": "teste"
+      },
+      "010003": {
+        "title": "teste",
+        "description": "teste"
+      },
+      "020001": {
+        "title": "teste",
+        "description": "teste"
+      },
+      "020002": {
+        "title": "teste",
+        "description": "teste"
+      },
+      "020003": {
+        "title": "teste",
+        "description": "teste"
+      },
+      "030001": {
+        "title": "teste",
+        "description": "teste"
+      },
+      "030002": {
+        "title": "teste",
+        "description": "teste"
+      },
+      "030003": {
+        "title": "teste",
+        "description": "teste"
+      }
+    }
   },
   "Resume_Page": {
     "title": "Resume",

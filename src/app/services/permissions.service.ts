@@ -46,6 +46,7 @@ export class PermissionsService {
           }
         }
       }
+      console.log(categorizedPermissions);
 
       return categorizedPermissions;
 
