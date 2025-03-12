@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Step2Filter1Component } from './step-2-filter-1.component';
+import { StepsFilterComponent } from './steps-filter.component';
 
-describe('Step2Filter1Component', () => {
-  let component: Step2Filter1Component;
-  let fixture: ComponentFixture<Step2Filter1Component>;
+describe('StepsFilterComponent', () => {
+  let component: StepsFilterComponent;
+  let fixture: ComponentFixture<StepsFilterComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Step2Filter1Component]
+      imports: [StepsFilterComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Step2Filter1Component);
+    fixture = TestBed.createComponent(StepsFilterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

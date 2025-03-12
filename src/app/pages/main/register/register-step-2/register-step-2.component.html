@@ -56,9 +56,7 @@
     </div>
     <form>
       <div class="permissions-form">
-        <app-step-2-filter-1 *ngIf="selectedButton === 'users'"></app-step-2-filter-1>
-        <app-step-2-filter-2 *ngIf="selectedButton === 'route'"></app-step-2-filter-2>
-        <app-step-2-filter-3 *ngIf="selectedButton === 'admin'"></app-step-2-filter-3>
+        <app-steps-filter [selectedFilter]="selectedButton"></app-steps-filter>
         <button class="btn-last" type="button" (click)="submit()">
           {{ btnRegister }}
         </button>

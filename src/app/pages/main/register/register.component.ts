@@ -26,7 +26,7 @@ export class RegisterComponent {
   ngOnInit() {
     this.registerService.currentStep$.subscribe((step) => {
       if (step < 1 || step > 3) {
-        this.registerService.setCurrentStep(1); // Redireciona para o passo 1 se o passo for inválido
+        this.registerService.setCurrentStep(1);
       }
       this.currentStep = step;
     });

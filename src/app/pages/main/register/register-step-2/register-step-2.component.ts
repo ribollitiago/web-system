@@ -5,20 +5,16 @@ import { Router } from '@angular/router';
 import { SearchInputComponent } from '../../../../components/search-input/search-input.component';
 import { CommonModule } from '@angular/common';
 import permissions from '../../../../../../public/assets/permissions/perm.json';
-import { Step2Filter1Component } from '../../../../components/register/step-2-filter-1/step-2-filter-1.component';
-import { Step2Filter2Component } from '../../../../components/register/step-2-filter-2/step-2-filter-2.component';
-import { Step2Filter3Component } from '../../../../components/register/step-2-filter-3/step-2-filter-3.component';
+import { StepsFilterComponent } from "../../../../components/register/steps-filter/steps-filter.component";
 
 @Component({
   selector: 'app-register-step-2',
   imports: [
     SearchInputComponent,
     SearchInputComponent,
-    Step2Filter1Component,
-    Step2Filter2Component,
-    Step2Filter3Component,
     CommonModule,
-  ],
+    StepsFilterComponent
+],
   templateUrl: './register-step-2.component.html',
   styleUrl: './register-step-2.component.scss',
 })

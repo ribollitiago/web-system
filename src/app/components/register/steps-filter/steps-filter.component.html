@@ -1,0 +1,10 @@
+<div class="parent-container">
+  <div class="checkbox-container" *ngFor="let item of currentList">
+    <div class="extra-information" (click)="printDescription(item.description)">
+      <img src="assets/svg/icon/register/step-2/extra_info.svg" alt="">
+    </div>
+    <img [src]="'assets/svg/icon/register/step-2/' + getSvgFileName(item.critical)" alt="{{ item.critical }}" class="critical-icon" />
+    <input [id]="'id_check_' + item.id" type="checkbox" name="nCheck" />
+    <label [for]="'id_check_' + item.id">{{ item.name }}</label>
+  </div>
+</div>

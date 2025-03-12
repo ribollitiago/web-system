@@ -47,7 +47,6 @@ export class RegisterStep3Component implements OnInit{
 
   confirmRegistration() {
     this.registerService.registerUser().then(() => {
-      // Redirect to home/dashboard
       this.router.navigate(['/home']);
     }).catch(error => {
       // Handle error
