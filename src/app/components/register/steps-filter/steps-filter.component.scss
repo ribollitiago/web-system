@@ -10,6 +10,13 @@ input[type="checkbox"] {
   }
 }
 
+@media (max-width: 768px) {
+  .checkbox-container .extra-information .menu {
+    left: auto;
+    right: 0;
+  }
+}
+
 .parent-container {
   width: 100%;
   display: flex;
@@ -20,15 +27,15 @@ input[type="checkbox"] {
 .checkbox-container {
   flex: 1 1 calc(50% - 10px);
   min-width: 300px;
-  height: 40px; // Fixed height
+  height: 40px;
   background-color: $rg-bg-checkbox;
   padding: 10px 5px;
   border-radius: 10px;
   position: relative;
   cursor: pointer;
-  display: flex; // Adiciona display flex
-  align-items: center; // Alinha os itens verticalmente no centro
-  gap: 5px; // Adiciona espaço entre os elementos
+  display: flex;
+  align-items: center;
+  gap: 5px;
 
   &:hover {
     background-color: darken($rg-bg-checkbox, 2%);
@@ -42,6 +49,24 @@ input[type="checkbox"] {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    position: relative;
+
+    .icon-wrapper {
+      position: relative;
+      display: flex;
+
+      &:hover .critical-tooltip {
+        visibility: visible;
+        opacity: 1;
+      }
+    }
+
+    .critical-tooltip {
+      @extend .critical-tooltip; // Herda todos os estilos do tooltip original
+      bottom: calc(100% + 8px);
+      left: 50%;
+      margin-bottom: 4px;
+    }
 
     img {
       width: 13px;
@@ -52,13 +77,16 @@ input[type="checkbox"] {
       background: $rg-bg-hover-extra;
       color: white;
       padding: 5px;
-      position: absolute;
       font-size: 12px;
       border-radius: 8px;
       width: 200px;
-      transform: translate(42%, -90%);
       cursor: default;
 
+      position: absolute;
+      top: 0;
+      left: calc(100% + 5px);
+      margin-left: 0;
+      z-index: 1;
     }
 
     .menu-title {
@@ -77,9 +105,50 @@ input[type="checkbox"] {
     cursor: pointer;
   }
 
+  .critical-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-right: 5px;
+
+    &:hover .critical-tooltip {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+
+  .critical-tooltip {
+    position: absolute;
+    bottom: calc(100% + 5px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: $rg-bg-hover-extra;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: $rg-bg-hover-extra transparent transparent transparent;
+    }
+  }
+
   .critical-icon {
-    width: 20px;
-    height: 20px;
+    width: 12px;
+    height: 12px;
+    cursor: help;
   }
 
   label {
@@ -88,7 +157,7 @@ input[type="checkbox"] {
     left: 0;
     right: 0;
     bottom: 0;
-    margin-left: 55px;
+    margin-left: 45px;
     padding: 10px 10px;
     font-size: 12px;
     color: $rg-text;
@@ -98,7 +167,6 @@ input[type="checkbox"] {
     gap: 8px;
     cursor: pointer;
 
-    // Add these to ensure content alignment in fixed height
     &::after {
       position: relative;
       top: 0;

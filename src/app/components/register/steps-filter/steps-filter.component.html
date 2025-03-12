@@ -1,17 +1,35 @@
 <div class="parent-container">
   <div class="checkbox-container" *ngFor="let item of currentList">
-    <div class="extra-information" (click)="toggleMenu(item.id)">
-      <img src="assets/svg/icon/register/step-2/extra_info.svg" alt="" />
-      <div class="menu" *ngIf="openedMenuId === item.id" clickOutside (clickOutside)="clickedOutside()">
-        <div class="menu-title">Descrição</div>
+    <div class="extra-information">
+      <div class="extra-information">
+        <div class="icon-wrapper" (click)="toggleMenu(item.id)"> <!-- Adicione o click aqui -->
+          <img src="assets/svg/icon/register/step-2/extra_info.svg" alt />
+          <div class="critical-tooltip">Descrição</div>
+        </div>
+        <div class="menu" *ngIf="openedMenuId === item.id" clickOutside
+          (clickOutside)="clickedOutside()">
+          <div class="menu-title">{{ item.name }}</div>
+          <div class="menu-item">{{ item.description }}</div>
+        </div>
+      </div>
+      <div class="menu" *ngIf="openedMenuId === item.id" clickOutside
+        (clickOutside)="clickedOutside()">
+        <div class="menu-title">{{ item.name }}</div>
         <div class="menu-item">{{ item.description }}</div>
       </div>
     </div>
-    <img
-      [src]="'assets/svg/icon/register/step-2/' + getSvgFileName(item.critical)"
-      alt="{{ item.critical }}"
-      class="critical-icon"
-    />
+    <div class="critical-wrapper">
+      <img
+        [src]="'assets/svg/icon/register/step-2/' + getSvgFileName(item.critical)"
+        alt="{{ item.critical }}"
+        class="critical-icon"
+        (mouseenter)="onMouseEnterCritical(item.id)"
+        (mouseleave)="onMouseLeaveCritical()"
+      />
+      <div class="critical-tooltip" *ngIf="hoveredCriticalId === item.id">
+        {{ getCriticalText(item.critical) }}
+      </div>
+    </div>
     <input [id]="'id_check_' + item.id" type="checkbox" name="nCheck" />
     <label [for]="'id_check_' + item.id">{{ item.name }}</label>
   </div>

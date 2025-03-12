@@ -9,9 +9,10 @@ import { Component, Input } from '@angular/core';
 })
 export class StepsFilterComponent {
   @Input() selectedFilter: string = 'users';
+  showExtraTooltip = false;
 
   users = [
-    { id: 1, name: 'User 1', description: "extra information 1", critical: 'HIGH_LEVEL'},
+    { id: 1, name: 'Registrar novo usuário', description: "Permita o registro de um novo usuário de forma básica, não é possivel adicionar ou remover permissões, não terá acesso ao sistema de imediato, após o registro solicite ao um superior acesso.", critical: 'HIGH_LEVEL'},
     { id: 2, name: 'User 2', description: "extra information 2", critical: 'HIGH_LEVEL'},
     { id: 3, name: 'User 3', description: "extra information 3", critical: 'HIGH_LEVEL' },
     { id: 4, name: 'User 4', description: "extra information 4", critical: 'MEDIUM_LEVEL' },
@@ -79,5 +80,25 @@ export class StepsFilterComponent {
 
   clickedOutside(): void {
     this.openedMenuId = null;
+  }
+
+  hoveredCriticalId: number | null = null;
+
+  getCriticalText(critical: string): string {
+    switch(critical) {
+      case 'HIGH_LEVEL': return 'Risco Alto';
+      case 'MEDIUM_LEVEL': return 'Risco Médio';
+      case 'LOW_LEVEL': return 'Risco Baixo';
+      case 'ZERO_LEVEL': return 'Sem Risco';
+      default: return '';
+    }
+  }
+
+  onMouseEnterCritical(id: number): void {
+    this.hoveredCriticalId = id;
+  }
+
+  onMouseLeaveCritical(): void {
+    this.hoveredCriticalId = null;
   }
 }
