@@ -14,6 +14,74 @@
       padding: 20px 15px 40px 15px !important;
       width: 100%;
       margin: 0 10px;
+
+      .steps {
+        justify-content: center; // Center the steps
+        align-items: center; // Align items vertically
+        flex-direction: row; // Stack steps vertically
+        gap: 10px; // Add spacing between steps
+
+        .step-1 {
+          display: flex;
+          flex-direction: row; // Stack image and text vertically
+          align-items: center; // Center horizontally
+          gap: 5px; // Add spacing between image and text
+
+          img {
+            margin-left: 0px; // Remove margins for mobile
+          }
+
+          .step-1-txt {
+            text-align: center; // Center the text
+          }
+        }
+
+        .step-2 {
+
+          .step-2-txt {
+            display: none !important;
+
+          }
+        }
+        .step-3 {
+          .step-3-txt {
+            display: none !important;
+
+          }
+          img {
+            margin-right: 0px !important;
+          }
+        }
+
+        .divider-2 {
+          margin-left: 0px !important;
+        }
+      }
+
+      form {
+        .register-form {
+
+          .phone-and-document,
+          .password-and-confirm {
+            .password {
+              margin-bottom: 0px  !important;
+            }
+            .confirm-password {
+              margin-bottom: 20px !important;
+            }
+            flex-direction: column; // Stack vertically
+            gap: 15px;
+
+            >div {
+              width: 100% !important;
+            }
+          }
+
+          button {
+            width: 100% !important; // Full width button
+          }
+        }
+      }
     }
   }
 }
@@ -22,6 +90,23 @@
   .register-wrapper {
     padding: 10px !important; // Mobile padding
     min-height: calc(100vh - 86px);
+  }
+}
+
+@media (max-width: 445px) {
+  .register-wrapper{
+    .register-container{
+      .steps {
+        .step-2 {
+          img {
+            margin-right: 0px;
+          }
+        }
+        .divider-1, .divider-2 {
+          display: none !important;
+        }
+      }
+    }
   }
 }
 
