@@ -6,7 +6,6 @@
     "inputPasswordLgn": "Insira sua senha",
     "linkForgotPasswordLgn": "Esqueceu a senha?",
     "btnLoginLgn": "Entrar",
-
     "titleFgt": "Esqueceu a Senha",
     "subtitleFgt": "Insira seu e-mail para recuperar a senha",
     "inputEmailFgt": "Insira seu e-mail",
@@ -45,7 +44,45 @@
     "inputSearch": "Pesquisar...",
     "filterOne": "Usuários",
     "filterTwo": "Rotas",
-    "filterThree": "Admin"
+    "filterThree": "Admin",
+    "permissions": {
+      "010001": {
+        "title": "Registrar novo usuário",
+        "description": "Permita o registro de um novo usuário de forma básica, não é possivel adicionar ou remover permissões, não terá acesso ao sistema de imediato, após o registro solicite ao um superior acesso."
+      },
+      "010002": {
+        "title": "teste",
+        "description": "teste"
+      },
+      "010003": {
+        "title": "teste",
+        "description": "teste"
+      },
+      "020001": {
+        "title": "teste",
+        "description": "teste"
+      },
+      "020002": {
+        "title": "teste",
+        "description": "teste"
+      },
+      "020003": {
+        "title": "teste",
+        "description": "teste"
+      },
+      "030001": {
+        "title": "teste",
+        "description": "teste"
+      },
+      "030002": {
+        "title": "teste",
+        "description": "teste"
+      },
+      "030003": {
+        "title": "teste",
+        "description": "teste"
+      }
+    }
   },
   "Resume_Page": {
     "title": "Resumo",

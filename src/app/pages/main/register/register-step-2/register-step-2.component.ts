@@ -4,7 +4,6 @@ import { RegisterService } from '../../../../services/register.service';
 import { Router } from '@angular/router';
 import { SearchInputComponent } from '../../../../components/search-input/search-input.component';
 import { CommonModule } from '@angular/common';
-import permissions from '../../../../../../public/assets/permissions/perm.json';
 import { StepsFilterComponent } from "../../../../components/register/steps-filter/steps-filter.component";
 import { ClickOutsideDirective } from '../../../../directives/clickOutside.directive';
 
@@ -14,14 +13,12 @@ import { ClickOutsideDirective } from '../../../../directives/clickOutside.direc
     SearchInputComponent,
     SearchInputComponent,
     CommonModule,
-    StepsFilterComponent,
-    ClickOutsideDirective
+    StepsFilterComponent
 ],
   templateUrl: './register-step-2.component.html',
   styleUrl: './register-step-2.component.scss',
 })
 export class RegisterStep2Component {
-  routePermissions: any[] = []; // Add form model
   selectedButton: string = 'users';
 
   title: string = '';
@@ -46,8 +43,6 @@ export class RegisterStep2Component {
       this.loadTranslations();
     });
     this.loadTranslations();
-
-    this.routePermissions = Object.values(permissions.route);
   }
 
   loadTranslations() {
