@@ -49,14 +49,15 @@
           {{ filterThree }}
         </button>
         <app-search-input
-      [placeholder]="inputSearch">
-        <img src="assets/svg/icon/search.svg" alt />
+        [placeholder]="inputSearch"
+        (searchChange)="handleSearchChange($event)">
+        <img src="assets/svg/icon/search.svg" alt/>
       </app-search-input>
       </div>
     </div>
     <form>
       <div class="permissions-form">
-        <app-steps-filter [selectedFilter]="selectedButton"></app-steps-filter>
+        <app-steps-filter [selectedFilter]="selectedButton" [searchQuery]="currentSearchQuery"></app-steps-filter>
         <button class="btn-last" type="button" (click)="submit()">
           {{ btnRegister }}
         </button>

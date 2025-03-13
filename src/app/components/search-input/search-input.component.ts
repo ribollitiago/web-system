@@ -30,6 +30,7 @@ export class SearchInputComponent {
   @Output() iconClick = new EventEmitter<void>();
   @Output() focus = new EventEmitter<void>();
   @Output() blur = new EventEmitter<void>();
+  @Output() searchChange = new EventEmitter<string>();
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
 
   fieldTextType?: boolean;
@@ -39,14 +40,16 @@ export class SearchInputComponent {
   onTouched: any = () => { }
 
   ngOnInit() {
-    // Inicializa o tipo do campo com base em isPassword
     this.fieldTextType = !this.isPassword;
   }
 
   onInput(event: Event) {
-    const value = (event.target as HTMLInputElement).value;
-    this.onChange(value);
-  }
+  const value = (event.target as HTMLInputElement).value;
+  this.value = value;
+  this.onChange(value);
+  this.searchChange.emit(value); // Nova linha
+  console.log('Valor atual:', value);
+}
 
   writeValue(value: any): void {
     this.value = value;

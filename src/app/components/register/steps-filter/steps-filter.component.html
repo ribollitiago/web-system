@@ -1,5 +1,5 @@
 <div class="parent-container">
-  <div class="checkbox-container" *ngFor="let item of resolvedList">
+  <div class="checkbox-container" *ngFor="let item of filteredList">
     <div class="extra-information">
       <div class="extra-information">
         <div class="icon-wrapper" (click)="toggleMenu(item.id)"> <!-- Adicione o click aqui -->
@@ -11,11 +11,6 @@
           <div class="menu-title">{{ item.title }}</div>
           <div class="menu-item">{{ item.description }}</div>
         </div>
-      </div>
-      <div class="menu" *ngIf="openedMenuId === item.id" clickOutside
-        (clickOutside)="clickedOutside()">
-        <div class="menu-title">{{ item.title }}</div>
-        <div class="menu-item">{{ item.description }}</div>
       </div>
     </div>
     <div class="critical-wrapper">

@@ -10,21 +10,13 @@ import { PermissionsService } from '../../../services/permissions.service';
 })
 export class StepsFilterComponent implements OnChanges {
   @Input() selectedFilter: string = 'users';
+  @Input() searchQuery: string = '';
+
   showExtraTooltip = false;
 
   constructor(private permissionsservice: PermissionsService) {}
 
-  users = [
-  ];
-
-  routes = [
-  ];
-
-  admin = [
-  ];
-
-  searchQuery: string = '';
-  filteredList: any[] = []; 
+  filteredList: any[] = [];
   resolvedList: any[] = [];
   openedMenuId: number | null = null;
   hoveredCriticalId: number | null = null;
@@ -33,50 +25,44 @@ export class StepsFilterComponent implements OnChanges {
   async ngOnInit() {
     this.permissions = await this.permissionsservice.getPermissions();
     this.updateCurrentList();
+    this.applySearchFilter();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['selectedFilter'] && this.permissions) {
       this.updateCurrentList();
     }
+    if (changes['searchQuery']) {
+      this.applySearchFilter();
+    }
   }
+
 
   updateCurrentList() {
     switch (this.selectedFilter) {
       case 'route':
-        console.log(this.permissions.routes);
         this.resolvedList = Object.values(this.permissions.routes);
         break;
       case 'admin':
-        console.log(this.permissions.admin);
         this.resolvedList = Object.values(this.permissions.admin);
         break;
       default:
-        console.log(this.permissions.users);
         this.resolvedList = Object.values(this.permissions.users);
         break;
     }
-    this.filterList();
+
+    this.applySearchFilter(); // Aplicar filtro após atualizar a lista
   }
 
-  filterList() {
-    if (!this.searchQuery.trim()) {
-      this.filteredList = [...this.resolvedList];
-    } else {
-      this.filteredList = this.resolvedList.filter(item => 
-        this.isItemMatch(item)
-      );
-    }
+  private applySearchFilter() {
+    const searchTerm = this.searchQuery.toLowerCase();
+
+    this.filteredList = this.resolvedList.filter(item =>
+      item.title.toLowerCase().includes(searchTerm)
+    );
   }
 
-  isItemMatch(item: any): boolean {
-    return item.name.toLowerCase().includes(this.searchQuery.toLowerCase());
-  }
 
-  onSearchChange(query: string) {
-    this.searchQuery = query;
-    this.filterList();
-  }
 
   getSvgFileName(critical: string): string {
     const mapping: { [key: string]: string } = {

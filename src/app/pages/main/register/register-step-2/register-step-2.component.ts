@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { SearchInputComponent } from '../../../../components/search-input/search-input.component';
 import { CommonModule } from '@angular/common';
 import { StepsFilterComponent } from "../../../../components/register/steps-filter/steps-filter.component";
-import { ClickOutsideDirective } from '../../../../directives/clickOutside.directive';
 
 @Component({
   selector: 'app-register-step-2',
@@ -20,6 +19,8 @@ import { ClickOutsideDirective } from '../../../../directives/clickOutside.direc
 })
 export class RegisterStep2Component {
   selectedButton: string = 'users';
+
+  currentSearchQuery: string = '';
 
   title: string = '';
   subtitle: string = '';
@@ -88,5 +89,9 @@ export class RegisterStep2Component {
   }
   async return() {
     this.registerService.setCurrentStep(1);
+  }
+
+  handleSearchChange(query: string) {
+    this.currentSearchQuery = query;
   }
 }
