@@ -84,6 +84,11 @@
       }
     }
   },
+  "Extra_info_page": {
+    "title": "Extra Informations",
+    "subtitle": "Add additional infomation for this user",
+    "btnRegister": "Resume"
+  },
   "Resume_Page": {
     "title": "Resume",
     "subtitle": "User registration summary",

@@ -84,6 +84,11 @@
       }
     }
   },
+  "Extra_info_page": {
+    "title": "Informações extras",
+    "subtitle": "Adicione informações extras sobre este usuário",
+    "btnRegister": "Resumo"
+  },
   "Resume_Page": {
     "title": "Resumo",
     "subtitle": "Resumo das informações do usuário",

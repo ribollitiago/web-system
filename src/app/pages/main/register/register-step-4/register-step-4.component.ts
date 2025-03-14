@@ -1,16 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { TranslationService } from '../../../../services/translate.service';
 import { RegisterService } from '../../../../services/register.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-register-step-3',
+  selector: 'app-register-step-4',
   imports: [],
-  templateUrl: './register-step-3.component.html',
-  styleUrl: './register-step-3.component.scss'
+  templateUrl: './register-step-4.component.html',
+  styleUrl: './register-step-4.component.scss'
 })
-export class RegisterStep3Component implements OnInit{
-  isLoading = false;
+export class RegisterStep4Component {
+isLoading = false;
   registrationData: any = {};
 
   title: string = '';
@@ -34,7 +34,7 @@ export class RegisterStep3Component implements OnInit{
   }
 
   loadTranslations() {
-    const section = 'Extra_info_page';
+    const section = 'Resume_Page';
     this.title = this.translationService.getTranslation('title', section);
     this.subtitle = this.translationService.getTranslation('subtitle', section);
     this.btnRegister = this.translationService.getTranslation('btnRegister', section);
@@ -45,11 +45,14 @@ export class RegisterStep3Component implements OnInit{
     this.stepThree = this.translationService.getTranslation('stepThree', section2);
   }
 
-  async submit() {
-    this.registerService.setCurrentStep(4);
+  confirmRegistration() {
+    this.registerService.registerUser().then(() => {
+      this.router.navigate(['/home']);
+    }).catch(error => {
+    });
   }
 
   async return() {
-    this.registerService.setCurrentStep(2);
+    this.registerService.setCurrentStep(3);
   }
 }

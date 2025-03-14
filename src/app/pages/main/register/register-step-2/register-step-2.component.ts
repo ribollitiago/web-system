@@ -19,7 +19,6 @@ import { StepsFilterComponent } from "../../../../components/register/steps-filt
 })
 export class RegisterStep2Component {
   selectedButton: string = 'users';
-
   currentSearchQuery: string = '';
 
   title: string = '';
