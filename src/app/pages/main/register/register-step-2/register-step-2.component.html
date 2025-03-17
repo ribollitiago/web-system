@@ -57,7 +57,7 @@
     </div>
     <form>
       <div class="permissions-form">
-        <app-steps-filter [selectedFilter]="selectedButton" [searchQuery]="currentSearchQuery"></app-steps-filter>
+        <app-steps-filter class="permissions-checkbox"[selectedFilter]="selectedButton" [searchQuery]="currentSearchQuery"></app-steps-filter>
         <button class="btn-last" type="button" (click)="submit()">
           {{ btnRegister }}
         </button>

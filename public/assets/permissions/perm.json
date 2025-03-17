@@ -4,21 +4,149 @@
       "critical": "HIGH_LEVEL",
       "id": "010001"
     },
-    "dado": {
+    "register2": {
       "critical": "MEDIUM_LEVEL",
       "id": "010002"
+    },
+    "register3": {
+      "critical": "LOW_LEVEL",
+      "id": "010003"
+    },
+    "register4": {
+      "critical": "ZERO_LEVEL",
+      "id": "010004"
+    },
+    "register5": {
+      "critical": "HIGH_LEVEL",
+      "id": "010005"
+    },
+    "register6": {
+      "critical": "LOW_LEVEL",
+      "id": "010006"
+    },
+    "register7": {
+      "critical": "MEDIUM_LEVEL",
+      "id": "010007"
+    },
+    "register8": {
+      "critical": "ZERO_LEVEL",
+      "id": "010008"
+    },
+    "register9": {
+      "critical": "HIGH_LEVEL",
+      "id": "010009"
+    },
+    "register10": {
+      "critical": "MEDIUM_LEVEL",
+      "id": "010010"
+    },
+    "register11": {
+      "critical": "LOW_LEVEL",
+      "id": "010011"
+    },
+    "register12": {
+      "critical": "ZERO_LEVEL",
+      "id": "010012"
     }
   },
   "routes": {
-    "register": {
-      "critical": "LOW_LEVEL",
+    "routes1": {
+      "critical": "HIGH_LEVEL",
       "id": "020001"
+    },
+    "routes2": {
+      "critical": "LOW_LEVEL",
+      "id": "020002"
+    },
+    "routes3": {
+      "critical": "MEDIUM_LEVEL",
+      "id": "020003"
+    },
+    "routes4": {
+      "critical": "ZERO_LEVEL",
+      "id": "020004"
+    },
+    "routes5": {
+      "critical": "HIGH_LEVEL",
+      "id": "020005"
+    },
+    "routes6": {
+      "critical": "LOW_LEVEL",
+      "id": "020006"
+    },
+    "routes7": {
+      "critical": "MEDIUM_LEVEL",
+      "id": "020007"
+    },
+    "routes8": {
+      "critical": "ZERO_LEVEL",
+      "id": "020008"
+    },
+    "routes9": {
+      "critical": "HIGH_LEVEL",
+      "id": "020009"
+    },
+    "routes10": {
+      "critical": "MEDIUM_LEVEL",
+      "id": "020010"
+    },
+    "routes11": {
+      "critical": "LOW_LEVEL",
+      "id": "020011"
+    },
+    "routes12": {
+      "critical": "ZERO_LEVEL",
+      "id": "020012"
     }
   },
   "admin": {
-    "register": {
+    "admin1": {
       "critical": "ZERO_LEVEL",
       "id": "030001"
+    },
+    "admin2": {
+      "critical": "MEDIUM_LEVEL",
+      "id": "030002"
+    },
+    "admin3": {
+      "critical": "HIGH_LEVEL",
+      "id": "030003"
+    },
+    "admin4": {
+      "critical": "LOW_LEVEL",
+      "id": "030004"
+    },
+    "admin5": {
+      "critical": "HIGH_LEVEL",
+      "id": "030005"
+    },
+    "admin6": {
+      "critical": "LOW_LEVEL",
+      "id": "030006"
+    },
+    "admin7": {
+      "critical": "MEDIUM_LEVEL",
+      "id": "030007"
+    },
+    "admin8": {
+      "critical": "ZERO_LEVEL",
+      "id": "030008"
+    },
+    "admin9": {
+      "critical": "HIGH_LEVEL",
+      "id": "030009"
+    },
+    "admin10": {
+      "critical": "MEDIUM_LEVEL",
+      "id": "030010"
+    },
+    "admin11": {
+      "critical": "LOW_LEVEL",
+      "id": "030011"
+    },
+    "admin12": {
+      "critical": "ZERO_LEVEL",
+      "id": "030012"
     }
   }
 }

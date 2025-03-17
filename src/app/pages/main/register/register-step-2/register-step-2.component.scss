@@ -121,7 +121,7 @@
 
   .register-container {
     position: relative;
-    padding: 40px 30px 40px 30px;
+    padding: 40px 30px 60px 30px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -307,11 +307,13 @@
     .permissions-form {
       display: flex;
       flex-direction: column;
-      gap: 15px;
       width: 100%;
       flex-grow: 1; // Allow this section to take up remaining space
     }
 
+    .permissions-checkbox {
+      margin-bottom: 50px;
+    }
     .btn-last {
       width: 275px;
       padding: 18px 0;

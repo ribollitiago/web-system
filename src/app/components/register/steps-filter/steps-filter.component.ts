@@ -26,6 +26,7 @@ export class StepsFilterComponent implements OnChanges {
     this.permissions = await this.permissionsservice.getPermissions();
     this.updateCurrentList();
     this.applySearchFilter();
+    this.sortByCriticalLevel();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -35,6 +36,7 @@ export class StepsFilterComponent implements OnChanges {
     if (changes['searchQuery']) {
       this.applySearchFilter();
     }
+    this.sortByCriticalLevel();
   }
 
 
@@ -50,18 +52,26 @@ export class StepsFilterComponent implements OnChanges {
         this.resolvedList = Object.values(this.permissions.users);
         break;
     }
-
-    this.applySearchFilter(); // Aplicar filtro após atualizar a lista
+    this.applySearchFilter();
+    this.sortByCriticalLevel();
   }
 
   private applySearchFilter() {
     const searchTerm = this.searchQuery.toLowerCase();
-
     this.filteredList = this.resolvedList.filter(item =>
       item.title.toLowerCase().includes(searchTerm)
     );
   }
 
+  private sortByCriticalLevel() {
+    const levelOrder = {
+      'HIGH_LEVEL': 0,
+      'MEDIUM_LEVEL': 1,
+      'LOW_LEVEL': 2,
+      'ZERO_LEVEL': 3
+    };
+
+  }
 
 
   getSvgFileName(critical: string): string {
