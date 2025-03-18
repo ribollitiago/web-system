@@ -45,6 +45,11 @@
     "filterOne": "Usuários",
     "filterTwo": "Rotas",
     "filterThree": "Admin",
+    "criticalTooltipZeroLevel": "Zero Risk",
+    "criticalTooltipLowLevel": "Low Risk",
+    "criticalTooltipMediumLevel": "Risco Médio",
+    "criticalTooltipHighLevel": "Risco Alto",
+    "menuTooltip": "Descrição",
     "permissions": {
       "010001": {
         "title": "Registrar novo usuário",

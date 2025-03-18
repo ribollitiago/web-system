@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, SimpleChanges, OnChanges } from '@angular/core';
 import { PermissionsService } from '../../../services/permissions.service';
+import { TranslationService } from '../../../services/translate.service';
 
 @Component({
   selector: 'app-steps-filter',
@@ -9,12 +10,18 @@ import { PermissionsService } from '../../../services/permissions.service';
   styleUrl: './steps-filter.component.scss'
 })
 export class StepsFilterComponent implements OnChanges {
+  menuTooltip: string = '';
+  zeroTooltip: string = '';
+  lowTooltip: string = '';
+  mediumTooltip: string = '';
+  highTooltip: string = '';
+
   @Input() selectedFilter: string = 'users';
   @Input() searchQuery: string = '';
 
   showExtraTooltip = false;
 
-  constructor(private permissionsservice: PermissionsService) {}
+  constructor(private permissionsservice: PermissionsService, private translationService: TranslationService,) {}
 
   filteredList: any[] = [];
   resolvedList: any[] = [];
@@ -27,6 +34,10 @@ export class StepsFilterComponent implements OnChanges {
     this.updateCurrentList();
     this.applySearchFilter();
     this.sortByCriticalLevel();
+    this.translationService.language$.subscribe(() => {
+      this.loadTranslations();
+    });
+    this.loadTranslations();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -39,6 +50,14 @@ export class StepsFilterComponent implements OnChanges {
     this.sortByCriticalLevel();
   }
 
+  loadTranslations() {
+    const section = 'Permissions_Page';
+    this.menuTooltip = this.translationService.getTranslation('menuTooltip', section);
+    this.zeroTooltip = this.translationService.getTranslation('criticalTooltipZeroLevel', section);
+    this.lowTooltip = this.translationService.getTranslation('criticalTooltipLowLevel', section);
+    this.mediumTooltip = this.translationService.getTranslation('criticalTooltipMediumLevel', section);
+    this.highTooltip = this.translationService.getTranslation('criticalTooltipHighLevel', section);
+  }
 
   updateCurrentList() {
     switch (this.selectedFilter) {
@@ -94,10 +113,10 @@ export class StepsFilterComponent implements OnChanges {
 
   getCriticalText(critical: string): string {
     switch (critical) {
-      case 'HIGH_LEVEL': return 'Risco Alto';
-      case 'MEDIUM_LEVEL': return 'Risco Médio';
-      case 'LOW_LEVEL': return 'Risco Baixo';
-      case 'ZERO_LEVEL': return 'Sem Risco';
+      case 'HIGH_LEVEL': return this.highTooltip;
+      case 'MEDIUM_LEVEL': return this.mediumTooltip;
+      case 'LOW_LEVEL': return this.lowTooltip;
+      case 'ZERO_LEVEL': return this.zeroTooltip;
       default: return '';
     }
   }

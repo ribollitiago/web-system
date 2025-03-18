@@ -45,6 +45,11 @@
     "filterOne": "Users",
     "filterTwo": "Routes",
     "filterThree": "Admin",
+    "criticalTooltipZeroLevel": "Zero Risk",
+    "criticalTooltipLowLevel": "Low Risk",
+    "criticalTooltipMediumLevel": "Medium Risk",
+    "criticalTooltipHighLevel": "High Risk",
+    "menuTooltip": "Description",
     "permissions": {
       "010001": {
         "title": "Register new user",

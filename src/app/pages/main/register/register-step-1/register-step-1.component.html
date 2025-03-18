@@ -23,7 +23,6 @@
 
     <form [formGroup]="registerForm" (ngSubmit)="submit()">
       <div class="register-form">
-        <!-- Name Input -->
         <div class="name">
           <h3>{{ titleName }}</h3>
           <app-primary-input
@@ -32,8 +31,6 @@
             <img src="assets/svg/icon/register/user.svg" alt>
           </app-primary-input>
         </div>
-
-        <!-- Email Input -->
         <div class="email">
           <h3>{{ titleEmail }}</h3>
           <app-primary-input
@@ -43,8 +40,6 @@
             <img src="assets/svg/icon/email.svg" alt>
           </app-primary-input>
         </div>
-
-        <!-- Phone & Document Inputs -->
         <div class="phone-and-document">
           <div class="phone">
             <h3>{{ titlePhone }}</h3>
@@ -64,7 +59,6 @@
           </div>
         </div>
 
-        <!-- Password & Confirm Inputs -->
         <div class="password-and-confirm">
           <div class="password">
             <h3>{{ titlePassword }}</h3>
@@ -87,7 +81,6 @@
             </app-primary-input>
           </div>
         </div>
-        <!-- Submit Button -->
         <button type="submit">{{ btnRegister }}</button>
       </div>
     </form>

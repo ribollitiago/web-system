@@ -182,6 +182,7 @@ input[type="checkbox"]+label::after {
   width: 18px;
   background: url('../../../../../public/assets/svg/icon/register/step-2/check-off.svg') no-repeat;
   background-size: 18px 18px;
+
 }
 
 input[type="checkbox"]:checked+label::after {

@@ -16,23 +16,23 @@
       margin: 0 10px;
 
       .steps {
-        justify-content: center; // Center the steps
-        align-items: center; // Align items vertically
-        flex-direction: row; // Stack steps vertically
-        gap: 10px; // Add spacing between steps
+        justify-content: center;
+        align-items: center;
+        flex-direction: row;
+        gap: 10px;
 
         .step-1 {
           display: flex;
-          flex-direction: row; // Stack image and text vertically
-          align-items: center; // Center horizontally
-          gap: 5px; // Add spacing between image and text
+          flex-direction: row;
+          align-items: center;
+          gap: 5px;
 
           img {
-            margin-left: 0px; // Remove margins for mobile
+            margin-left: 0px;
           }
 
           .step-1-txt {
-            text-align: center; // Center the text
+            text-align: center;
           }
         }
 
@@ -69,7 +69,7 @@
             .confirm-password {
               margin-bottom: 20px !important;
             }
-            flex-direction: column; // Stack vertically
+            flex-direction: column;
             gap: 15px;
 
             >div {
@@ -78,7 +78,7 @@
           }
 
           button {
-            width: 100% !important; // Full width button
+            width: 100% !important;
           }
         }
       }
@@ -88,7 +88,7 @@
 
 @media (max-width: 860px) {
   .register-wrapper {
-    padding: 10px !important; // Mobile padding
+    padding: 10px !important;
     min-height: calc(100vh - 86px);
   }
 }
@@ -233,15 +233,14 @@
         width: 40px;
         height: 40px;
         border-radius: 100%;
-
         cursor: pointer;
+        transition: all 0.3s ease;
 
         &:hover {
           background-color: darken($text-color, 90%);
         }
       }
     }
-
 
     .filters-wrapper {
       display: flex;
@@ -259,8 +258,8 @@
         width: 100%;
 
         button {
-          flex: 0 1 150px; // Don't grow, allow shrinking, start at 200px
-          max-width: 110px; // Maximum width
+          flex: 0 1 150px;
+          max-width: 110px;
           margin-right: 15px;
           height: 28px;
           font-size: 12px;
@@ -269,10 +268,11 @@
           color: white;
           background: transparent;
           cursor: pointer;
-          white-space: nowrap; // Prevent text wrapping
+          white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
           font-weight: 400;
+          transition: all 0.3s ease;
 
           &.selected {
             background-color: $rg-text;
@@ -285,7 +285,7 @@
           }
 
           &:last-child {
-            margin-right: 0; // Remove margin from the last button
+            margin-right: 0;
           }
 
           &:hover {
@@ -298,7 +298,7 @@
           margin-right: 10px;
 
           &:last-child {
-            margin-right: 0; // Remove margin from the last element
+            margin-right: 0;
           }
         }
       }
@@ -308,7 +308,7 @@
       display: flex;
       flex-direction: column;
       width: 100%;
-      flex-grow: 1; // Allow this section to take up remaining space
+      flex-grow: 1;
     }
 
     .permissions-checkbox {

@@ -20,7 +20,6 @@ import { RegisterService } from '../../../../services/register.service';
 export class RegisterStep1Component {
   registerForm: FormGroup;
 
-  // Translation variables
   title: string = '';
   subtitle: string = '';
   stepOne: string = '';

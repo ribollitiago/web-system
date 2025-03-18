@@ -2,9 +2,9 @@
   <div class="checkbox-container" *ngFor="let item of filteredList">
     <div class="extra-information">
       <div class="extra-information">
-        <div class="icon-wrapper" (click)="toggleMenu(item.id)"> <!-- Adicione o click aqui -->
+        <div class="icon-wrapper" (click)="toggleMenu(item.id)">
           <img src="assets/svg/icon/register/step-2/extra_info.svg" alt />
-          <div class="critical-tooltip">Descrição</div>
+          <div class="critical-tooltip">{{ menuTooltip }}</div>
         </div>
         <div class="menu" *ngIf="openedMenuId === item.id" clickOutside
           (clickOutside)="clickedOutside()">
