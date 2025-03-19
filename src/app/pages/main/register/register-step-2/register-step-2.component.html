@@ -23,7 +23,7 @@
   <form>
     <div class="permissions-form">
       <app-steps-filter class="permissions-checkbox" [selectedFilter]="selectedButton"
-        [searchQuery]="currentSearchQuery">
+        [searchQuery]="currentSearchQuery" (permissionSelected)="handlePermissionSelection($event)">
       </app-steps-filter>
     </div>
   </form>

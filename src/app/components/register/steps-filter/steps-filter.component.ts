@@ -1,41 +1,51 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, SimpleChanges, OnChanges } from '@angular/core';
+import { Component, Input, SimpleChanges, OnChanges, OnDestroy } from '@angular/core';
 import { PermissionsService } from '../../../services/permissions.service';
 import { TranslationService } from '../../../services/translate.service';
+import { Output, EventEmitter } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-steps-filter',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './steps-filter.component.html',
-  styleUrl: './steps-filter.component.scss'
+  styleUrls: ['./steps-filter.component.scss']
 })
-export class StepsFilterComponent implements OnChanges {
-  constructor(private permissionsservice: PermissionsService, private translationService: TranslationService,) {}
-
+export class StepsFilterComponent implements OnChanges, OnDestroy {
   @Input() selectedFilter: string = 'users';
   @Input() searchQuery: string = '';
+  @Output() permissionSelected = new EventEmitter<any>();
 
   menuTooltip: string = '';
   zeroTooltip: string = '';
   lowTooltip: string = '';
   mediumTooltip: string = '';
   highTooltip: string = '';
-  showExtraTooltip = false;
+
   filteredList: any[] = [];
   resolvedList: any[] = [];
   openedMenuId: number | null = null;
-  private clickListener?: (event: MouseEvent) => void;
   hoveredCriticalId: number | null = null;
-  permissions: any = null;
+  showExtraTooltip = false;
+
+  private clickListener?: (event: MouseEvent) => void;
+  private permissions: any = null;
+
+  constructor(
+    private permissionsservice: PermissionsService,
+    private translationService: TranslationService
+  ) { }
 
   async ngOnInit() {
     this.permissions = await this.permissionsservice.getPermissions();
     this.updateCurrentList();
     this.applySearchFilter();
     this.sortByCriticalLevel();
+    
     this.translationService.language$.subscribe(() => {
       this.loadTranslations();
     });
+
     this.loadTranslations();
   }
 
@@ -65,13 +75,22 @@ export class StepsFilterComponent implements OnChanges {
   updateCurrentList() {
     switch (this.selectedFilter) {
       case 'route':
-        this.resolvedList = Object.values(this.permissions.routes);
+        this.resolvedList = Object.values(this.permissions.routes).map((item: any) => ({
+          ...item,
+          checked: this.permissionsservice.getSelectedPermissions()[item.id] || false
+        }));
         break;
       case 'admin':
-        this.resolvedList = Object.values(this.permissions.admin);
+        this.resolvedList = Object.values(this.permissions.admin).map((item: any) => ({
+          ...item,
+          checked: this.permissionsservice.getSelectedPermissions()[item.id] || false
+        }));
         break;
       default:
-        this.resolvedList = Object.values(this.permissions.users);
+        this.resolvedList = Object.values(this.permissions.users).map((item: any) => ({
+          ...item,
+          checked: this.permissionsservice.getSelectedPermissions()[item.id] || false
+        }));
         break;
     }
     this.applySearchFilter();
@@ -86,13 +105,18 @@ export class StepsFilterComponent implements OnChanges {
   }
 
   private sortByCriticalLevel() {
-    const levelOrder = {
+    const levelOrder: { [key: string]: number } = {
       'HIGH_LEVEL': 0,
       'MEDIUM_LEVEL': 1,
       'LOW_LEVEL': 2,
       'ZERO_LEVEL': 3
     };
-
+  
+    this.filteredList.sort((a, b) => {
+      const aOrder = levelOrder[a.critical] ?? 3;
+      const bOrder = levelOrder[b.critical] ?? 3;
+      return aOrder - bOrder;
+    });
   }
 
   getSvgFileName(critical: string): string {
@@ -105,6 +129,20 @@ export class StepsFilterComponent implements OnChanges {
     return mapping[critical] || 'default.svg';
   }
 
+  toggleMenu(id: number): void {
+    if (this.openedMenuId !== null) {
+      this.removeDocumentClickListener();
+    }
+    this.openedMenuId = this.openedMenuId === id ? null : id;
+    if (this.openedMenuId !== null) {
+      this.addDocumentClickListener();
+    }
+  }
+
+  clickedOutside(): void {
+    this.openedMenuId = null;
+  }
+
   getCriticalText(critical: string): string {
     switch (critical) {
       case 'HIGH_LEVEL': return this.highTooltip;
@@ -113,6 +151,21 @@ export class StepsFilterComponent implements OnChanges {
       case 'ZERO_LEVEL': return this.zeroTooltip;
       default: return '';
     }
+  }
+
+  onCheckboxChange(item: any) {
+    this.permissionsservice.setSelectedPermission(item.id, item.checked);
+    const selectedPermissions = this.filteredList.filter(i => i.checked);
+    this.permissionSelected.emit(selectedPermissions);
+    console.log('Checkbox alterado:', item);
+  }
+
+  onMouseEnterCritical(id: number): void {
+    this.hoveredCriticalId = id;
+  }
+
+  onMouseLeaveCritical(): void {
+    this.hoveredCriticalId = null;
   }
 
   private addDocumentClickListener(): void {
@@ -139,23 +192,5 @@ export class StepsFilterComponent implements OnChanges {
       document.removeEventListener('click', this.clickListener);
       this.clickListener = undefined;
     }
-  }
-
-  toggleMenu(itemId: number): void {
-    if (this.openedMenuId !== null) {
-      this.removeDocumentClickListener();
-    }
-    this.openedMenuId = this.openedMenuId === itemId ? null : itemId;
-    if (this.openedMenuId !== null) {
-      this.addDocumentClickListener();
-    }
-  }
-
-  onMouseEnterCritical(id: number): void {
-    this.hoveredCriticalId = id;
-  }
-
-  onMouseLeaveCritical(): void {
-    this.hoveredCriticalId = null;
   }
 }
