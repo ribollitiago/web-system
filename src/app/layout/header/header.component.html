@@ -1,8 +1,26 @@
 <div class="header-top">
   <div class="header-container">
-    <div class="user-button">
-      <div class="user-icon">
-        <img src="assets/user-photo.png" alt="User" class="user-photo"/>
+    <div class="user-container">
+      <img #userToggler src="assets/user-photo.png" alt="User" class="user-toggler" (click)="toggleMenu()" />
+      <div class="menu" *ngIf="isMenuOpened" #menu>
+        <div class="menu-item-user">
+          <img src="assets/user-photo.png" alt>
+          <h2 class="name">Tiago Ribolli</h2>
+          <h2 class="email">ribollitiagogmail.com</h2>
+        </div>
+        <div class="divider"></div>
+        <div class="menu-item">
+          <img src="assets/svg/icon/header/config.svg" alt>
+          <h4>Config</h4>
+        </div>
+        <div class="menu-item">
+          <img src="assets/svg/icon/header/language.svg" alt>
+          <h4>Language</h4>
+        </div>
+        <div class="menu-item" (click)="logout()">
+          <img src="assets/svg/icon/header/logout.svg" alt>
+          <h4>Log Out</h4>
+        </div>
       </div>
     </div>
   </div>

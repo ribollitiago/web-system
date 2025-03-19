@@ -10,22 +10,21 @@ import { TranslationService } from '../../../services/translate.service';
   styleUrl: './steps-filter.component.scss'
 })
 export class StepsFilterComponent implements OnChanges {
+  constructor(private permissionsservice: PermissionsService, private translationService: TranslationService,) {}
+
+  @Input() selectedFilter: string = 'users';
+  @Input() searchQuery: string = '';
+
   menuTooltip: string = '';
   zeroTooltip: string = '';
   lowTooltip: string = '';
   mediumTooltip: string = '';
   highTooltip: string = '';
-
-  @Input() selectedFilter: string = 'users';
-  @Input() searchQuery: string = '';
-
   showExtraTooltip = false;
-
-  constructor(private permissionsservice: PermissionsService, private translationService: TranslationService,) {}
-
   filteredList: any[] = [];
   resolvedList: any[] = [];
   openedMenuId: number | null = null;
+  private clickListener?: (event: MouseEvent) => void;
   hoveredCriticalId: number | null = null;
   permissions: any = null;
 
@@ -48,6 +47,10 @@ export class StepsFilterComponent implements OnChanges {
       this.applySearchFilter();
     }
     this.sortByCriticalLevel();
+  }
+
+  ngOnDestroy(): void {
+    this.removeDocumentClickListener();
   }
 
   loadTranslations() {
@@ -92,7 +95,6 @@ export class StepsFilterComponent implements OnChanges {
 
   }
 
-
   getSvgFileName(critical: string): string {
     const mapping: { [key: string]: string } = {
       HIGH_LEVEL: 'high_level.svg',
@@ -103,14 +105,6 @@ export class StepsFilterComponent implements OnChanges {
     return mapping[critical] || 'default.svg';
   }
 
-  toggleMenu(id: number): void {
-    this.openedMenuId = this.openedMenuId === id ? null : id;
-  }
-
-  clickedOutside(): void {
-    this.openedMenuId = null;
-  }
-
   getCriticalText(critical: string): string {
     switch (critical) {
       case 'HIGH_LEVEL': return this.highTooltip;
@@ -119,6 +113,42 @@ export class StepsFilterComponent implements OnChanges {
       case 'ZERO_LEVEL': return this.zeroTooltip;
       default: return '';
     }
+  }
+
+  private addDocumentClickListener(): void {
+    this.clickListener = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      const openMenu = document.querySelector('.menu:not([hidden])');
+      const iconWrapper = openMenu?.previousElementSibling;
+      const clickedInsideMenu = openMenu?.contains(target);
+      const clickedOnIcon = iconWrapper?.contains(target);
+
+      if (!clickedInsideMenu && !clickedOnIcon) {
+        this.openedMenuId = null;
+        this.removeDocumentClickListener();
+      }
+    };
+
+    setTimeout(() => {
+      document.addEventListener('click', this.clickListener!);
+    }, 0);
+  }
+
+  private removeDocumentClickListener(): void {
+    if (this.clickListener) {
+      document.removeEventListener('click', this.clickListener);
+      this.clickListener = undefined;
+    }
+  }
+
+  toggleMenu(itemId: number): void {
+    if (this.openedMenuId !== null) {
+      this.removeDocumentClickListener();
+    }
+    this.openedMenuId = this.openedMenuId === itemId ? null : itemId;
+    if (this.openedMenuId !== null) {
+      this.addDocumentClickListener();
+    }
   }
 
   onMouseEnterCritical(id: number): void {
