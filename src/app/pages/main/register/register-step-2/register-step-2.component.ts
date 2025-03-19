@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { SearchInputComponent } from '../../../../components/search-input/search-input.component';
 import { CommonModule } from '@angular/common';
 import { StepsFilterComponent } from "../../../../components/register/steps-filter/steps-filter.component";
+import { DefaultStepComponent } from "../../../../layout/default-step/default-step.component";
 
 @Component({
   selector: 'app-register-step-2',
@@ -12,7 +13,8 @@ import { StepsFilterComponent } from "../../../../components/register/steps-filt
     SearchInputComponent,
     SearchInputComponent,
     CommonModule,
-    StepsFilterComponent
+    StepsFilterComponent,
+    DefaultStepComponent
 ],
   templateUrl: './register-step-2.component.html',
   styleUrl: './register-step-2.component.scss',
@@ -23,10 +25,7 @@ export class RegisterStep2Component {
 
   title: string = '';
   subtitle: string = '';
-  stepOne: string = '';
-  stepTwo: string = '';
-  stepThree: string = '';
-  btnRegister: string = '';
+  btnLast: string = '';
   inputSearch: string = '';
   filterOne: string = '';
   filterTwo: string = '';
@@ -35,7 +34,6 @@ export class RegisterStep2Component {
   constructor(
     private translationService: TranslationService,
     private registerService: RegisterService,
-    private router: Router
   ) {}
 
   ngOnInit() {
@@ -67,13 +65,7 @@ export class RegisterStep2Component {
     );
 
     const section2 = 'Register_Page';
-    this.stepOne = this.translationService.getTranslation('stepOne', section2);
-    this.stepTwo = this.translationService.getTranslation('stepTwo', section2);
-    this.stepThree = this.translationService.getTranslation(
-      'stepThree',
-      section2
-    );
-    this.btnRegister = this.translationService.getTranslation(
+    this.btnLast = this.translationService.getTranslation(
       'btnRegister',
       section2
     );
@@ -85,9 +77,6 @@ export class RegisterStep2Component {
 
   async submit() {
     this.registerService.setCurrentStep(3);
-  }
-  async return() {
-    this.registerService.setCurrentStep(1);
   }
 
   handleSearchChange(query: string) {

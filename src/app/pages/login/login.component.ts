@@ -55,7 +55,7 @@ export class LoginComponent {
     });
     const token = sessionStorage.getItem('refresh-token');
     if (token) {
-      this.router.navigate(['home']); // Redireciona para home se já estiver logado
+      this.router.navigate(['home']);
     }
   }
 

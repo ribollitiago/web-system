@@ -36,6 +36,7 @@ input[type="checkbox"] {
   display: flex;
   align-items: center;
   gap: 5px;
+  transition: background-color 0.3s ease;
 
   &:hover {
     background-color: darken($rg-bg-checkbox, 2%);
@@ -62,7 +63,7 @@ input[type="checkbox"] {
     }
 
     .critical-tooltip {
-      @extend .critical-tooltip; // Herda todos os estilos do tooltip original
+      @extend .critical-tooltip;
       bottom: calc(100% + 8px);
       left: 50%;
       margin-bottom: 4px;

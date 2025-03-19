@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { TranslationService } from '../../../../services/translate.service';
 import { RegisterService } from '../../../../services/register.service';
 import { Router } from '@angular/router';
+import { DefaultStepComponent } from "../../../../layout/default-step/default-step.component";
 
 @Component({
   selector: 'app-register-step-4',
-  imports: [],
+  imports: [DefaultStepComponent],
   templateUrl: './register-step-4.component.html',
   styleUrl: './register-step-4.component.scss'
 })

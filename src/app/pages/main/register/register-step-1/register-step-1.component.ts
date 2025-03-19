@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { PrimaryInputComponent } from '../../../../components/primary-input/primary-input.component';
 import { TranslationService } from '../../../../services/translate.service';
 import { RegisterService } from '../../../../services/register.service';
+import { DefaultStepComponent } from "../../../../layout/default-step/default-step.component";
 
 @Component({
   selector: 'app-register-step-1',
@@ -12,8 +13,9 @@ import { RegisterService } from '../../../../services/register.service';
   imports: [
     CommonModule,
     PrimaryInputComponent,
-    ReactiveFormsModule
-  ],
+    ReactiveFormsModule,
+    DefaultStepComponent
+],
   templateUrl: './register-step-1.component.html',
   styleUrl: './register-step-1.component.scss'
 })
@@ -37,7 +39,7 @@ export class RegisterStep1Component {
   placeholderPassword: string = '';
   titleConfirmPassword: string = '';
   placeholderConfirmPassword: string = '';
-  btnRegister: string = '';
+  btnLast: string = '';
 
   constructor(
     private translationService: TranslationService,
@@ -95,7 +97,7 @@ export class RegisterStep1Component {
     this.placeholderPassword = this.translationService.getTranslation('inputPassword', section);
     this.titleConfirmPassword = this.translationService.getTranslation('titleConfirmPassword', section);
     this.placeholderConfirmPassword = this.translationService.getTranslation('inputPasswordConfirm', section);
-    this.btnRegister = this.translationService.getTranslation('btnRegister', section);
+    this.btnLast = this.translationService.getTranslation('btnRegister', section);
   }
 
   async submit() {

@@ -1,0 +1,252 @@
+@import "../../../styles/variables.scss";
+
+* {
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .register-wrapper {
+    padding: 10px !important;
+    min-height: calc(100vh - 86px);
+
+    .register-container {
+      padding: 20px 15px 40px 15px !important;
+      width: 100%;
+      margin: 0 10px;
+
+      .steps {
+        justify-content: center;
+        align-items: center;
+        flex-direction: row;
+        gap: 10px;
+
+        .step-1 {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 5px;
+
+          img {
+            margin-left: 0px;
+          }
+
+          .step-1-txt {
+            text-align: center;
+          }
+        }
+
+        .step-2 {
+
+          .step-2-txt {
+            display: none !important;
+
+          }
+        }
+
+        .step-3 {
+          .step-3-txt {
+            display: none !important;
+
+          }
+
+          img {
+            margin-right: 0px !important;
+          }
+        }
+
+        .divider-2 {
+          margin-left: 0px !important;
+        }
+      }
+
+      form {
+        .register-form {
+          button {
+            width: 100% !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 860px) {
+  .register-wrapper {
+    padding: 10px !important;
+    min-height: calc(100vh - 86px);
+  }
+}
+
+@media (max-width: 445px) {
+  .register-wrapper {
+    .register-container {
+      .steps {
+        .step-2 {
+          img {
+            margin-right: 0px;
+          }
+        }
+
+        .divider-1,
+        .divider-2 {
+          display: none !important;
+        }
+      }
+    }
+  }
+}
+
+.register-wrapper {
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 106px);
+  width: 100%;
+  box-sizing: border-box;
+
+  .register-container {
+    padding: 40px 30px 60px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 720px;
+    height: fit-content;
+    background-color: $rg-bg;
+    overflow-y: auto;
+
+
+    .steps {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      margin-bottom: 25px;
+
+      .step-txt {
+        &.active {
+          color: $rg-step-completed !important; // Cor para passo atual
+        }
+        &.inactive {
+          color: $rg-step-missing-text !important; // Cor para passos inativos
+        }
+      }
+
+      // Cores dos divisores
+      .divider-1, .divider-2 {
+        &.blue {
+          background-color: $rg-step-completed !important;
+        }
+        &.gray {
+          background-color: $rg-step-missing-div !important;
+        }
+      }
+
+      .step-3 {
+        .step-3-txt {
+          margin-right: 10px;
+        }
+      }
+
+      [class^="step-"] {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+      }
+
+      img {
+        width: 28px;
+        height: 28px;
+        margin-left: 10px;
+        margin-right: 10px;
+      }
+
+      h4 {
+        margin: 0;
+        font-size: 12px;
+        font-weight: 400;
+        color: $rg-step-missing-div;
+      }
+
+      .divider-1 {
+        flex-grow: 1;
+        height: 1px;
+        background-color: $rg-step-completed;
+        min-width: 20px;
+        margin-left: 10px;
+      }
+
+      .divider-2 {
+        flex-grow: 1;
+        height: 1px;
+        background-color: $rg-step-missing-div;
+        min-width: 20px;
+        margin-left: 10px;
+      }
+    }
+
+    .register-header {
+      width: 100%;
+      position: relative;
+      padding-top: 10px;
+
+      .title {
+        font-size: 24px;
+        color: $rg-title;
+        font-weight: 500;
+        margin-bottom: 15px;
+      }
+
+      .subtitle {
+        font-size: 14px;
+        color: $rg-subtitle;
+        font-weight: 300;
+        margin-bottom: 25px;
+      }
+
+      img {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 40px;
+        height: 40px;
+        border-radius: 100%;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+          background-color: darken($text-color, 90%);
+        }
+      }
+    }
+
+    form.register-form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      button {
+
+        width: 275px;
+        padding: 18px 0;
+        margin: 0 auto;
+        border-radius: 12px;
+        border: none;
+        font-size: 14px;
+        font-weight: 600;
+        color: $btn-text-color;
+        background-color: $btn-color;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+          background-color: darken($btn-color, 8%);
+        }
+      }
+    }
+  }
+}

@@ -1,67 +1,46 @@
-<div class="register-wrapper">
-  <div class="register-container">
-    <div class="register-header">
-      <h1 class="title">{{ title }}</h1>
-      <h2 class="subtitle">{{ subtitle }}</h2>
-      <img
-        src="assets/svg/icon/register/back-page.svg"
-        alt
-        (click)="return()"
-      />
-    </div>
-    <div class="steps">
-      <div class="step-1">
-        <img src="assets/svg/icon/register/step-1.svg" alt />
-        <h4 class="step-1-txt">{{ stepOne }}</h4>
-      </div>
-      <div class="divider-1"></div>
-      <div class="step-2">
-        <img src="assets/svg/icon/register/step-2.svg" alt />
-        <h4 class="step-2-txt">{{ stepTwo }}</h4>
-      </div>
-      <div class="divider-2"></div>
-      <div class="step-3">
-        <img src="assets/svg/icon/register/step-3.svg" alt />
-        <h4 class="step-3-txt">{{ stepThree }}</h4>
-      </div>
-    </div>
-    <div class="filters-wrapper">
-      <div class="filters">
-        <button
-          class="users"
-          [ngClass]="{ 'selected': selectedButton === 'users' }"
-          (click)="selectButton('users')"
-        >
-          {{ filterOne }}
-        </button>
-        <button
-          class="route"
-          [ngClass]="{ 'selected': selectedButton === 'route' }"
-          (click)="selectButton('route')"
-        >
-          {{ filterTwo }}
-        </button>
-        <button
-          class="admin"
-          [ngClass]="{ 'selected': selectedButton === 'admin' }"
-          (click)="selectButton('admin')"
-        >
-          {{ filterThree }}
-        </button>
-        <app-search-input
+<app-default-step
+  [title]="title"
+  [subtitle]="subtitle"
+  [currentStepState]="2"
+  [btnLast]="btnLast"
+  [returnStep]="1"
+  (submit)="submit()">
+
+  <div class="filters-wrapper">
+    <div class="filters">
+      <button
+        class="users"
+        type="button"
+        [ngClass]="{ 'selected': selectedButton === 'users' }"
+        (click)="selectButton('users')">
+        {{ filterOne }}
+      </button>
+      <button
+        class="route"
+        type="button"
+        [ngClass]="{ 'selected': selectedButton === 'route' }"
+        (click)="selectButton('route')">
+        {{ filterTwo }}
+      </button>
+      <button
+        class="admin"
+        type="button"
+        [ngClass]="{ 'selected': selectedButton === 'admin' }"
+        (click)="selectButton('admin')">
+        {{ filterThree }}
+      </button>
+      <app-search-input
         [placeholder]="inputSearch"
         (searchChange)="handleSearchChange($event)">
-        <img src="assets/svg/icon/search.svg" alt/>
+        <img src="assets/svg/icon/search.svg" alt />
       </app-search-input>
-      </div>
     </div>
-    <form>
-      <div class="permissions-form">
-        <app-steps-filter class="permissions-checkbox"[selectedFilter]="selectedButton" [searchQuery]="currentSearchQuery"></app-steps-filter>
-        <button class="btn-last" type="button" (click)="submit()">
-          {{ btnRegister }}
-        </button>
-      </div>
-    </form>
   </div>
-</div>
+  <form>
+    <div class="permissions-form">
+      <app-steps-filter class="permissions-checkbox"
+        [selectedFilter]="selectedButton"
+        [searchQuery]="currentSearchQuery"></app-steps-filter>
+    </div>
+  </form>
+</app-default-step>

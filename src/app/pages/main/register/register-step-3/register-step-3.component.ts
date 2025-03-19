@@ -4,13 +4,15 @@ import { RegisterService } from '../../../../services/register.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DefaultStepComponent } from "../../../../layout/default-step/default-step.component";
 
 @Component({
   selector: 'app-register-step-3',
   imports: [
     CommonModule,
-    FormsModule
-  ],
+    FormsModule,
+    DefaultStepComponent
+],
   templateUrl: './register-step-3.component.html',
   styleUrl: './register-step-3.component.scss'
 })
@@ -20,12 +22,9 @@ export class RegisterStep3Component implements OnInit{
 
   title: string = '';
   subtitle: string = '';
-  stepOne: string = '';
-  stepTwo: string = '';
-  stepThree: string = '';
   textExplanation: string = '';
   placeholderTextArea: string = '';
-  btnRegister: string = '';
+  btnLast: string = '';
 
   textTyped: string = '';
   textSave: string = '';
@@ -33,7 +32,6 @@ export class RegisterStep3Component implements OnInit{
   constructor(
     private translationService: TranslationService,
     private registerService: RegisterService,
-    private router: Router
   ) { }
 
   ngOnInit() {
@@ -49,12 +47,7 @@ export class RegisterStep3Component implements OnInit{
     this.subtitle = this.translationService.getTranslation('subtitle', section);
     this.textExplanation = this.translationService.getTranslation('textExplanation', section);
     this.placeholderTextArea = this.translationService.getTranslation('placeholderTextArea', section);
-    this.btnRegister = this.translationService.getTranslation('btnRegister', section);
-
-    const section2 = 'Register_Page';
-    this.stepOne = this.translationService.getTranslation('stepOne', section2);
-    this.stepTwo = this.translationService.getTranslation('stepTwo', section2);
-    this.stepThree = this.translationService.getTranslation('stepThree', section2);
+    this.btnLast = this.translationService.getTranslation('btnRegister', section);
   }
 
   saveText() {
