@@ -16,7 +16,9 @@
     "inputSearch": "Search...",
     "linkHome": "Home",
     "linkRegister": "Register",
-    "linkUsers": "Users"
+    "linkUsers": "Users",
+    "linkListUsers": "List Users",
+    "linkAnalytics": "Analytics"
   },
   "Header_user": {
     "account": "My Account",
