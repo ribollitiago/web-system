@@ -15,6 +15,15 @@ export class HeaderComponent implements OnDestroy {
     private router: Router,
     private translationService: TranslationService) { }
 
+  account: string = '';
+  signout: string = '';
+  language: string = '';
+  apparence: string = '';
+  settings: string = '';
+  help: string = '';
+  feedback: string = '';
+  titleLanguage: string = '';
+
   @ViewChild('menu') menuElement!: ElementRef;
   @ViewChild('userToggler') userTogglerElement!: ElementRef;
   @ViewChild('menuLanguage') menuLanguageElement!: ElementRef;
@@ -29,11 +38,32 @@ export class HeaderComponent implements OnDestroy {
 
   ngOnInit(): void {
     this.selectedLanguage = this.translationService.getCurrentLanguage();
+    this.translationService.language$.subscribe(() => {
+      this.loadTranslations();
+    });
+    this.loadTranslations();
   }
 
   ngOnDestroy(): void {
     this.removeMainMenuClickListener();
     this.removeLanguageMenuClickListener();
+  }
+
+  loadTranslations() {
+    const section = "Header_user";
+    try {
+      this.account = this.translationService.getTranslation('account', section);
+      this.signout = this.translationService.getTranslation('signout', section);
+      this.language = this.translationService.getTranslation('language', section);
+      this.apparence = this.translationService.getTranslation('apparence', section);
+      this.settings = this.translationService.getTranslation('settings', section);
+      this.help = this.translationService.getTranslation('help', section);
+      this.feedback = this.translationService.getTranslation('feedback', section);
+      this.titleLanguage = this.translationService.getTranslation('titleLanguage', section);
+
+    } catch (error) {
+      console.error('Error loading sidebar translations:', error);
+    }
   }
 
   toggleMenu(): void {

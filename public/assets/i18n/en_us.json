@@ -18,6 +18,16 @@
     "linkRegister": "Register",
     "linkUsers": "Users"
   },
+  "Header_user": {
+    "account": "My Account",
+    "signout": "Sign Out",
+    "language": "Language: English",
+    "apparence": "Apparence: Dark",
+    "settings": "Settings",
+    "help": "Help",
+    "feedback": "Send Feedback",
+    "titleLanguage": "Choose your language"
+  },
   "Register_Page": {
     "title": "Register New User",
     "subtitle": "Register a new user to use the system",

@@ -18,6 +18,16 @@
     "linkRegister": "Registrar",
     "linkUsers": "Usuários"
   },
+  "Header_user": {
+    "account": "Minha Conta",
+    "signout": "Sair",
+    "language": "Idioma: Português",
+    "apparence": "Aparencia: Tema Escuro",
+    "settings": "Configurações",
+    "help": "Ajuda",
+    "feedback": "Enviar Feedback",
+    "titleLanguage": "Selecione seu idioma"
+  },
   "Register_Page": {
     "title": "Registrar Novo Usuário",
     "subtitle": "Registre um novo usuário para usar o sistema",

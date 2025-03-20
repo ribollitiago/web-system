@@ -12,38 +12,38 @@
         <div class="divider"></div>
         <div class="menu-item">
           <img class="icon" src="assets/svg/icon/header/user.svg" alt>
-          <h4>My Account</h4>
+          <h4>{{account}}</h4>
         </div>
         <div class="menu-item" (click)="logout()">
           <img class="icon" src="assets/svg/icon/header/logout.svg" alt>
-          <h4>Sign Out</h4>
+          <h4>{{signout}}</h4>
         </div>
         <div class="divider"></div>
         <div class="menu-item"
           (click)="toggleMenuLanguage(); $event.stopPropagation()"
           #languageToggler>
           <img class="icon" src="assets/svg/icon/header/language.svg" alt>
-          <h4>Language: English</h4>
+          <h4>{{language}}</h4>
           <img class="arrow" src="assets/svg/icon/header/arrow.svg" alt>
         </div>
 
         <div class="menu-item">
           <img class="icon" src="assets/svg/icon/header/dark-mode.svg" alt>
-          <h4>Apparence: Dark</h4>
+          <h4>{{apparence}}</h4>
         </div>
         <div class="divider"></div>
         <div class="menu-item">
           <img class="icon" src="assets/svg/icon/header/config.svg" alt>
-          <h4>Settings</h4>
+          <h4>{{settings}}</h4>
         </div>
         <div class="divider"></div>
         <div class="menu-item">
           <img class="icon" src="assets/svg/icon/header/help.svg" alt>
-          <h4>Help</h4>
+          <h4>{{help}}</h4>
         </div>
         <div class="menu-item">
           <img src="assets/svg/icon/header/send-feedback.svg" alt>
-          <h4>Send Feedback</h4>
+          <h4>{{feedback}}</h4>
         </div>
         <div class="menu-item-description"></div>
       </div>
@@ -54,7 +54,7 @@
           (click)="toggleMenu(); $event.stopPropagation()">
           <img class="arrow" src="assets/svg/icon/header/arrow.svg" alt>
         </div>
-        <h2 class="name">Choose your language</h2>
+        <h2 class="name">{{titleLanguage}}</h2>
       </div>
       <div class="divider"></div>
       <div class="menu-item-language"
