@@ -19,22 +19,51 @@
   </app-search-input>
   <div class="divider"></div>
   <div class="sidenav-nav">
-    @for (item of items; track $index){
-    <li class="sidenav-nav-item">
+    @for (item of items; track $index; let idx = $index) {
+    <li class="sidenav-nav-item" [class.has-submenu]="item.submenu">
       <a
         class="sidenav-nav-link"
-        [routerLink]="item.routeLink"
+        [routerLink]="!item.submenu ? item.routeLink : null"
+        (click)="item.submenu && toggleSubmenu(idx)"
         routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: true }">
         <span
           class="sidenav-link-icon"
           [style.mask-image]="'url(' + item.icon + ')'"
           [attr.aria-label]="item.label"></span>
-        <!-- No extra class -->
-        <span class="sidenav-link-text" *ngIf="!isLeftSidebarCollapsed">{{
-          item.label
-          }}</span>
+        <span class="sidenav-link-text" *ngIf="!isLeftSidebarCollapsed">
+          {{ item.label }}
+        </span>
+        @if (item.submenu && !isLeftSidebarCollapsed) {
+          <span class="submenu-icon" *ngIf="!isLeftSidebarCollapsed">
+            <img
+              src="assets/svg/icon/header/arrow.svg"
+              class="arrow-icon"
+              [class.rotated]="openedSubmenuIndex === idx"
+            />
+          </span>
+        }
       </a>
+
+      @if (item.submenu && openedSubmenuIndex === idx && !isLeftSidebarCollapsed) {
+      <ul class="submenu">
+        @for (subItem of item.itemsSubMenu; track $index) {
+        <li class="sidenav-nav-item">
+          <a
+            class="sidenav-nav-link submenu-link"
+            [routerLink]="subItem.routeLink"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }">
+            <span
+              class="sidenav-link-icon"
+              [style.mask-image]="'url(' + subItem.icon + ')'"
+              [attr.aria-label]="subItem.label"></span>
+            <span class="sidenav-link-text">{{ subItem.label }}</span>
+          </a>
+        </li>
+        }
+      </ul>
+      }
     </li>
     }
   </div>

@@ -4,6 +4,15 @@ import { RouterModule } from '@angular/router';
 import { SearchInputComponent } from "../../components/search-input/search-input.component";
 import { TranslationService } from '../../services/translate.service';
 
+interface SidebarItem {
+  routeLink?: string;
+  icon: string;
+  label: string;
+  submenu?: boolean;
+  isOpen?: boolean;
+  itemsSubMenu?: SidebarItem[];
+}
+
 @Component({
   selector: 'app-sidebar',
   standalone: true,
@@ -13,6 +22,7 @@ import { TranslationService } from '../../services/translate.service';
   providers: [TranslationService]
 })
 export class SidebarComponent {
+
   @Input() isLeftSidebarCollapsed: boolean = false;
   @Output() changeIsLeftSidebarCollapsed = new EventEmitter<boolean>();
   @ViewChild(SearchInputComponent) searchInputComponent!: SearchInputComponent;
@@ -22,7 +32,9 @@ export class SidebarComponent {
   linkRegister: string = '';
   linkUsers: string = '';
 
-  items: { routeLink: string, icon: string, label: string }[] = [];
+  openedSubmenuIndex: number | null = null;
+
+  items: SidebarItem[] = [];
 
   constructor(private translationService: TranslationService) {}
 
@@ -31,6 +43,10 @@ export class SidebarComponent {
       this.loadTranslations();
     });
     this.loadTranslations();
+  }
+
+  toggleSubmenu(index: number): void {
+    this.openedSubmenuIndex = this.openedSubmenuIndex === index ? null : index;
   }
 
   loadTranslations() {
@@ -42,9 +58,33 @@ export class SidebarComponent {
       this.linkUsers = this.translationService.getTranslation('linkUsers', section);
 
       this.items = [
-        { routeLink: '/home', icon: 'assets/svg/icon/home.svg', label: this.linkHome },
-        { routeLink: '/register', icon: 'assets/svg/icon/register.svg', label: this.linkRegister },
-        { routeLink: '/users', icon: 'assets/svg/icon/users.svg', label: this.linkUsers }
+        {
+          routeLink: '/home',
+          icon: 'assets/svg/icon/home.svg',
+          label: this.linkHome
+        },
+        {
+          routeLink: '/register',
+          icon: 'assets/svg/icon/register.svg',
+          label: this.linkRegister,
+        },
+        {
+          icon: 'assets/svg/icon/users.svg',
+          label: this.linkUsers,
+          submenu: true,
+          itemsSubMenu: [
+            {
+              routeLink: '/users',
+              icon: 'assets/svg/icon/sidebar/listofusers.svg',
+              label: 'List of users'
+            },
+            {
+              routeLink: '/subitem2',
+              icon: 'assets/svg/icon/sidebar/analytics.svg',
+              label: 'Analytics'
+            }
+          ]
+        }
       ];
     } catch (error) {
       console.error('Error loading sidebar translations:', error);
@@ -60,6 +100,9 @@ export class SidebarComponent {
 
   toggleSidebar() {
     this.isLeftSidebarCollapsed = !this.isLeftSidebarCollapsed;
+    if (this.isLeftSidebarCollapsed) {
+      this.openedSubmenuIndex = null;
+    }
     this.changeIsLeftSidebarCollapsed.emit(this.isLeftSidebarCollapsed);
   }
 }

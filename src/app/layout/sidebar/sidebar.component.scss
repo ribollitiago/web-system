@@ -2,37 +2,32 @@
 
 .sidenav {
   background: $sb-bg;
-  transition: all 0.3s ease; // Increased transition time for smoother effect
+  transition: all 0.3s ease;
   position: fixed;
   z-index: 1100;
   top: 0;
   width: $sb-width;
   height: 100vh;
-  padding: 20px 20px;
+  padding: 20px;
 
   &-collapsed {
     width: $sb-collapsed-width;
-    padding: 20px 20px; // Adjusted padding for collapsed state
+    padding: 20px;
 
     .logo-text,
     .sidenav-link-text {
       opacity: 0;
-      visibility: hidden; // Use visibility to maintain layout
+      visibility: hidden;
       transition: opacity 0.5s ease, visibility 0.5s ease;
     }
 
     .sidenav-nav-link {
       justify-content: center;
-      transition: all 0.3s ease;
-    }
-
-    .sidenav-link-icon {
-      flex-shrink: 0;
-      transition: all 0.3s ease;
     }
 
     .search-input {
       margin-bottom: 22px !important;
+
       .input-content {
         justify-content: center;
 
@@ -42,15 +37,6 @@
           width: 0;
           padding: 0;
           border: none;
-          transition: opacity 0.2s ease, visibility 0.2s ease;
-        }
-
-        .icon {
-          position: relative;
-          transform: none;
-          top: auto;
-          right: auto;
-          background-color: transparent;
         }
       }
     }
@@ -93,7 +79,7 @@
       font-weight: 700;
       color: $sb-text-color;
       white-space: nowrap;
-      transition: opacity 0.3s ease, visibility 0.3s ease; // Consistent transition
+      transition: opacity 0.3s ease, visibility 0.3s ease;
     }
   }
 
@@ -106,23 +92,32 @@
     width: 100%;
     height: 1px;
     background-color: $sb-divider-color;
-    margin: 1rem 0;
-    margin-bottom: 20px;
-    display: block;
+    margin: 1rem 0 20px;
   }
 
   .sidenav-nav {
     list-style: none;
     margin: 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     height: calc(100% - 3.65rem);
-    cursor: pointer;
 
     .sidenav-nav-item {
       width: 100%;
       margin-bottom: 0.625rem;
+      position: relative;
+
+      // Hover apenas para itens principais sem submenu
+      &:not(.has-submenu):hover .sidenav-nav-link {
+        background-color: $sb-hover-bg;
+      }
+
+      // Hover para itens com submenu (apenas no elemento pai)
+      &.has-submenu:hover > .sidenav-nav-link:not(.active) {
+        background-color: $sb-hover-bg;
+      }
     }
 
     .sidenav-nav-link {
@@ -134,35 +129,47 @@
       border-radius: 12px;
       padding: 13px;
       transition: all 0.3s ease;
+      cursor: pointer;
 
       .sidenav-link-icon {
         width: 18px;
         height: 18px;
         background-color: currentColor;
-        display: inline-block;
         mask-repeat: no-repeat;
         mask-position: center;
         mask-size: contain;
         flex-shrink: 0;
-        transition: all 0.3s ease;
+      }
+
+      .submenu-icon {
+        margin-left: auto; // Isso fixa à direita
+        display: flex;
+        align-items: center;
+        padding: 0 8px;
+
+        .arrow-icon {
+          width: 12px;
+          height: 12px;
+          transition: transform 0.3s ease;
+          filter: brightness(0) invert(1); // Mantém a cor consistente
+
+          &.rotated {
+            transform: rotate(90deg);
+          }
+        }
       }
 
       .sidenav-link-text {
         margin-left: 1rem;
         font-weight: 300;
         font-size: 15px;
-        transition: opacity 0.3s ease, visibility 0.3s ease;
+        transition: opacity 0.3s ease;
       }
 
       &:hover .sidenav-link-text {
-        font-weight: 400 !important;
+        font-weight: 400;
         color: $sb-text-color;
       }
-    }
-
-    .sidenav-nav-item:hover .sidenav-nav-link {
-      background-color: $sb-hover-bg;
-      color: $sb-text-color;
     }
   }
 
@@ -170,15 +177,88 @@
     background-color: $sb-active-bg;
     color: $sb-text-hover-color;
 
-    &:hover .sidenav-link-icon,
-    .sidenav-link-text {
-      color: $sb-active-bg;
-    }
-
     .sidenav-link-icon,
     .sidenav-link-text {
       color: $sb-text-hover-color;
       font-weight: 600 !important;
+    }
+
+    &:hover {
+      .sidenav-link-icon {
+        color: $sb-text-color !important;
+      }
+
+      .sidenav-link-text {
+        color: $sb-text-color !important;
+        font-weight: 400 !important;
+      }
+    }
+  }
+
+  .submenu {
+    position: absolute;
+    left: 25px;
+    min-width: 240px;
+    width: calc(100% - 25px);
+    background: $sb-bg;
+    border-radius: 12px;
+    z-index: 1;
+    overflow: hidden;
+    transform-origin: top;
+    animation: fadeInDown 0.3s ease-out forwards;
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(0px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .sidenav-nav-item {
+      margin-bottom: 0;
+      animation: slideIn 0.4s ease-out both;
+
+      @for $i from 1 through 10 {
+        &:nth-child(#{$i}) {
+          animation-delay: 0.1s * $i;
+        }
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(0px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      &:hover .sidenav-nav-link {
+        background-color: $sb-hover-bg !important;
+      }
+    }
+
+    .sidenav-nav-link {
+      height: 40px;
+      padding: 8px 13px 8px 30px;
+      border-radius: 8px;
+      margin: 2px 5px;
+
+      .sidenav-link-icon {
+        width: 16px;
+        height: 16px;
+        margin-left: -15px;
+      }
+
+      .sidenav-link-text {
+        font-size: 14px;
+      }
     }
   }
 }
