@@ -1,26 +1,73 @@
 <div class="header-top">
   <div class="header-container">
     <div class="user-container">
-      <img #userToggler src="assets/user-photo.png" alt="User" class="user-toggler" (click)="toggleMenu()" />
+      <img #userToggler src="assets/user-photo.png" alt="User"
+        class="user-toggler" (click)="toggleMenu()" />
       <div class="menu" *ngIf="isMenuOpened" #menu>
         <div class="menu-item-user">
           <img src="assets/user-photo.png" alt>
           <h2 class="name">Tiago Ribolli</h2>
-          <h2 class="email">ribollitiagogmail.com</h2>
+          <h2 class="email">gabrielfigueiroaguilar1234ga...</h2>
         </div>
         <div class="divider"></div>
         <div class="menu-item">
-          <img src="assets/svg/icon/header/config.svg" alt>
-          <h4>Config</h4>
-        </div>
-        <div class="menu-item">
-          <img src="assets/svg/icon/header/language.svg" alt>
-          <h4>Language</h4>
+          <img class="icon" src="assets/svg/icon/header/user.svg" alt>
+          <h4>My Account</h4>
         </div>
         <div class="menu-item" (click)="logout()">
-          <img src="assets/svg/icon/header/logout.svg" alt>
-          <h4>Log Out</h4>
+          <img class="icon" src="assets/svg/icon/header/logout.svg" alt>
+          <h4>Sign Out</h4>
         </div>
+        <div class="divider"></div>
+        <div class="menu-item"
+          (click)="toggleMenuLanguage(); $event.stopPropagation()"
+          #languageToggler>
+          <img class="icon" src="assets/svg/icon/header/language.svg" alt>
+          <h4>Language: English</h4>
+          <img class="arrow" src="assets/svg/icon/header/arrow.svg" alt>
+        </div>
+
+        <div class="menu-item">
+          <img class="icon" src="assets/svg/icon/header/dark-mode.svg" alt>
+          <h4>Apparence: Dark</h4>
+        </div>
+        <div class="divider"></div>
+        <div class="menu-item">
+          <img class="icon" src="assets/svg/icon/header/config.svg" alt>
+          <h4>Settings</h4>
+        </div>
+        <div class="divider"></div>
+        <div class="menu-item">
+          <img class="icon" src="assets/svg/icon/header/help.svg" alt>
+          <h4>Help</h4>
+        </div>
+        <div class="menu-item">
+          <img src="assets/svg/icon/header/send-feedback.svg" alt>
+          <h4>Send Feedback</h4>
+        </div>
+        <div class="menu-item-description"></div>
+      </div>
+    </div>
+    <div class="menu-language" *ngIf="isMenuOpenedLanguage" #menuLanguage>
+      <div class="menu-item-header">
+        <div class="arrow-container"
+          (click)="toggleMenu(); $event.stopPropagation()">
+          <img class="arrow" src="assets/svg/icon/header/arrow.svg" alt>
+        </div>
+        <h2 class="name">Choose your language</h2>
+      </div>
+      <div class="divider"></div>
+      <div class="menu-item-language"
+        data-value="pt_br"
+        (click)="onLanguageChange($event)">
+        <img class="check" src="assets/svg/icon/header/check.svg" *ngIf="selectedLanguage === 'pt_br'" alt>
+        <h4>Português (Brasil)</h4>
+      </div>
+      <div class="menu-item-language"
+        data-value="en_us"
+        (click)="onLanguageChange($event)">
+        <img class="check" src="assets/svg/icon/header/check.svg" *ngIf="selectedLanguage === 'en_us'" alt>
+        <h4>English (US)</h4>
       </div>
     </div>
   </div>

@@ -12,12 +12,6 @@
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-.user-container {
-  width: 200px;
-  background: #04aa62;
-  font-size: 20px;
-}
-
 .user-toggler {
   position: absolute;
   right: 30px;
@@ -30,16 +24,17 @@
   border-radius: 50%;
 }
 
-.menu {
-  background: #333;
-  color: #fff;
-  padding: 10px 10px;
+.menu,
+.menu-language {
+  background: $sb-bg;
+  color: $text-color;
+  padding: 10px;
   position: absolute;
-  top: 60px;
+  top: 70px;
   right: 20px;
-  z-index: 1001;
-  width: 220px;
+  width: 300px;
   border-radius: 12px;
+  z-index: 1001;
 }
 
 .divider {
@@ -49,7 +44,8 @@
 }
 
 .menu-item,
-.menu-item-user {
+.menu-item-user,
+.menu-item-language {
   padding: 10px;
   font-size: 15px;
   border-radius: 10px;
@@ -61,7 +57,8 @@
   align-items: center;
   gap: 16px;
   padding: 11px;
-  img {
+
+  .icon {
     width: 18px;
     height: 18px;
   }
@@ -70,6 +67,12 @@
     font-size: 15px;
     font-weight: 300;
     margin: 0;
+  }
+
+  .arrow {
+    width: 12px;
+    height: 12px;
+    margin-left: auto;
   }
 }
 
@@ -103,8 +106,76 @@
 }
 
 .menu-item:hover {
-  background: #4d4d4d;
+  transition: background-color 0.3s ease;
+  background: $sb-hover-bg;
+
   h4 {
     font-weight: 500;
   }
 }
+
+.menu-language {
+  z-index: 1002;
+
+  .menu-item-header {
+    font-size: 18px;
+    border-radius: 10px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    column-gap: 10px;
+
+    .arrow-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: $sb-hover-bg;
+      }
+
+      .arrow {
+        width: 18px;
+        height: 18px;
+        transform: scaleX(-1);
+        transition: filter 0.3s ease;
+      }
+    }
+
+    .name {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 300;
+    }
+  }
+
+  .menu-item-language {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 11px;
+
+    h4 {
+      font-size: 15px;
+      font-weight: 400;
+      margin: 0;
+    }
+  }
+  .menu-item-language:hover {
+    transition: background-color 0.3s ease;
+
+    background: $sb-hover-bg;
+
+    h4 {
+      font-weight: 500;
+    }
+  }
+}
+
+
