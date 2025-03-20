@@ -31,12 +31,14 @@ export class SidebarComponent {
   linkHome: string = '';
   linkRegister: string = '';
   linkUsers: string = '';
+  linkListUsers: string = '';
+  linkAnalytics: string = '';
 
   openedSubmenuIndex: number | null = null;
 
   items: SidebarItem[] = [];
 
-  constructor(private translationService: TranslationService) {}
+  constructor(private translationService: TranslationService) { }
 
   ngOnInit() {
     this.translationService.language$.subscribe(() => {
@@ -56,6 +58,8 @@ export class SidebarComponent {
       this.linkHome = this.translationService.getTranslation('linkHome', section);
       this.linkRegister = this.translationService.getTranslation('linkRegister', section);
       this.linkUsers = this.translationService.getTranslation('linkUsers', section);
+      this.linkListUsers = this.translationService.getTranslation('linkListUsers', section);
+      this.linkAnalytics = this.translationService.getTranslation('linkAnalytics', section);
 
       this.items = [
         {
@@ -64,27 +68,45 @@ export class SidebarComponent {
           label: this.linkHome
         },
         {
-          routeLink: '/register',
-          icon: 'assets/svg/icon/register.svg',
-          label: this.linkRegister,
-        },
-        {
           icon: 'assets/svg/icon/users.svg',
           label: this.linkUsers,
           submenu: true,
           itemsSubMenu: [
             {
+              routeLink: '/register',
+              icon: 'assets/svg/icon/register.svg',
+              label: this.linkRegister,
+            },
+            {
               routeLink: '/users',
               icon: 'assets/svg/icon/sidebar/listofusers.svg',
-              label: 'List of users'
+              label: this.linkListUsers
             },
             {
               routeLink: '/subitem2',
               icon: 'assets/svg/icon/sidebar/analytics.svg',
-              label: 'Analytics'
-            }
-          ]
-        }
+              label: this.linkAnalytics
+            },
+
+          ],
+        },
+        {
+          icon: 'assets/svg/icon/sidebar/storage.svg',
+          label: 'Stock',
+          submenu: true,
+          itemsSubMenu: [
+            {
+              routeLink: '/subitem2',
+              icon: 'assets/svg/icon/sidebar/analytics.svg',
+              label: "Register"
+            },
+            {
+              routeLink: '/users',
+              icon: 'assets/svg/icon/sidebar/listofusers.svg',
+              label: "List of storage"
+            },
+          ],
+        },
       ];
     } catch (error) {
       console.error('Error loading sidebar translations:', error);
@@ -105,4 +127,6 @@ export class SidebarComponent {
     }
     this.changeIsLeftSidebarCollapsed.emit(this.isLeftSidebarCollapsed);
   }
+
+
 }
