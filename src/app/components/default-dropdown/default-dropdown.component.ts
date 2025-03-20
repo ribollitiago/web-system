@@ -1,28 +1,26 @@
-import { Component, NgModule, OnInit } from '@angular/core';
-import { TranslationService } from '../../services/translate.service'; // Ajuste conforme necessário
+import { Component, OnInit } from '@angular/core';
+import { TranslationService } from '../../services/translate.service';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-default-dropdown',
   templateUrl: './default-dropdown.component.html',
   styleUrl: './default-dropdown.component.scss',
-  imports: [ FormsModule]
+  imports: [FormsModule, CommonModule]
 })
 export class DefaultDropdownComponent implements OnInit {
-
   selectedLanguage!: string;
+  supportedLanguages: { code: string, name: string }[] = [];
 
   constructor(private translationService: TranslationService) { }
 
   ngOnInit(): void {
-    // Inicializa a linguagem com o valor do serviço de tradução
+    this.supportedLanguages = this.translationService.getSupportedLanguages();
     this.selectedLanguage = this.translationService.getCurrentLanguage();
   }
 
-  onLanguageChange(event: any): void {
-    const selectedLanguage = event.target.value;
-
-    // Altera o idioma conforme a seleção
-    this.translationService.setLanguage(selectedLanguage);
+  onLanguageChange(langCode: string): void {
+    this.translationService.setLanguage(langCode);
   }
 }

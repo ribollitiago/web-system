@@ -50,24 +50,17 @@
     </div>
     <div class="menu-language" *ngIf="isMenuOpenedLanguage" #menuLanguage>
       <div class="menu-item-header">
-        <div class="arrow-container"
-          (click)="toggleMenu(); $event.stopPropagation()">
+        <div class="arrow-container" (click)="toggleMenu(); $event.stopPropagation()">
           <img class="arrow" src="assets/svg/icon/header/arrow.svg" alt>
         </div>
         <h2 class="name">{{titleLanguage}}</h2>
       </div>
       <div class="divider"></div>
-      <div class="menu-item-language"
-        data-value="pt_br"
-        (click)="onLanguageChange($event)">
-        <img class="check" src="assets/svg/icon/header/check.svg" *ngIf="selectedLanguage === 'pt_br'" alt>
-        <h4>Português (Brasil)</h4>
-      </div>
-      <div class="menu-item-language"
-        data-value="en_us"
-        (click)="onLanguageChange($event)">
-        <img class="check" src="assets/svg/icon/header/check.svg" *ngIf="selectedLanguage === 'en_us'" alt>
-        <h4>English (US)</h4>
+      <div class="menu-item-language" 
+           *ngFor="let lang of supportedLanguages"
+           (click)="onLanguageChange(lang.code)">
+        <img class="check" src="assets/svg/icon/header/check.svg" *ngIf="selectedLanguage === lang.code" alt>
+        <h4>{{lang.name}}</h4>
       </div>
     </div>
   </div>

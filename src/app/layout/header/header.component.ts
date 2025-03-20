@@ -30,6 +30,7 @@ export class HeaderComponent implements OnDestroy {
   @ViewChild('languageToggler') languageTogglerElement!: ElementRef;
 
   selectedLanguage!: string;
+  supportedLanguages: any[] = [];
   isMenuOpened: boolean = false;
   isMenuOpenedLanguage: boolean = false;
 
@@ -37,6 +38,7 @@ export class HeaderComponent implements OnDestroy {
   private languageMenuClickListener?: (event: MouseEvent) => void;
 
   ngOnInit(): void {
+    this.supportedLanguages = this.translationService.getSupportedLanguages();
     this.selectedLanguage = this.translationService.getCurrentLanguage();
     this.translationService.language$.subscribe(() => {
       this.loadTranslations();
@@ -68,7 +70,7 @@ export class HeaderComponent implements OnDestroy {
 
   toggleMenu(): void {
     this.isMenuOpened = !this.isMenuOpened;
-    this.isMenuOpenedLanguage = false; // Fecha o menu de linguagem ao abrir o principal
+    this.isMenuOpenedLanguage = false;
     if (this.isMenuOpened) {
       this.addMainMenuClickListener();
     } else {
@@ -78,7 +80,7 @@ export class HeaderComponent implements OnDestroy {
 
   toggleMenuLanguage(): void {
     this.isMenuOpenedLanguage = !this.isMenuOpenedLanguage;
-    this.isMenuOpened = false; // Fecha o menu principal ao abrir o de linguagem
+    this.isMenuOpened = false;
     if (this.isMenuOpenedLanguage) {
       this.addLanguageMenuClickListener();
     } else {
@@ -128,14 +130,10 @@ export class HeaderComponent implements OnDestroy {
     }
   }
 
-  onLanguageChange(event: any): void {
-    const target = event.target.closest('.menu-item-language');
-    if (target) {
-      const selectedLanguage = target.dataset.value;
-      this.translationService.setLanguage(selectedLanguage);
-      this.isMenuOpenedLanguage = false;
-      window.location.reload();
-    }
+  onLanguageChange(languageCode: string): void {
+    this.translationService.setLanguage(languageCode);
+    this.isMenuOpenedLanguage = false;
+    window.location.reload();
   }
 
   logout() {
