@@ -113,7 +113,7 @@
         background-color: $sb-hover-bg;
       }
 
-      &.has-submenu:hover>.sidenav-nav-link:not(.active) {
+      &.has-submenu:hover > .sidenav-nav-link:not(.active) {
         background-color: $sb-hover-bg;
       }
 
@@ -168,6 +168,11 @@
         padding: 0;
         background: transparent;
 
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+
         .arrow-icon {
           width: 12px;
           height: 12px;
@@ -176,9 +181,14 @@
           background: transparent;
           border: none;
 
+          pointer-events: none;
+          user-select: none;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+
           &.rotated {
             transform: rotate(90deg);
-
           }
         }
       }
