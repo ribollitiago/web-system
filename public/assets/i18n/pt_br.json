@@ -14,10 +14,10 @@
   },
   "Sidebar": {
     "inputSearch": "Pesquisar...",
-    "linkHome": "Home",
+    "linkHome": "Página Inicial",
     "linkRegister": "Registrar",
     "linkUsers": "Usuários",
-    "linkListUsers": "Lista de usuários",
+    "linkListUsers": "Usuários registrados",
     "linkAnalytics": "Monitoramento"
   },
   "Header_user": {

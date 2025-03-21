@@ -15,12 +15,16 @@
     [placeholder]="inputSearch"
     [isCollapsed]="isLeftSidebarCollapsed"
     (iconClick)="handleSearchIconClick()">
-    <img src="assets/svg/icon/search.svg" alt>
+    <img src="assets/svg/icon/input/search.svg" alt>
   </app-search-input>
   <div class="divider"></div>
   <div class="sidenav-nav">
     @for (item of items; track $index; let idx = $index) {
-    <li class="sidenav-nav-item" [class.has-submenu]="item.submenu">
+      <li
+      class="sidenav-nav-item"
+      [class.has-submenu]="item.submenu"
+      [class.parent-active]="activeParentIndex === idx"
+    >
       <a
         class="sidenav-nav-link"
         [routerLink]="!item.submenu ? item.routeLink : null"

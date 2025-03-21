@@ -117,24 +117,23 @@
         background-color: $sb-hover-bg;
       }
 
-      &.has-submenu:has(.submenu .active) {
-        >.sidenav-nav-link {
-          background-color: $sb-active-bg;
+      &.parent-active {
+        > .sidenav-nav-link {
+          background-color: $sb-hover-bg;
           color: $sb-text-hover-color;
 
           .sidenav-link-icon,
           .sidenav-link-text {
             color: $sb-text-hover-color;
-            font-weight: 600;
+            font-weight: 400;
           }
 
           &:hover {
-            background-color: $sb-active-bg !important;
+            background-color: $sb-hover-bg !important;
 
             .sidenav-link-icon,
             .sidenav-link-text {
               color: $sb-text-hover-color !important;
-              font-weight: 600 !important;
             }
           }
         }
@@ -179,6 +178,7 @@
 
           &.rotated {
             transform: rotate(90deg);
+
           }
         }
       }
@@ -199,11 +199,11 @@
 
   .active {
     background-color: $sb-active-bg;
-    color: $sb-text-hover-color;
+    color: $sb-text-active-color;
 
     .sidenav-link-icon,
     .sidenav-link-text {
-      color: $sb-text-hover-color;
+      color: $sb-text-active-color;
       font-weight: 600 !important;
     }
 
@@ -270,7 +270,7 @@
   .active,
   .has-submenu:has(.submenu .active) {
     .submenu-icon .arrow-icon {
-      filter: brightness(0) invert(0);
+      filter: brightness(0) invert(1);
     }
   }
 
@@ -283,7 +283,7 @@
   .has-submenu:has(.submenu .active) {
     > .sidenav-nav-link:hover {
       .submenu-icon .arrow-icon {
-        filter: brightness(0) invert(0) !important;
+        filter: brightness(0) invert(1) !important;
       }
     }
   }
