@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output, Input, ViewChild, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Output, Input, ViewChild, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { SearchInputComponent } from "../../components/search-input/search-input.component";
 import { TranslationService } from '../../services/translate.service';
@@ -27,7 +27,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
   @Output() changeIsLeftSidebarCollapsed = new EventEmitter<boolean>();
   @ViewChild(SearchInputComponent) searchInputComponent!: SearchInputComponent;
 
-  inputSearch: string = '';
+  inputSearchValue: string = '';
+  inputPlaceholder: string = '';
   linkHome: string = '';
   linkRegister: string = '';
   linkUsers: string = '';
@@ -44,7 +45,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   constructor(
     private translationService: TranslationService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {
     this.routerSubscription = this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
@@ -63,6 +65,56 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.routerSubscription.unsubscribe();
+  }
+
+  onSearchInput(value: string) {
+    this.inputSearchValue = value;
+    this.cdr.detectChanges();
+    if (value) {
+      this.openedSubmenuIndex = null;
+    } else {
+      this.updateActiveParent();
+    }
+  }
+
+  highlightMatches(text: string): string {
+    if (!this.inputSearchValue) return text;
+    const regex = new RegExp(this.inputSearchValue, 'gi');
+    return text.replace(regex, match => `<span class="highlight">${match}</span>`);
+  }
+
+  get filteredItems(): SidebarItem[] {
+    if (!this.inputSearchValue?.trim()) {
+      return this.items;
+    }
+
+    const searchTerm = this.inputSearchValue.toLowerCase();
+    return this.items
+      .filter(item => {
+        const matchesLabel = item.label.toLowerCase().includes(searchTerm);
+        const hasMatchingSubItems = item.itemsSubMenu?.some(subItem =>
+          subItem.label.toLowerCase().includes(searchTerm)
+        );
+        return matchesLabel || hasMatchingSubItems;
+      })
+      .map(item => {
+        if (!item.submenu) return item;
+        return {
+          ...item,
+          itemsSubMenu: item.itemsSubMenu?.filter(subItem =>
+            subItem.label.toLowerCase().includes(searchTerm)
+          )
+        };
+      });
+  }
+
+
+  shouldOpenSubmenu(item: SidebarItem, index: number): boolean {
+    if (this.isLeftSidebarCollapsed) return false;
+    if (this.inputSearchValue) {
+      return !!item.itemsSubMenu?.length;
+    }
+    return this.openedSubmenuIndex === index;
   }
 
   private loadClosedSubmenus() {
@@ -89,10 +141,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   private updateActiveParent() {
     this.activeParentIndex = null;
-    this.items.forEach((item, index) => {
+    this.filteredItems.forEach((item, index) => {
       if (item.submenu && this.isSubItemActive(item.itemsSubMenu)) {
         this.activeParentIndex = index;
-        if (!this.isLeftSidebarCollapsed && !this.closedSubmenus.has(index)) {
+        if (!this.isLeftSidebarCollapsed && !this.inputSearchValue) {
           this.openedSubmenuIndex = index;
         }
       }
@@ -108,63 +160,67 @@ export class SidebarComponent implements OnInit, OnDestroy {
   loadTranslations() {
     const section = "Sidebar";
     try {
-      this.inputSearch = this.translationService.getTranslation('inputSearch', section);
+      this.inputPlaceholder = this.translationService.getTranslation('inputSearch', section);
       this.linkHome = this.translationService.getTranslation('linkHome', section);
       this.linkRegister = this.translationService.getTranslation('linkRegister', section);
       this.linkUsers = this.translationService.getTranslation('linkUsers', section);
       this.linkListUsers = this.translationService.getTranslation('linkListUsers', section);
       this.linkAnalytics = this.translationService.getTranslation('linkAnalytics', section);
 
-      this.items = [
-        {
-          routeLink: '/home',
-          icon: 'assets/svg/icon/sidebar/home.svg',
-          label: this.linkHome
-        },
-        {
-          icon: 'assets/svg/icon/sidebar/users.svg',
-          label: this.linkUsers,
-          submenu: true,
-          itemsSubMenu: [
-            {
-              routeLink: '/register',
-              icon: 'assets/svg/icon/sidebar/register.svg',
-              label: this.linkRegister,
-            },
-            {
-              routeLink: '/users',
-              icon: 'assets/svg/icon/sidebar/listofusers.svg',
-              label: this.linkListUsers
-            },
-            {
-              routeLink: '/subitem2',
-              icon: 'assets/svg/icon/sidebar/analytics.svg',
-              label: this.linkAnalytics
-            },
-
-          ],
-        },
-        {
-          icon: 'assets/svg/icon/sidebar/storage.svg',
-          label: 'Stock',
-          submenu: true,
-          itemsSubMenu: [
-            {
-              routeLink: '/subitem2',
-              icon: 'assets/svg/icon/sidebar/analytics.svg',
-              label: "Register"
-            },
-            {
-              routeLink: '/aaa',
-              icon: 'assets/svg/icon/sidebar/listofusers.svg',
-              label: "List of storage"
-            },
-          ],
-        },
-      ];
+      this.items = [...this.createItems()]
     } catch (error) {
       console.error('Error loading sidebar translations:', error);
     }
+  }
+
+  private createItems(): SidebarItem[] {
+    return [
+      {
+        routeLink: '/home',
+        icon: 'assets/svg/icon/sidebar/home.svg',
+        label: this.linkHome
+      },
+      {
+        icon: 'assets/svg/icon/sidebar/users.svg',
+        label: this.linkUsers,
+        submenu: true,
+        itemsSubMenu: [
+          {
+            routeLink: '/register',
+            icon: 'assets/svg/icon/sidebar/register.svg',
+            label: this.linkRegister,
+          },
+          {
+            routeLink: '/users',
+            icon: 'assets/svg/icon/sidebar/listofusers.svg',
+            label: this.linkListUsers
+          },
+          {
+            routeLink: '/subitem2',
+            icon: 'assets/svg/icon/sidebar/analytics.svg',
+            label: this.linkAnalytics
+          },
+
+        ],
+      },
+      {
+        icon: 'assets/svg/icon/sidebar/storage.svg',
+        label: 'Stock',
+        submenu: true,
+        itemsSubMenu: [
+          {
+            routeLink: '/subitem2',
+            icon: 'assets/svg/icon/sidebar/analytics.svg',
+            label: "Register"
+          },
+          {
+            routeLink: '/aaa',
+            icon: 'assets/svg/icon/sidebar/listofusers.svg',
+            label: "List of storage"
+          },
+        ],
+      },
+    ];
   }
 
   handleSearchIconClick() {
