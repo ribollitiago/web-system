@@ -1,6 +1,9 @@
 <div class="header-top">
   <div class="header-container">
     <div class="user-container">
+      <div class="notification-icon">
+        <img src="assets/svg/icon/header/notification.svg" alt="">
+      </div>
       <img #userToggler src="assets/user-photo.png" alt="User"
         class="user-toggler" (click)="toggleMenu()" />
       <div class="menu" *ngIf="isMenuOpened" #menu>
@@ -56,7 +59,7 @@
         <h2 class="name">{{titleLanguage}}</h2>
       </div>
       <div class="divider"></div>
-      <div class="menu-item-language" 
+      <div class="menu-item-language"
            *ngFor="let lang of supportedLanguages"
            (click)="onLanguageChange(lang.code)">
         <img class="check" src="assets/svg/icon/header/check.svg" *ngIf="selectedLanguage === lang.code" alt>
