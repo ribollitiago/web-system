@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { getDatabase, ref, get, push, set, remove, onValue, DataSnapshot } from 'firebase/database';
+import { getDatabase, ref, get, push, set, remove, onValue, DataSnapshot, off } from 'firebase/database';
 import firebaseApp from '../firebase.config';
 
 type User = {
@@ -14,6 +14,7 @@ type User = {
 export class FirebaseService {
     private readonly db = getDatabase(firebaseApp);
     private readonly usersRef = ref(this.db, 'Users');
+    private usersSubscription: (() => void) | null = null;
 
     constructor() {
         console.log('Firebase inicializado:', !!firebaseApp);
@@ -61,9 +62,20 @@ export class FirebaseService {
     }
 
     subscribeToUsers(callback: (users: User[]) => void) {
-        onValue(this.usersRef, (snapshot) => {
+        if (this.usersSubscription) {
+            this.off();
+        }
+
+        this.usersSubscription = onValue(this.usersRef, (snapshot) => {
             const users = this.snapshotToUsers(snapshot);
             callback(users);
         });
+    }
+
+    off() {
+        if (this.usersSubscription) {
+            off(this.usersRef);
+            this.usersSubscription = null;
+        }
     }
 }

@@ -47,7 +47,7 @@ export class TranslationService {
   }
 
   async setLanguage(language: string) {
-    const lang = language || 'en_us';
+    const lang = 'en_us';
     this.currentLanguage = lang;
     localStorage.setItem('language', lang);
 
