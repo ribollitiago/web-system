@@ -47,7 +47,7 @@
     .filters-wrapper {
       width: 100%;
       display: flex;
-      gap: 15px; // Espaço entre os elementos
+      gap: 15px;
       align-items: center;
       margin-bottom: 15px;
 
@@ -64,7 +64,7 @@
 
         display: flex;
         align-items: center;
-        justify-content: flex-start; /* Alinha o conteúdo à esquerda */
+        justify-content: flex-start;
         padding:  0px 14px 0px 12px;
 
         img {
@@ -75,9 +75,8 @@
 
       .filters {
         background-color: transparent;
-        border-color: $text-color;
 
-        border: 1px solid white;
+        border: 1px solid $us-border-button;
         color: $text-color;
 
         transition: 0.2s ease ;

@@ -61,6 +61,7 @@
     .list-item {
       color: $rg-text;
       font-size: 14px;
+      font-weight: 200;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -77,7 +78,52 @@
     .name     { flex: 3 1 20%; }
     .email    { flex: 3 1 25%; }
     .date     { flex: 1 1 13%; }
-    .situation{ flex: 1 1 11%; font-size: 12px; }
-    .more     { flex: 0 0 16px; margin-left: 14px;}
+    .situation{
+      flex: 1 1 11%;
+      font-size: 11px;
+      font-weight: 200;
+      display: flex;
+      align-items: center;
+
+      & > div {
+        display: flex;
+        align-items: center;
+        border: 0.5px solid $us-border-button;
+        padding: 4px 9px 4px 8px;
+        border-radius: 45px;
+      }
+
+      img {
+        width: 10px;
+        height: 10px;
+        margin-right: 7px;
+        position: relative;
+      }
+    }
+
+    .more {
+      flex: 0 0 24px; // Alterado de 16px para 24px
+      margin-left: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      transition: background-color 0.2s ease;
+      cursor: pointer;
+
+      img {
+        width: 16px;
+        height: 16px;
+        transition: filter 0.2s ease;
+      }
+
+      &:hover {
+        background-color: $rg-bg-hover-extra; // Ou outra cor do tema
+
+
+      }
+    }
   }
 }
