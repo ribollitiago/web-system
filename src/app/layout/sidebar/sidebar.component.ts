@@ -30,7 +30,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   tooltipMenuClose: string = '';
   tooltipMenuOpen: string = '';
   inputSearchValue: string = '';
-  inputPlaceholder: string = '';
+  inputSearch: string = '';
   linkHome: string = '';
   linkRegister: string = '';
   linkUsers: string = '';
@@ -164,7 +164,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
     try {
       this.tooltipMenuClose = this.translationService.getTranslation('tooltipMenuClose', section);
       this.tooltipMenuOpen = this.translationService.getTranslation('tooltipMenuOpen', section);
-      this.inputPlaceholder = this.translationService.getTranslation('inputSearch', section);
       this.linkHome = this.translationService.getTranslation('linkHome', section);
       this.linkRegister = this.translationService.getTranslation('linkRegister', section);
       this.linkUsers = this.translationService.getTranslation('linkUsers', section);
@@ -175,6 +174,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.error('Error loading sidebar translations:', error);
     }
+
+    const section2 = 'Global_Components';
+    this.inputSearch = this.translationService.getTranslation('inputSearch', section2);
   }
 
   private createItems(): SidebarItem[] {

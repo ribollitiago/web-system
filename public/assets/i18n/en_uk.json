@@ -1,4 +1,7 @@
 {
+  "Global_Components": {
+    "inputSearch": "Search..."
+  },
   "Login_form": {
     "titleLgn": "Sign In",
     "subtitleLgn": "Log in to your account",
@@ -13,18 +16,19 @@
     "btnLoginFgt": "Send Recovery Email"
   },
   "Sidebar": {
-    "tooltipMenuClose": "Close Menu",
-    "tooltipMenuOpen": "Open Menu",
-    "inputSearch": "Search...",
+    "tooltipMenuClose": "Close Sidebar",
+    "tooltipMenuOpen": "Open Sidebar",
     "linkHome": "Home",
     "linkRegister": "Register",
-    "linkUsers": "Users"
+    "linkUsers": "Users",
+    "linkListUsers": "List Users",
+    "linkAnalytics": "Analytics"
   },
   "Header_user": {
     "tooltipNotifications": "Notifications",
     "account": "My Account",
     "signout": "Sign Out",
-    "language": "Language: English (UK)",
+    "language": "Language: English",
     "apparence": "Apparence: Dark",
     "settings": "Settings",
     "help": "Help",
@@ -55,7 +59,6 @@
   "Permissions_Page": {
     "title": "Permissions",
     "subtitle": "Register the permissions for this account",
-    "inputSearch": "Search...",
     "filterOne": "Users",
     "filterTwo": "Routes",
     "filterThree": "Admin",
@@ -222,5 +225,11 @@
     "title": "Resume",
     "subtitle": "User registration summary",
     "btnRegister": "Complete Sign Up"
+  },
+  "Users_Page": {
+    "title": "List of Users",
+    "subtitle": "List of users registered in the system",
+    "btnFilters": "Filters",
+    "btnExport": "Export"
   }
 }

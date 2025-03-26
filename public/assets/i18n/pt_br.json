@@ -1,4 +1,7 @@
 {
+  "Global_Components": {
+    "inputSearch": "Pesquisar..."
+  },
   "Login_form": {
     "titleLgn": "Entrar",
     "subtitleLgn": "Faça login na sua conta",
@@ -15,7 +18,6 @@
   "Sidebar": {
     "tooltipMenuClose": "Fechar Menu",
     "tooltipMenuOpen": "Abrir Menu",
-    "inputSearch": "Pesquisar...",
     "linkHome": "Página Inicial",
     "linkRegister": "Registrar",
     "linkUsers": "Usuários",
@@ -57,7 +59,6 @@
   "Permissions_Page": {
     "title": "Permissões",
     "subtitle": "Registre as permissões para este usuário",
-    "inputSearch": "Pesquisar...",
     "filterOne": "Usuários",
     "filterTwo": "Rotas",
     "filterThree": "Admin",
@@ -224,5 +225,15 @@
     "title": "Resumo",
     "subtitle": "Resumo das informações do usuário",
     "btnRegister": "Completar Registro"
+  },
+  "Users_Page": {
+    "title": "Lista de usuários",
+    "subtitle": "Usuários cadastrados no sistema",
+    "btnFilters": "Filtros",
+    "btnExport": "Exportar",
+    "filterName": "Nome",
+    "filterDate": "Data",
+    "filterSituation": "Situação",
+    "filterMore": "Mais"
   }
 }

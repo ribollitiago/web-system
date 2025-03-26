@@ -1,0 +1,83 @@
+@import "../../../../styles/variables.scss";
+
+.list-wrapper {
+  .filters-list {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 10px;
+    padding: 0px 15px;
+    border-radius: 8px;
+    background-color: $us-bg-filters;
+
+    .filter-item {
+      display: flex;
+      align-items: center;
+      color: $rg-text;
+      font-size: 12px;
+      padding: 12px 0;
+      position: relative;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      & > span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      img {
+        width: 14px;
+        height: 14px;
+        margin-left: 5px;
+        cursor: pointer;
+      }
+    }
+
+    .checkbox {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 40px;
+      cursor: pointer;
+    }
+
+    .id       { flex: 0 0 55px;}
+    .name     { flex: 3 1 20%; }
+    .email    { flex: 3 1 25%; }
+    .date     { flex: 1 1 13%; }
+    .situation{ flex: 1 1 11%; font-size: 12px; }
+    .more     { flex: 0 0 30px; }
+  }
+
+  .list-container {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+    border-bottom: 1px solid $us-bg-filters;
+
+    .list-item {
+      color: $rg-text;
+      font-size: 14px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .checkbox {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 40px;
+      cursor: pointer;
+    }
+
+    .id       { flex: 0 0 55px; }
+    .name     { flex: 3 1 20%; }
+    .email    { flex: 3 1 25%; }
+    .date     { flex: 1 1 13%; }
+    .situation{ flex: 1 1 11%; font-size: 12px; }
+    .more     { flex: 0 0 16px; margin-left: 14px;}
+  }
+}

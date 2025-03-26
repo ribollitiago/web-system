@@ -1,0 +1,22 @@
+<div class="list-wrapper">
+  <div class="filters-list">
+    <div class="checkbox"><img src="assets/svg/icon/register/step-2/check-off.svg"></div>
+    <div class="filter-item id">{{filterId}}<img src="assets/svg/icon/users/arrow-filter.svg"></div>
+    <div class="filter-item name">{{filterName}}<img src="assets/svg/icon/users/arrow-filter.svg"></div>
+    <div class="filter-item email">{{filterEmail}}<img src="assets/svg/icon/users/arrow-filter.svg"></div>
+    <div class="filter-item date">{{filterDate}}<img src="assets/svg/icon/users/arrow-filter.svg"></div>
+    <div class="filter-item situation">{{filterSituation}}<img src="assets/svg/icon/users/arrow-filter.svg"></div>
+    <div class="filter-item more">{{filterMore}}</div>
+  </div>
+
+  <!-- Lista dinâmica de usuários -->
+  <div class="list-container" *ngFor="let user of users">
+    <div class="checkbox"><img src="assets/svg/icon/register/step-2/check-off.svg"></div>
+    <div class="list-item id">{{user.id}}</div>
+    <div class="list-item name">{{user.name}}</div>
+    <div class="list-item email">{{user.email}}</div>
+    <div class="list-item date">{{user.date}}</div>
+    <div class="list-item situation">{{user.situation}}</div>
+    <div class="list-item more"><img src="assets/svg/icon/register/step-2/extra_info.svg"></div>
+  </div>
+</div>

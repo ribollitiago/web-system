@@ -1,4 +1,7 @@
 {
+  "Global_Components": {
+    "inputSearch": "Pesquisar..."
+  },
   "Login_form": {
     "titleLgn": "Entrar",
     "subtitleLgn": "Faça login na sua conta",
@@ -15,16 +18,17 @@
   "Sidebar": {
     "tooltipMenuClose": "Fechar Menu",
     "tooltipMenuOpen": "Abrir Menu",
-    "inputSearch": "Pesquisar...",
-    "linkHome": "Home",
+    "linkHome": "Página Inicial",
     "linkRegister": "Registrar",
-    "linkUsers": "Usuários"
+    "linkUsers": "Usuários",
+    "linkListUsers": "Usuários registrados",
+    "linkAnalytics": "Monitoramento"
   },
   "Header_user": {
     "tooltipNotifications": "Notificações",
     "account": "Minha Conta",
     "signout": "Sair",
-    "language": "Idioma: Português (PT)",
+    "language": "Idioma: Português",
     "apparence": "Aparencia: Tema Escuro",
     "settings": "Configurações",
     "help": "Ajuda",
@@ -55,7 +59,6 @@
   "Permissions_Page": {
     "title": "Permissões",
     "subtitle": "Registre as permissões para este usuário",
-    "inputSearch": "Pesquisar...",
     "filterOne": "Usuários",
     "filterTwo": "Rotas",
     "filterThree": "Admin",
@@ -222,5 +225,15 @@
     "title": "Resumo",
     "subtitle": "Resumo das informações do usuário",
     "btnRegister": "Completar Registro"
+  },
+  "Users_Page": {
+    "title": "Lista de usuários",
+    "subtitle": "Usuários cadastrados no sistema",
+    "btnFilters": "Filtros",
+    "btnExport": "Exportar",
+    "filterName": "Nome",
+    "filterDate": "Data",
+    "filterSituation": "Situação",
+    "filterMore": "Mais"
   }
 }

@@ -29,7 +29,7 @@ export class RegisterStep2Component implements OnDestroy {
   filterOne: string = '';
   filterTwo: string = '';
   filterThree: string = '';
-  
+
   private languageSubscription: Subscription;
 
   constructor(
@@ -56,13 +56,16 @@ export class RegisterStep2Component implements OnDestroy {
     const section = 'Permissions_Page';
     this.title = this.translationService.getTranslation('title', section);
     this.subtitle = this.translationService.getTranslation('subtitle', section);
-    this.inputSearch = this.translationService.getTranslation('inputSearch', section);
+
     this.filterOne = this.translationService.getTranslation('filterOne', section);
     this.filterTwo = this.translationService.getTranslation('filterTwo', section);
     this.filterThree = this.translationService.getTranslation('filterThree', section);
 
     const section2 = 'Register_Page';
     this.btnLast = this.translationService.getTranslation('btnRegister', section2);
+
+    const section3 = 'Global_Components'
+    this.inputSearch = this.translationService.getTranslation('inputSearch', section3);
   }
 
   selectButton(buttonName: string): void {
