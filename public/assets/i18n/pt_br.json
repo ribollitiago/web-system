@@ -13,6 +13,8 @@
     "btnLoginFgt": "Enviar E-mail de Recuperação"
   },
   "Sidebar": {
+    "tooltipMenuClose": "Fechar Menu",
+    "tooltipMenuOpen": "Abrir Menu",
     "inputSearch": "Pesquisar...",
     "linkHome": "Página Inicial",
     "linkRegister": "Registrar",
@@ -21,6 +23,7 @@
     "linkAnalytics": "Monitoramento"
   },
   "Header_user": {
+    "tooltipNotifications": "Notificações",
     "account": "Minha Conta",
     "signout": "Sair",
     "language": "Idioma: Português",
@@ -36,6 +39,7 @@
     "stepOne": "Informações pessoais",
     "stepTwo": "Permissões",
     "stepThree": "Informações Extras",
+    "tooltipBack": "Voltar",
     "titleName": "Nome",
     "inputName": "Insira o Nome",
     "titleEmail": "E-mail",

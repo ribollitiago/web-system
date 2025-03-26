@@ -27,6 +27,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
   @Output() changeIsLeftSidebarCollapsed = new EventEmitter<boolean>();
   @ViewChild(SearchInputComponent) searchInputComponent!: SearchInputComponent;
 
+  tooltipMenuClose: string = '';
+  tooltipMenuOpen: string = '';
   inputSearchValue: string = '';
   inputPlaceholder: string = '';
   linkHome: string = '';
@@ -160,6 +162,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
   loadTranslations() {
     const section = "Sidebar";
     try {
+      this.tooltipMenuClose = this.translationService.getTranslation('tooltipMenuClose', section);
+      this.tooltipMenuOpen = this.translationService.getTranslation('tooltipMenuOpen', section);
       this.inputPlaceholder = this.translationService.getTranslation('inputSearch', section);
       this.linkHome = this.translationService.getTranslation('linkHome', section);
       this.linkRegister = this.translationService.getTranslation('linkRegister', section);

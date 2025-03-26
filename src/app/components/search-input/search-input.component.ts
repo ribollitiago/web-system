@@ -44,12 +44,12 @@ export class SearchInputComponent {
   }
 
   onInput(event: Event) {
-  const value = (event.target as HTMLInputElement).value;
-  this.value = value;
-  this.onChange(value);
-  this.searchChange.emit(value); // Nova linha
-  console.log('Valor atual:', value);
-}
+    const value = (event.target as HTMLInputElement).value;
+    this.value = value;
+    this.onChange(value);
+    this.searchChange.emit(value); // Nova linha
+    console.log('Valor atual:', value);
+  }
 
   writeValue(value: any): void {
     this.value = value;
@@ -80,5 +80,12 @@ export class SearchInputComponent {
 
   public focusInput() {
     this.searchInput.nativeElement.focus();
+  }
+
+  clearInput() {
+    this.value = '';
+    this.onChange('');
+    this.searchChange.emit('');
+    setTimeout(() => this.searchInput.nativeElement.focus(), 0);
   }
 }

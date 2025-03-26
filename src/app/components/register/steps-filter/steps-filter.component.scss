@@ -51,6 +51,7 @@ input[type="checkbox"] {
     justify-content: center;
     cursor: pointer;
     position: relative;
+    transition: background-color 0.3s ease;
 
     .icon-wrapper {
       display: flex;
@@ -59,7 +60,6 @@ input[type="checkbox"] {
       width: 100%;
       height: 100%;
       padding: 4px;
-
 
       &:hover .critical-tooltip {
         visibility: visible;
@@ -189,7 +189,7 @@ input[type="checkbox"]+label::after {
   width: 18px;
   background: url('../../../../../public/assets/svg/icon/register/step-2/check-off.svg') no-repeat;
   background-size: 18px 18px;
-
+  transition: 0.2s ease;
 }
 
 input[type="checkbox"]:checked+label::after {
@@ -199,4 +199,5 @@ input[type="checkbox"]:checked+label::after {
   width: 18px;
   background: url('../../../../../public/assets/svg/icon/register/step-2/check-on.svg') no-repeat;
   background-size: 18px 18px;
+  transition: 0.2s ease;
 }

@@ -23,6 +23,7 @@ export class DefaultStepComponent {
   stepOne: string = '';
   stepTwo: string = '';
   stepThree: string = '';
+  tooltipBack: string = '';
   step1Image: string = '';
   step2Image: string = '';
   step3Image: string = '';
@@ -46,6 +47,7 @@ export class DefaultStepComponent {
 
   loadTranslations() {
     const section = 'Register_Page';
+    this.tooltipBack = this.translationService.getTranslation('tooltipBack', section);
     this.stepOne = this.translationService.getTranslation('stepOne', section);
     this.stepTwo = this.translationService.getTranslation('stepTwo', section);
     this.stepThree = this.translationService.getTranslation('stepThree', section);

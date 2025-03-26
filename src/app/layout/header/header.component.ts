@@ -16,6 +16,7 @@ export class HeaderComponent implements OnDestroy {
     private translationService: TranslationService) { }
 
   account: string = '';
+  tooltipNotifications: string = '';
   signout: string = '';
   language: string = '';
   apparence: string = '';
@@ -54,6 +55,7 @@ export class HeaderComponent implements OnDestroy {
   loadTranslations() {
     const section = "Header_user";
     try {
+      this.tooltipNotifications = this.translationService.getTranslation('tooltipNotifications', section);
       this.account = this.translationService.getTranslation('account', section);
       this.signout = this.translationService.getTranslation('signout', section);
       this.language = this.translationService.getTranslation('language', section);

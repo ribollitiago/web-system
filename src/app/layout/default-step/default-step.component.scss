@@ -130,16 +130,19 @@
         &.active {
           color: $rg-step-completed !important; // Cor para passo atual
         }
+
         &.inactive {
           color: $rg-step-missing-text !important; // Cor para passos inativos
         }
       }
 
       // Cores dos divisores
-      .divider-1, .divider-2 {
+      .divider-1,
+      .divider-2 {
         &.blue {
           background-color: $rg-step-completed !important;
         }
+
         &.gray {
           background-color: $rg-step-missing-div !important;
         }
@@ -207,18 +210,60 @@
         margin-bottom: 25px;
       }
 
-      img {
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 40px;
-        height: 40px;
-        border-radius: 100%;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
+      .back-wrapper {
+        float: right ;
 
-        &:hover {
-          background-color: darken($text-color, 90%);
+        &:hover .back-tooltip {
+          visibility: visible;
+          opacity: 1;
+        }
+
+        .back-img {
+          position: absolute;
+          top: 0;
+          right: 0;
+          width: 40px;
+          height: 40px;
+          border-radius: 100%;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+
+          &:hover {
+            background-color: darken($text-color, 90%);
+          }
+        }
+
+        .back-tooltip {
+          position: absolute;
+          bottom: calc(100% + 5px);
+          transform: translateX(-50%);
+          background: $rg-bg-hover-extra;
+          color: white;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 12px;
+          white-space: nowrap;
+          z-index: 1000;
+          visibility: hidden;
+          opacity: 0;
+          transition: opacity 0.2s ease-in-out;
+          right: 18px;
+          left: auto;
+          bottom: calc(100% + 8px);
+          transform: translateX(50%);
+
+          &::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: $rg-bg-hover-extra transparent transparent transparent;
+            left: 50%; // Centraliza a setinha
+            margin-left: -5px;
+          }
         }
       }
     }

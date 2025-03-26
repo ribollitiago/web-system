@@ -11,8 +11,8 @@
       (focus)="focus.emit()"
       (blur)="blur.emit()"
     />
-    <div *ngIf="isPassword" class="toggle-icon" (click)="toggleFieldTextType()">
-      <img [src]="fieldTextType ? 'assets/svg/icon/input/eye-off.svg' : 'assets/svg/icon/input/eye-on.svg'" alt="Toggle Password Visibility">
+    <div class="clear-wrapper" [class.hidden]="!value">
+      <img class="clear-icon" src="assets/svg/icon/input/clear.svg" (click)="clearInput()">
     </div>
     <div class="icon" (click)="handleIconClick()">
       <ng-content></ng-content>

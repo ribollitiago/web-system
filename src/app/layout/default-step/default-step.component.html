@@ -3,12 +3,13 @@
     <div class="register-header">
       <h1 class="title">{{title}}</h1>
       <h2 class="subtitle">{{subtitle}}</h2>
-      <img
-      *ngIf="showBackIcon"
-        src="assets/svg/icon/register/back-page.svg"
-        alt
-        (click)="return()"
-      />
+      <div class="back-wrapper"><img class="back-img"
+          *ngIf="showBackIcon"
+          src="assets/svg/icon/register/back-page.svg"
+          alt
+          (click)="return()" />
+        <div class="back-tooltip">{{ tooltipBack }}</div>
+
     </div>
     <div class="steps">
       <div class="step-1">

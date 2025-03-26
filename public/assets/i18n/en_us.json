@@ -13,6 +13,8 @@
     "btnLoginFgt": "Send Recovery Email"
   },
   "Sidebar": {
+    "tooltipMenuClose": "Close Menu",
+    "tooltipMenuOpen": "Open Menu",
     "inputSearch": "Search...",
     "linkHome": "Home",
     "linkRegister": "Register",
@@ -21,6 +23,7 @@
     "linkAnalytics": "Analytics"
   },
   "Header_user": {
+    "tooltipNotifications": "Notifications",
     "account": "My Account",
     "signout": "Sign Out",
     "language": "Language: English",
@@ -36,6 +39,7 @@
     "stepOne": "Personal Information",
     "stepTwo": "Permissions",
     "stepThree": "Extra Information",
+    "tooltipBack": "Back Page",
     "titleName": "Name",
     "inputName": "Enter Name",
     "titleEmail": "Email",
