@@ -36,7 +36,9 @@ export class ListUsersComponent {
   ) {
     this.languageSubscription = this.translationService.language$.subscribe(() => {
       this.loadTranslations();
+
     });
+
   }
 
   ngOnInit() {
@@ -61,6 +63,21 @@ export class ListUsersComponent {
   private loadUsers(): void {
     this.firebaseService.subscribeToUsers((users: any[]) => {
       this.users = users;
+      this.sortUsersById();
+      console.log(this.users);
     });
+  }
+
+  private sortUsersById(): void {
+    this.users = this.users.sort((a, b) => a.id - b.id);
+  }
+
+  getSituationIcon(situation: string): string {
+    const iconMap: { [key: string]: string } = {
+      'actived': 'situation-actived.svg',
+      'disabled': 'situation-disabled.svg',
+      'inactived': 'situation-inactived.svg'
+    };
+    return `assets/svg/icon/users/${iconMap[situation.toLowerCase()] || 'situation-inactived.svg'}`;
   }
 }
