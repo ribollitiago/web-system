@@ -5,13 +5,13 @@
       <h2 class="subtitle">{{subtitle}}</h2>
     </div>
     <div class="filters-wrapper">
-      <app-search-input  [placeholder]="inputSearch" class="input-search">
+      <app-search-input [placeholder]="inputSearch" class="input-search" (searchChange)="handleSearchChange($event)">
         <img src="assets/svg/icon/input/search.svg" alt />
       </app-search-input>
       <button class="filters"><img src="assets/svg/icon/users/filters.svg">{{ btnFilters }}</button>
       <button class="export"><img src="assets/svg/icon/users/export.svg">{{ btnExport }}</button>
     </div>
-    <app-list-users style="width: 100%;"></app-list-users>
+    <app-list-users [searchQuery]="currentSearchQuery" style="width: 100%;"></app-list-users>
   </div>
   <div class="users-container-details">
   </div>

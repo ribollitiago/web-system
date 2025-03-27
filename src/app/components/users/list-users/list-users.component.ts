@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { TranslationService } from '../../../services/translate.service';
 import { CommonModule } from '@angular/common';
@@ -20,6 +20,8 @@ export interface User {
   styleUrl: './list-users.component.scss'
 })
 export class ListUsersComponent {
+  @Input() searchQuery: string = '';
+
   filterId: string = 'Id';
   filterName: string = '';
   filterEmail: string = 'Email';
@@ -32,8 +34,10 @@ export class ListUsersComponent {
   totalPages: number = 1;
 
   users: User[] = [];
+  filteredUsers: User[] = [];
 
   private languageSubscription: Subscription;
+  cdr: any;
 
   constructor(
     private translationService: TranslationService,
@@ -41,14 +45,17 @@ export class ListUsersComponent {
   ) {
     this.languageSubscription = this.translationService.language$.subscribe(() => {
       this.loadTranslations();
-
     });
-
   }
 
   ngOnInit() {
     this.loadTranslations();
     this.loadUsers();
+  }
+
+  ngOnChanges() {
+    this.filterUsers();
+    this.updateTotalPages();
   }
 
   ngOnDestroy() {
@@ -65,21 +72,35 @@ export class ListUsersComponent {
     this.filterMore = this.translationService.getTranslation('filterMore', section2);
   }
 
-  // private loadUsers(): void {
-  //   this.firebaseService.subscribeToUsers((users: any[]) => {
-  //     this.users = users;
-  //     this.sortUsersById();
-  //     this.updateTotalPages();
-  //   });
-  // }
+  private filterUsers(): void {
+    if (this.searchQuery) {
+      this.filteredUsers = this.users.filter(user =>
+        user.id.toString().includes(this.searchQuery) ||
+        user.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        user.email.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
+    } else {
+      this.filteredUsers = [...this.users];
+    }
+  }
+
+  private loadUsers(): void {
+    this.firebaseService.subscribeToUsers((users: any[]) => {
+      this.users = users;
+      this.sortUsersById();
+      this.filterUsers();
+      this.updateTotalPages();
+    });
+  }
 
   //*****************************************************************************************************************
   //*********************AO USAR PARA TESTAR JUNTO COM AS ULTIMAS FUNÇÕES, DESATIVAR O OUTRO LOAD USERS**************
-  private loadUsers(): void {
-    this.users = this.generateMockUsers();
-    this.sortUsersById();
-    this.updateTotalPages();
-  }
+  // private loadUsers(): void {
+  //   this.users = this.generateMockUsers();
+  //   this.sortUsersById();
+  //   this.filterUsers();
+  //   this.updateTotalPages();
+  // }
   //*****************************************************************************************************************
 
   private sortUsersById(): void {
@@ -98,11 +119,11 @@ export class ListUsersComponent {
   get visibleUsers(): User[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     const end = start + this.itemsPerPage;
-    return this.users.slice(start, end);
+    return this.filteredUsers.slice(start, end);
   }
 
   private updateTotalPages(): void {
-    this.totalPages = Math.ceil(this.users.length / this.itemsPerPage) || 1;
+    this.totalPages = Math.ceil(this.filteredUsers.length / this.itemsPerPage) || 1;
   }
 
   previousPage(): void {
@@ -134,7 +155,7 @@ export class ListUsersComponent {
     const pages: (number | string)[] = [];
 
     if (total <= 5) {
-      return Array.from({length: total}, (_, i) => i + 1);
+      return Array.from({ length: total }, (_, i) => i + 1);
     }
 
     pages.push(1);
@@ -175,29 +196,55 @@ export class ListUsersComponent {
     }
   }
 
-  //*****************************************************************************************************************
   //******************************************* APENAS PARA TESTE ***************************************************
-  private generateMockUsers(): User[] {
-    const mockUsers: User[] = [];
-    const situations = ['actived', 'disabled', 'inactived'];
+  //******************************************* FIREBASE ************************************************************
+  // private createUser() {
+  //   const nextUID = this.filteredUsers.length + 1;
 
-    for (let i = 1; i <= 100; i++) {
-      mockUsers.push({
-        id: i,
-        name: `User ${i}`,
-        email: `user${i}@example.com`,
-        date: this.generateRandomDate(),
-        situation: situations[Math.floor(Math.random() * situations.length)]
-      });
-    }
-    return mockUsers;
-  }
+  //   const name = `User ${nextUID}`;
+  //   const email = `user${nextUID}@gmail.com`; 
 
-  private generateRandomDate(): string {
-    const start = new Date(2020, 0, 1);
-    const end = new Date();
-    const randomDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-    return randomDate.toISOString().split('T')[0]; // Formato YYYY-MM-DD
-  }
+  //   const situations = ['actived', 'disabled', 'inactived'];
+  //   const situation = situations[Math.floor(Math.random() * situations.length)];
+
+  //   const randomMonth = Math.floor(Math.random() * 3) + 1;
+  //   const randomDay = Math.floor(Math.random() * 28) + 1;
+  //   const date = `${randomMonth.toString().padStart(2, '0')}/${randomDay.toString().padStart(2, '0')}/2025`;
+
+  //   const data = {
+  //     uid: nextUID,
+  //     id: nextUID.toString().padStart(5, '0'),
+  //     name: name,
+  //     email: email,
+  //     date: date,
+  //     situation: situation
+  //   };
+
+  //   console.log(`Usuário ${nextUID}:`, data);
+  //   this.firebaseService.addUser(data, `${nextUID}`);
+  // }
+  //******************************************* LOCAL ************************************************************
+  // private generateMockUsers(): User[] {
+  //   const mockUsers: User[] = [];
+  //   const situations = ['actived', 'disabled', 'inactived'];
+
+  //   for (let i = 1; i <= 100; i++) {
+  //     mockUsers.push({
+  //       id: i,
+  //       name: `User ${i}`,
+  //       email: `user${i}@example.com`,
+  //       date: this.generateRandomDate(),
+  //       situation: situations[Math.floor(Math.random() * situations.length)]
+  //     });
+  //   }
+  //   return mockUsers;
+  // }
+
+  // private generateRandomDate(): string {
+  //   const start = new Date(2020, 0, 1);
+  //   const end = new Date();
+  //   const randomDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+  //   return randomDate.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+  // }
   //*****************************************************************************************************************
 }

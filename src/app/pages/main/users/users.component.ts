@@ -11,6 +11,8 @@ import { ListUsersComponent } from "../../../components/users/list-users/list-us
   styleUrl: './users.component.scss'
 })
 export class UsersComponent implements OnDestroy{
+  currentSearchQuery: string = '';
+
   title: string = '';
   subtitle: string = '';
   inputSearch: string = '';
@@ -43,5 +45,9 @@ export class UsersComponent implements OnDestroy{
     this.btnFilters = this.translationService.getTranslation('btnFilters', section2);
     this.btnExport = this.translationService.getTranslation('btnExport', section2);
 
+  }
+  
+  handleSearchChange(query: string): void {
+    this.currentSearchQuery = query;
   }
 }
