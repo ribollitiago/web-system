@@ -72,6 +72,22 @@ export class ListUsersComponent {
     this.filterMore = this.translationService.getTranslation('filterMore', section2);
   }
 
+  translateField(fieldName: string, fieldValue: any ): string {
+    const fieldMap: { [key: string]: { [key: string]: string } } = {
+      situation: {
+        '1': 'actived',
+        '0': 'inactived',
+        '-1': 'disabled'
+      },
+      status: {
+        '1': 'enabled',
+        '0': 'disabled'
+      },
+    };
+
+    return this.translationService.getTranslation(fieldMap[fieldName][fieldValue], 'Users_Page');
+  }
+
   private filterUsers(): void {
     if (this.searchQuery) {
       this.filteredUsers = this.users.filter(user =>
@@ -104,16 +120,16 @@ export class ListUsersComponent {
   //*****************************************************************************************************************
 
   private sortUsersById(): void {
-    this.users = this.users.sort((a, b) => a.id - b.id);
+    this.users = this.users.sort((a, b) => b.id - a.id);
   }
 
   getSituationIcon(situation: string): string {
     const iconMap: { [key: string]: string } = {
-      'actived': 'situation-actived.svg',
-      'disabled': 'situation-disabled.svg',
-      'inactived': 'situation-inactived.svg'
+      '1': 'situation-actived.svg',
+      '-1': 'situation-disabled.svg',
+      '0': 'situation-inactived.svg'
     };
-    return `assets/svg/icon/users/${iconMap[situation.toLowerCase()] || 'situation-inactived.svg'}`;
+    return `assets/svg/icon/users/${iconMap[situation] || 'situation-inactived.svg'}`;
   }
 
   get visibleUsers(): User[] {

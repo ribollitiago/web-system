@@ -234,6 +234,9 @@
     "filterName": "Nome",
     "filterDate": "Data",
     "filterSituation": "Situação",
-    "filterMore": "Mais"
+    "filterMore": "Mais",
+    "inactived": "Inativo",
+    "actived": "Ativo",
+    "disabled": "Desativado"
   }
 }

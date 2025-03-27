@@ -234,6 +234,9 @@
     "filterName": "Name",
     "filterDate": "Date",
     "filterSituation": "Situation",
-    "filterMore": "More"
+    "filterMore": "More",
+    "inactived": "Inactived",
+    "actived": "Actived",
+    "disabled": "Disabled"
   }
 }
