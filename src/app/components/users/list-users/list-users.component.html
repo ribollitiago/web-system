@@ -1,26 +1,84 @@
 <div class="list-wrapper">
+  <!-- Cabeçalho com filtros -->
   <div class="filters-list">
-    <div class="checkbox"><img src="assets/svg/icon/register/step-2/check-off.svg"></div>
-    <div class="filter-item id">{{filterId}}<img src="assets/svg/icon/users/arrow-filter.svg"></div>
-    <div class="filter-item name">{{filterName}}<img src="assets/svg/icon/users/arrow-filter.svg"></div>
-    <div class="filter-item email">{{filterEmail}}<img src="assets/svg/icon/users/arrow-filter.svg"></div>
-    <div class="filter-item date">{{filterDate}}<img src="assets/svg/icon/users/arrow-filter.svg"></div>
-    <div class="filter-item situation">{{filterSituation}}<img src="assets/svg/icon/users/arrow-filter.svg"></div>
-    <div class="filter-item more">{{filterMore}}</div>
+    <div class="checkbox">
+      <img src="assets/svg/icon/register/step-2/check-off.svg">
+    </div>
+    <div class="filter-item id">
+      {{filterId}}
+      <img src="assets/svg/icon/users/arrow-filter.svg">
+    </div>
+    <div class="filter-item name">
+      {{filterName}}
+      <img src="assets/svg/icon/users/arrow-filter.svg">
+    </div>
+    <div class="filter-item email">
+      {{filterEmail}}
+      <img src="assets/svg/icon/users/arrow-filter.svg">
+    </div>
+    <div class="filter-item date">
+      {{filterDate}}
+      <img src="assets/svg/icon/users/arrow-filter.svg">
+    </div>
+    <div class="filter-item situation">
+      {{filterSituation}}
+      <img src="assets/svg/icon/users/arrow-filter.svg">
+    </div>
+    <div class="filter-item more">
+      {{filterMore}}
+    </div>
   </div>
 
-  <div class="list-container" *ngFor="let user of users">
-    <div class="checkbox"><img src="assets/svg/icon/register/step-2/check-off.svg"></div>
-    <div class="list-item id">{{user.id}}</div>
-    <div class="list-item name">{{user.name}}</div>
-    <div class="list-item email">{{user.email}}</div>
-    <div class="list-item date">{{user.date}}</div>
-    <div class="list-item situation">
-      <div>
-        <img [src]="getSituationIcon(user.situation)">
-        <span>{{user.situation}}</span>
+  <!-- Área rolável com lista de usuários -->
+  <div class="list-scroll-container" [style.max-height]="maxListHeight">
+    <div class="list-container" *ngFor="let user of visibleUsers">
+      <div class="checkbox">
+        <img src="assets/svg/icon/register/step-2/check-off.svg">
+      </div>
+      <div class="list-item id">{{user.id}}</div>
+      <div class="list-item name">{{user.name}}</div>
+      <div class="list-item email">{{user.email}}</div>
+      <div class="list-item date">{{user.date}}</div>
+      <div class="list-item situation">
+        <div>
+          <img [src]="getSituationIcon(user.situation)">
+          <span>{{user.situation}}</span>
+        </div>
+      </div>
+      <div class="list-item more">
+        <img src="assets/svg/icon/register/step-2/extra_info.svg">
       </div>
     </div>
-    <div class="list-item more"><img src="assets/svg/icon/register/step-2/extra_info.svg"></div>
+  </div>
+
+  <div class="pagination-controls">
+
+    <select class="page-select" [(ngModel)]="itemsPerPage" (change)="onItemsPerPageChange()">
+      <option value="10">10</option>
+      <option value="25">25</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+      <option value="200">200</option>
+    </select>
+
+    <button class="pagination-button" (click)="previousPage()" [disabled]="currentPage === 1">
+      <img src="assets/svg/icon/users/arrow-list.svg" alt="Previous page" class="arrow-icon rotate-180">
+    </button>
+
+    <div class="page-numbers">
+      <ng-container *ngFor="let page of displayedPages">
+        <span *ngIf="page === '...'" class="ellipsis">...</span>
+        <button *ngIf="page !== '...'" class="page-button" [class.active]="page === currentPage"
+          (click)="goToPage(page)">
+          {{page}}
+        </button>
+      </ng-container>
+    </div>
+
+    <button class="pagination-button" (click)="nextPage()" [disabled]="currentPage === totalPages">
+      <img src="assets/svg/icon/users/arrow-list.svg" alt="Next page" class="arrow-icon">
+    </button>
+
+
   </div>
 </div>

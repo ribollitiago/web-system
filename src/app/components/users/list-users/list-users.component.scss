@@ -1,6 +1,11 @@
 @import "../../../../styles/variables.scss";
 
 .list-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 372px);
+  position: relative;
+
   .filters-list {
     display: flex;
     width: 100%;
@@ -42,12 +47,25 @@
       cursor: pointer;
     }
 
-    .id       { flex: 0 0 55px;}
-    .name     { flex: 3 1 20%; }
-    .email    { flex: 3 1 25%; }
-    .date     { flex: 1 1 13%; }
-    .situation{ flex: 1 1 11%; font-size: 12px; }
-    .more     { flex: 0 0 30px; }
+    .id {
+      flex: 0 0 55px;
+    }
+    .name {
+      flex: 3 1 20%;
+    }
+    .email {
+      flex: 3 1 25%;
+    }
+    .date {
+      flex: 1 1 13%;
+    }
+    .situation {
+      flex: 1 1 11%;
+      font-size: 12px;
+    }
+    .more {
+      flex: 0 0 40px;
+    }
   }
 
   .list-container {
@@ -55,7 +73,7 @@
     width: 100%;
     align-items: center;
     gap: 10px;
-    padding: 12px 15px;
+    padding: 10px 15px;
     border-bottom: 1px solid $us-bg-filters;
 
     .list-item {
@@ -74,11 +92,19 @@
       cursor: pointer;
     }
 
-    .id       { flex: 0 0 55px; }
-    .name     { flex: 3 1 20%; }
-    .email    { flex: 3 1 25%; }
-    .date     { flex: 1 1 13%; }
-    .situation{
+    .id {
+      flex: 0 0 55px;
+    }
+    .name {
+      flex: 3 1 20%;
+    }
+    .email {
+      flex: 3 1 25%;
+    }
+    .date {
+      flex: 1 1 13%;
+    }
+    .situation {
       flex: 1 1 11%;
       font-size: 11px;
       font-weight: 200;
@@ -121,8 +147,113 @@
 
       &:hover {
         background-color: $rg-bg-hover-extra; // Ou outra cor do tema
+      }
+    }
+  }
 
+  .list-scroll-container {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    max-height: calc(100vh - 200px);
 
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: $us-bg-filters;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $us-page-btn;
+      border-radius: 4px;
+    }
+  }
+  .pagination-controls {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end; // Alinha os elementos filhos à direita
+    gap: 15px;
+    width: 100%;
+
+    .pagination-button {
+      background: none;
+      border: none;
+      border-radius: 50%;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover:not(:disabled) {
+        background-color: $rg-bg-hover-extra;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+
+    .page-info {
+      font-size: 14px;
+      color: $rg-text;
+    }
+
+    .page-select {
+      padding: 5px 25px 5px 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      appearance: none;
+      background: $rg-bg-hover-extra;
+      background-size: 12px;
+      cursor: pointer;
+      width: 80px;
+      color: $text-color;
+
+      &:focus {
+        outline: none;
+        border-color: $btn-color;
+        background-color: $rg-bg-hover-extra;
+      }
+    }
+
+    .arrow-icon.rotate-180 {
+      transform: rotate(180deg);
+    }
+
+    .page-numbers {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      margin: 0 10px;
+
+      .ellipsis {
+        color: $us-page-btn;
+        padding: 0 5px;
+      }
+
+      .page-button {
+        background: none;
+        border: none;
+        color: $us-page-btn;
+        padding: 8px 10px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        min-width: 32px;
+
+        &:hover:not(.active) {
+          background-color: $rg-bg-hover-extra;
+        }
+
+        &.active {
+          border-color: $us-border-button;
+          background-color: $btn-color;
+          color: $us-bg-filters;
+
+          cursor: default;
+          font-weight: bold;
+        }
       }
     }
   }
