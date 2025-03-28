@@ -30,7 +30,7 @@
   </div>
 
   <!-- Área rolável com lista de usuários -->
-  <div class="list-scroll-container" [style.max-height]="maxListHeight">
+  <div class="list-scroll-container">
     <div class="list-container" *ngFor="let user of visibleUsers">
       <div class="checkbox">
         <img src="assets/svg/icon/register/step-2/check-off.svg">
@@ -49,36 +49,5 @@
         <img src="assets/svg/icon/register/step-2/extra_info.svg">
       </div>
     </div>
-  </div>
-
-  <div class="pagination-controls">
-
-    <select class="page-select" [(ngModel)]="itemsPerPage" (change)="onItemsPerPageChange()">
-      <option value="10">10</option>
-      <option value="25">25</option>
-      <option value="50">50</option>
-      <option value="100">100</option>
-      <option value="200">200</option>
-    </select>
-
-    <button class="pagination-button" (click)="previousPage()" [disabled]="currentPage === 1">
-      <img src="assets/svg/icon/users/arrow-list.svg" alt="Previous page" class="arrow-icon rotate-180">
-    </button>
-
-    <div class="page-numbers">
-      <ng-container *ngFor="let page of displayedPages">
-        <span *ngIf="page === '...'" class="ellipsis">...</span>
-        <button *ngIf="page !== '...'" class="page-button" [class.active]="page === currentPage"
-          (click)="goToPage(page)">
-          {{page}}
-        </button>
-      </ng-container>
-    </div>
-
-    <button class="pagination-button" (click)="nextPage()" [disabled]="currentPage === totalPages">
-      <img src="assets/svg/icon/users/arrow-list.svg" alt="Next page" class="arrow-icon">
-    </button>
-
-
   </div>
 </div>

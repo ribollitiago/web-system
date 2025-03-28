@@ -11,7 +11,35 @@
       <button class="filters"><img src="assets/svg/icon/users/filters.svg">{{ btnFilters }}</button>
       <button class="export"><img src="assets/svg/icon/users/export.svg">{{ btnExport }}</button>
     </div>
-    <app-list-users [searchQuery]="currentSearchQuery" style="width: 100%;"></app-list-users>
+    <app-list-users [searchQuery]="currentSearchQuery" [currentPage]="currentPage" [itemsPerPage]="itemsPerPage"
+      (filteredUsersCount)="handleFilteredUsersCount($event)"></app-list-users>
+    <div class="pagination-controls">
+      <select class="page-select" [(ngModel)]="itemsPerPage" (change)="onItemsPerPageChange()">
+        <option value="10">10</option>
+        <option value="25">25</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+        <option value="200">200</option>
+      </select>
+
+      <button class="pagination-button" (click)="previousPage()" [disabled]="currentPage === 1">
+        <img src="assets/svg/icon/users/arrow-list.svg" alt="Previous page" class="arrow-icon rotate-180">
+      </button>
+
+      <div class="page-numbers">
+        <ng-container *ngFor="let page of displayedPages">
+          <span *ngIf="page === '...'" class="ellipsis">...</span>
+          <button *ngIf="page !== '...'" class="page-button" [class.active]="page === currentPage"
+            (click)="goToPage(page)">
+            {{page}}
+          </button>
+        </ng-container>
+      </div>
+
+      <button class="pagination-button" (click)="nextPage()" [disabled]="currentPage === totalPages">
+        <img src="assets/svg/icon/users/arrow-list.svg" alt="Next page" class="arrow-icon">
+      </button>
+    </div>
   </div>
   <div class="users-container-details">
   </div>

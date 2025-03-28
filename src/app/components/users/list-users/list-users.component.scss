@@ -3,8 +3,10 @@
 .list-wrapper {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 372px);
-  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  --row-height: 45px; // Altura de cada linha
+  --visible-rows: 10;
 
   .filters-list {
     display: flex;
@@ -14,6 +16,7 @@
     padding: 0px 15px;
     border-radius: 8px;
     background-color: $us-bg-filters;
+    flex-shrink: 0;
 
     .filter-item {
       display: flex;
@@ -75,6 +78,8 @@
     gap: 10px;
     padding: 10px 15px;
     border-bottom: 1px solid $us-bg-filters;
+    height: auto; // Remove altura fixa
+    min-height: 45px;
 
     .list-item {
       color: $rg-text;
@@ -152,9 +157,41 @@
   }
 
   .list-scroll-container {
-    flex: 1 1 auto;
+    flex: 1;
+    min-height: 0;
     overflow-y: auto;
-    max-height: calc(100vh - 200px);
+    max-height: calc(var(--visible-rows) * var(--row-height));
+
+    min-height: 300px;
+
+
+    @media (min-height: 690px) { --visible-rows: 6; }
+    @media (min-height: 735px) { --visible-rows: 7; }
+    @media (min-height: 780px) { --visible-rows: 8; }
+    @media (min-height: 825px) { --visible-rows: 9; }
+    @media (min-height: 870px) { --visible-rows: 11; }
+    @media (min-height: 960px) { --visible-rows: 12; }
+    @media (min-height: 1005px) { --visible-rows: 13; }
+    @media (min-height: 1050px) { --visible-rows: 15; }
+    @media (min-height: 1095px) { --visible-rows: 16; }
+    @media (min-height: 1140px) { --visible-rows: 17; }
+    @media (min-height: 1185px) { --visible-rows: 18; }
+    @media (min-height: 1230px) { --visible-rows: 19; }
+    @media (min-height: 1320px) { --visible-rows: 20; }
+    @media (min-height: 1410px) { --visible-rows: 22; }
+
+    // Principais resoluções acima de 1440px
+    @media (min-height: 1440px) { --visible-rows: 24; } // QHD
+    @media (min-height: 1600px) { --visible-rows: 26; }
+    @media (min-height: 1800px) { --visible-rows: 28; }
+    @media (min-height: 2000px) { --visible-rows: 30; } // 4K
+
+    // Regra geral para telas muito grandes
+    @media (min-height: 2001px) {
+      --visible-rows: 30;
+      max-height: 80vh !important; // Limite máximo para manter usabilidade
+    }
+
 
     &::-webkit-scrollbar {
       width: 8px;
@@ -167,94 +204,6 @@
     &::-webkit-scrollbar-thumb {
       background: $us-page-btn;
       border-radius: 4px;
-    }
-  }
-  .pagination-controls {
-    margin-top: 20px;
-    display: flex;
-    justify-content: flex-end; // Alinha os elementos filhos à direita
-    gap: 15px;
-    width: 100%;
-
-    .pagination-button {
-      background: none;
-      border: none;
-      border-radius: 50%;
-      padding: 8px 12px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-
-      &:hover:not(:disabled) {
-        background-color: $rg-bg-hover-extra;
-      }
-
-      &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-    }
-
-    .page-info {
-      font-size: 14px;
-      color: $rg-text;
-    }
-
-    .page-select {
-      padding: 5px 25px 5px 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      appearance: none;
-      background: $rg-bg-hover-extra;
-      background-size: 12px;
-      cursor: pointer;
-      width: 80px;
-      color: $text-color;
-
-      &:focus {
-        outline: none;
-        border-color: $btn-color;
-        background-color: $rg-bg-hover-extra;
-      }
-    }
-
-    .arrow-icon.rotate-180 {
-      transform: rotate(180deg);
-    }
-
-    .page-numbers {
-      display: flex;
-      gap: 4px;
-      align-items: center;
-      margin: 0 10px;
-
-      .ellipsis {
-        color: $us-page-btn;
-        padding: 0 5px;
-      }
-
-      .page-button {
-        background: none;
-        border: none;
-        color: $us-page-btn;
-        padding: 8px 10px;
-        border-radius: 50%;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        min-width: 32px;
-
-        &:hover:not(.active) {
-          background-color: $rg-bg-hover-extra;
-        }
-
-        &.active {
-          border-color: $us-border-button;
-          background-color: $btn-color;
-          color: $us-bg-filters;
-
-          cursor: default;
-          font-weight: bold;
-        }
-      }
     }
   }
 }

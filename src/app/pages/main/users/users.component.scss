@@ -1,29 +1,31 @@
 @import "../../../../styles/variables.scss";
 
 .users-wrapper {
-  padding: 35px;
-
+  padding: 25px;
   display: flex;
-  justify-content: space-between;
-  align-items: stretch;
-  min-height: 90vh;
+  min-height: calc(100vh - 70px); // Adicionar
+  overflow-y: auto; // Ajuste para altura total
+  gap: 25px;
 
   .users-container-list {
-    width: 75%;
-    height: 100%;
-    margin-right: 35px;
-    border-radius: 12px;
-    padding: 40px 30px 30px 30px;
-
+    flex: 1 1 auto; // Permite crescimento e redução
+    min-height: min-content;
+    min-width: 0; // Permite que o conteúdo encolha
+    height: auto;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-
-    align-self: stretch;
-    height: auto;
+    background: $rg-bg;
+    border-radius: 12px;
+    padding: 40px 30px 30px 30px;
+    overflow: visible;
+    position: relative;
 
     background: $rg-bg;
+
+    flex-direction: column;
+    > * {
+      flex-shrink: 0; // Evita compressão excessiva
+    }
 
     .users-header {
       width: 100%;
@@ -65,7 +67,7 @@
         display: flex;
         align-items: center;
         justify-content: flex-start;
-        padding:  0px 14px 0px 12px;
+        padding: 0px 14px 0px 12px;
 
         img {
           width: 18px;
@@ -79,9 +81,9 @@
         border: 1px solid $us-border-button;
         color: $text-color;
 
-        transition: 0.2s ease ;
+        transition: 0.2s ease;
 
-        &:hover{
+        &:hover {
           background-color: darken($text-color, 80%);
         }
       }
@@ -90,9 +92,9 @@
         background-color: $btn-color;
         border: none;
 
-        transition: 0.2s ease ;
+        transition: 0.2s ease;
 
-        &:hover{
+        &:hover {
           background-color: darken($btn-color, 10%);
         }
       }
@@ -113,5 +115,106 @@
     height: auto;
 
     background: $rg-bg;
+  }
+
+  .pagination-controls {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    justify-content: flex-end; // Alinha tudo à direita
+    width: 100%;
+    margin-top: 20px;
+
+    position: absolute; // Altera para posicionamento absoluto
+    bottom: 30px; // Distância da base do container
+    right: 30px; // Alinhamento à direita
+    z-index: 2;
+
+    .pagination-button {
+      background: none;
+      border: none;
+      border-radius: 50%;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      order: 2;
+
+      &:hover:not(:disabled) {
+        background-color: $rg-bg-hover-extra;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+
+    .page-info {
+      font-size: 14px;
+      color: $rg-text;
+    }
+
+    .page-select {
+      padding: 5px 10px 5px 10px;
+      border: 1px solid $us-border-button;
+      border-radius: 8px;
+      appearance: none;
+      background: transparent;
+      background-size: 12px;
+      cursor: pointer;
+      width: auto;
+      color: $text-color;
+      order: 1;
+
+      &:focus {
+        outline: none;
+        border-color: $btn-color;
+        background-color: $rg-bg-hover-extra;
+      }
+    }
+
+    .arrow-icon.rotate-180 {
+      transform: rotate(180deg);
+    }
+
+    .page-numbers {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      margin: 0 10px;
+      order: 3;
+
+      .ellipsis {
+        color: $us-page-btn;
+        padding: 0 5px;
+      }
+
+      .page-button {
+        background: none;
+        border: none;
+        color: $us-page-btn;
+        padding: 8px 10px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        min-width: 32px;
+
+        &:hover:not(.active) {
+          background-color: $rg-bg-hover-extra;
+        }
+
+        &.active {
+          border-color: $us-border-button;
+          background-color: $btn-color;
+          color: $us-bg-filters;
+
+          cursor: default;
+          font-weight: bold;
+        }
+      }
+    }
+    .pagination-button:last-child {
+      order: 4; // Botão próximo
+    }
   }
 }
