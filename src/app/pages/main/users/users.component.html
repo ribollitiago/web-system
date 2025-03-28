@@ -10,9 +10,12 @@
       </app-search-input>
       <button class="filters"><img src="assets/svg/icon/users/filters.svg">{{ btnFilters }}</button>
       <button class="export"><img src="assets/svg/icon/users/export.svg">{{ btnExport }}</button>
+      <div class="selected-count" *ngIf="currentSelectedCount > 0">
+        {{ currentSelectedCount }} usuário(s) selecionado(s)
+      </div>
     </div>
     <app-list-users [searchQuery]="currentSearchQuery" [currentPage]="currentPage" [itemsPerPage]="itemsPerPage"
-      (filteredUsersCount)="handleFilteredUsersCount($event)"></app-list-users>
+      (filteredUsersCount)="handleFilteredUsersCount($event)" (selectedCount)="handleSelectedCount($event)"></app-list-users>
     <div class="pagination-controls">
       <select class="page-select" [(ngModel)]="itemsPerPage" (change)="onItemsPerPageChange()">
         <option value="10">10</option>

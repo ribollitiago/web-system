@@ -25,6 +25,7 @@ export class UsersComponent implements OnDestroy{
   itemsPerPage: number = 10;
   totalPages: number = 1;
   filteredUsersCount: number = 0;
+  currentSelectedCount: number = 0;
 
   private languageSubscription: Subscription;
 
@@ -132,5 +133,9 @@ export class UsersComponent implements OnDestroy{
   handleFilteredUsersCount(count: number): void {
     this.filteredUsersCount = count;
     this.updateTotalPages();
+  }
+
+  handleSelectedCount(count: number) {
+    this.currentSelectedCount = count;
   }
 }

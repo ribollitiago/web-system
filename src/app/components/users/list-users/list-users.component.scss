@@ -5,7 +5,7 @@
   flex-direction: column;
   flex: 1 1 auto;
   min-height: 0;
-  --row-height: 45px; // Altura de cada linha
+  --row-height: 45px;
   --visible-rows: 10;
 
   .filters-list {
@@ -46,28 +46,28 @@
     .checkbox {
       width: 18px;
       height: 18px;
-      flex: 0 0 40px;
+      flex: 0 0 30px;
       cursor: pointer;
     }
 
     .id {
-      flex: 0 0 55px;
+      flex: 0 0 54px;
     }
     .name {
-      flex: 3 1 20%;
+      flex: 3 1 15%;
     }
     .email {
-      flex: 3 1 25%;
+      flex: 3 1 20%;
     }
     .date {
       flex: 1 1 13%;
     }
     .situation {
-      flex: 1 1 11%;
+      flex: 1 1 10%;
       font-size: 12px;
     }
     .more {
-      flex: 0 0 40px;
+      flex: 0 0 30px;
     }
   }
 
@@ -76,10 +76,36 @@
     width: 100%;
     align-items: center;
     gap: 10px;
-    padding: 10px 15px;
     border-bottom: 1px solid $us-bg-filters;
-    height: auto; // Remove altura fixa
+    height: auto;
     min-height: 45px;
+    transition: background-color 0.1s ease;
+    cursor: default;
+    padding: 0 15px 0 4px;
+
+    &:hover,
+    &.selected {
+      background-color: $rg-bg-hover-extra;
+      cursor: pointer;
+
+      .more {
+        background-color: $rg-bg-hover-extra;
+        &:hover {
+          background-color: darken($rg-bg-hover-extra, 5%);
+        }
+      }
+    }
+
+    &.selected {
+      background-color: darken($rg-bg-hover-extra, 5%);
+      .more {
+        background-color: darken($rg-bg-hover-extra, 5%);
+        &:hover {
+          background-color: darken($rg-bg-hover-extra, 10%);
+        }
+      }
+
+    }
 
     .list-item {
       color: $rg-text;
@@ -91,26 +117,49 @@
     }
 
     .checkbox {
-      width: 18px;
-      height: 18px;
-      flex: 0 0 40px;
-      cursor: pointer;
+      position: relative;
+      flex: 0 0 40px; // Mantém o espaço alocado original
+      width: 40px; // Tamanho visual mantido
+      height: 40px; // Tamanho visual mantido
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      // Área de clique aumentada
+      &::after {
+        content: '';
+        position: absolute;
+        width: 45px; // Área de clique maior
+        height: 45px; // Área de clique maior
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%); // Centraliza a área de clique
+        cursor: pointer;
+      }
+
+      img {
+        width: 18px;
+        height: 18px;
+        position: relative;
+        z-index: 1;
+        pointer-events: none;
+      }
     }
 
     .id {
-      flex: 0 0 55px;
+      flex: 0 0 54px;
     }
     .name {
-      flex: 3 1 20%;
+      flex: 3 1 15%;
     }
     .email {
-      flex: 3 1 25%;
+      flex: 3 1 20%;
     }
     .date {
       flex: 1 1 13%;
     }
     .situation {
-      flex: 1 1 11%;
+      flex: 1 1 10%;
       font-size: 11px;
       font-weight: 200;
       display: flex;
@@ -133,7 +182,7 @@
     }
 
     .more {
-      flex: 0 0 24px; // Alterado de 16px para 24px
+      flex: 0 0 20px;
       margin-left: 14px;
       display: flex;
       align-items: center;
@@ -141,17 +190,17 @@
       width: 24px;
       height: 24px;
       border-radius: 4px;
-      transition: background-color 0.2s ease;
+      transition: background-color 0.1s ease;
       cursor: pointer;
 
       img {
         width: 16px;
         height: 16px;
-        transition: filter 0.2s ease;
+        transition: filter 0.1s ease;
       }
 
       &:hover {
-        background-color: $rg-bg-hover-extra; // Ou outra cor do tema
+        background-color: $rg-bg-hover-extra;
       }
     }
   }
@@ -164,34 +213,64 @@
 
     min-height: 300px;
 
-
-    @media (min-height: 690px) { --visible-rows: 6; }
-    @media (min-height: 735px) { --visible-rows: 7; }
-    @media (min-height: 780px) { --visible-rows: 8; }
-    @media (min-height: 825px) { --visible-rows: 9; }
-    @media (min-height: 870px) { --visible-rows: 11; }
-    @media (min-height: 960px) { --visible-rows: 12; }
-    @media (min-height: 1005px) { --visible-rows: 13; }
-    @media (min-height: 1050px) { --visible-rows: 15; }
-    @media (min-height: 1095px) { --visible-rows: 16; }
-    @media (min-height: 1140px) { --visible-rows: 17; }
-    @media (min-height: 1185px) { --visible-rows: 18; }
-    @media (min-height: 1230px) { --visible-rows: 19; }
-    @media (min-height: 1320px) { --visible-rows: 20; }
-    @media (min-height: 1410px) { --visible-rows: 22; }
-
-    // Principais resoluções acima de 1440px
-    @media (min-height: 1440px) { --visible-rows: 24; } // QHD
-    @media (min-height: 1600px) { --visible-rows: 26; }
-    @media (min-height: 1800px) { --visible-rows: 28; }
-    @media (min-height: 2000px) { --visible-rows: 30; } // 4K
-
-    // Regra geral para telas muito grandes
+    @media (min-height: 690px) {
+      --visible-rows: 6;
+    }
+    @media (min-height: 735px) {
+      --visible-rows: 7;
+    }
+    @media (min-height: 780px) {
+      --visible-rows: 8;
+    }
+    @media (min-height: 825px) {
+      --visible-rows: 9;
+    }
+    @media (min-height: 870px) {
+      --visible-rows: 11;
+    }
+    @media (min-height: 960px) {
+      --visible-rows: 12;
+    }
+    @media (min-height: 1005px) {
+      --visible-rows: 13;
+    }
+    @media (min-height: 1050px) {
+      --visible-rows: 15;
+    }
+    @media (min-height: 1095px) {
+      --visible-rows: 16;
+    }
+    @media (min-height: 1140px) {
+      --visible-rows: 17;
+    }
+    @media (min-height: 1185px) {
+      --visible-rows: 18;
+    }
+    @media (min-height: 1230px) {
+      --visible-rows: 19;
+    }
+    @media (min-height: 1320px) {
+      --visible-rows: 20;
+    }
+    @media (min-height: 1410px) {
+      --visible-rows: 22;
+    }
+    @media (min-height: 1440px) {
+      --visible-rows: 24;
+    }
+    @media (min-height: 1600px) {
+      --visible-rows: 26;
+    }
+    @media (min-height: 1800px) {
+      --visible-rows: 28;
+    }
+    @media (min-height: 2000px) {
+      --visible-rows: 30;
+    }
     @media (min-height: 2001px) {
       --visible-rows: 30;
-      max-height: 80vh !important; // Limite máximo para manter usabilidade
+      max-height: 80vh !important;
     }
-
 
     &::-webkit-scrollbar {
       width: 8px;

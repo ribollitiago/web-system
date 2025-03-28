@@ -98,6 +98,12 @@
           background-color: darken($btn-color, 10%);
         }
       }
+
+      .selected-count{
+        color: $rg-subtitle;
+        margin-left: auto;
+        font-size: 14px;
+      }
     }
   }
 

@@ -24,6 +24,7 @@ export class ListUsersComponent {
   @Input() currentPage: number = 1;
   @Input() itemsPerPage: number = 10;
   @Output() filteredUsersCount = new EventEmitter<number>();
+  @Output() selectedCount = new EventEmitter<number>();
 
   filterId: string = 'Id';
   filterName: string = '';
@@ -31,6 +32,9 @@ export class ListUsersComponent {
   filterDate: string = '';
   filterSituation: string = '';
   filterMore: string = '';
+
+  selectedUsers: Set<number> = new Set<number>();
+  lastSingleSelected: number | null = null;
 
   users: User[] = [];
   filteredUsers: User[] = [];
@@ -137,12 +141,37 @@ export class ListUsersComponent {
     this.filteredUsersCount.emit(this.filteredUsers.length);
   }
 
-
-
   get visibleUsers(): User[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     const end = start + this.itemsPerPage;
     return this.filteredUsers.slice(start, end);
+  }
+
+  toggleUserSelection(userId: number, event: MouseEvent): void {
+    event.stopPropagation();
+
+    if (this.selectedUsers.has(userId)) {
+      this.selectedUsers.delete(userId);
+    } else {
+      this.selectedUsers.add(userId);
+    }
+
+    this.lastSingleSelected = null;
+    this.selectedCount.emit(this.selectedUsersCount);
+  }
+
+  selectSingleUser(userId: number): void {
+    this.selectedUsers.clear();
+    this.lastSingleSelected = userId;
+    this.selectedCount.emit(this.selectedUsersCount);
+  }
+
+  isSelected(userId: number): boolean {
+    return this.selectedUsers.has(userId) || this.lastSingleSelected === userId;
+  }
+
+  get selectedUsersCount(): number {
+    return Math.max(this.selectedUsers.size, this.lastSingleSelected ? 1 : 0);
   }
 
   //******************************************* APENAS PARA TESTE ***************************************************
