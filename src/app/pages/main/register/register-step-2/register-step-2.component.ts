@@ -77,8 +77,12 @@ export class RegisterStep2Component implements OnDestroy {
       .filter(([_, checked]) => checked)
       .map(([id]) => id);
 
-    console.log('Todas as permissões selecionadas:', allSelected);
-    this.registerService.setCurrentStep(3);
+    const allPermissions = allSelected.reduce<{ [key: string]: boolean }>((acc, permission) => {
+      acc[permission] = true;
+      return acc;
+    }, {});
+    
+    await this.registerService.setStepData(2, { permissions: allPermissions });
   }
 
   handleSearchChange(query: string): void {

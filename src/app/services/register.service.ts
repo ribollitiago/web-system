@@ -1,15 +1,19 @@
 import { Injectable } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { AngularFireDatabase } from '@angular/fire/compat/database';
+import { getAuth, createUserWithEmailAndPassword, User } from 'firebase/auth';
+import { getDatabase, ref, set, get } from 'firebase/database';
+import firebaseApp from '../firebase.config';
 import { BehaviorSubject } from 'rxjs';
+import { FirebaseService } from './firebase.service'; // Assumindo que você tem o FirebaseService
+
+interface UserData {
+  [key: string]: any;
+}
 
 @Injectable({
   providedIn: 'root'
 })
-
 export class RegisterService {
-  private userData: { [uid: string]: any } = {};
-
+  private userData: Partial<UserData> = {};
   private currentStepSubject = new BehaviorSubject<number>(1);
   currentStep$ = this.currentStepSubject.asObservable();
 
@@ -21,50 +25,97 @@ export class RegisterService {
     this.currentStepSubject.next(step);
   }
 
-  constructor(
-    private afAuth: AngularFireAuth,
-    private db: AngularFireDatabase
-  ) { }
+  getUserData() {
+    return this.userData
+  }
 
-  private async getCurrentUser(): Promise<any> {
+  private auth = getAuth(firebaseApp);
+  private db = getDatabase(firebaseApp);
+  private firebaseService: FirebaseService;
+
+  constructor(firebaseService: FirebaseService) {
+    this.firebaseService = firebaseService;
+  }
+
+  // ------------------------------------------------------
+  // SEÇÃO: ARMAZENAMENTO DE DADOS DE CADA ETAPA
+  // ------------------------------------------------------
+
+  async setStepData(step: number, data: UserData): Promise<void> {
     try {
-      const currentUser = await this.afAuth.currentUser;
-      if (!currentUser) {
-        throw new Error('Nenhum usuário logado');
+      if (step < 1 || step > 4) {
+        throw new Error('Etapa inválida');
       }
-      return currentUser;
+
+      this.userData = { ...this.userData, ...data };
+      console.log(step, data)
+
+      if (step < 4) {
+        this.setCurrentStep(step + 1);
+      }
     } catch (error) {
-      console.error('Erro ao obter usuário atual:', error);
+      console.error('Erro ao armazenar dados na etapa:', error);
       throw error;
     }
   }
-  async setData(userData: any): Promise<void> {
-    const currentUser = await this.getCurrentUser();
-    this.userData[currentUser.uid] = { ...userData };
-  }
-  async getData(): Promise<any> {
-    const currentUser = await this.getCurrentUser();
-    return this.userData[currentUser.uid];
-  }
-  async registerUser(): Promise<any> {
+
+  // ------------------------------------------------------
+  // SEÇÃO: REGISTRO FINAL DO USUÁRIO
+  // ------------------------------------------------------
+
+  async registerUser(): Promise<User> {
+    console.log('Dados antes do registro:', this.userData);
     try {
-      const currentUser = await this.getCurrentUser();
-      const userData = this.userData[currentUser.uid];
-      const { email, password } = userData;
-      const userCredential = await this.afAuth.createUserWithEmailAndPassword(email, password);
+      if (!this.userData['email'] || !this.userData['password'] || !this.userData['cpf']) {
+        throw new Error('Dados de usuário incompletos');
+      }
+
+      const existingUserByCpf = await this.firebaseService.getUsersByField('cpf', this.userData['cpf']);
+      if (existingUserByCpf.length > 0) {
+        throw new Error('Este CPF já está registrado.');
+      }
+
+      const existingUserByEmail = await this.firebaseService.getUsersByField('email', this.userData['email']);
+      if (existingUserByEmail.length > 0) {
+        throw new Error('Este email já está registrado.');
+      }
+
+      this.userData['id'] = await this.getMaxUserId();
+
+      const userCredential = await createUserWithEmailAndPassword(this.auth, this.userData['email'], this.userData['password']);
       const user = userCredential.user;
+
       if (user) {
-        const { password, ...userMap } = userData;
-        userMap.email = user.email;
-        await this.db.database.ref('users/' + user.uid).set(userMap);
-        delete this.userData[currentUser.uid];
+        const { password, ...userMap } = this.userData;
+
+        await set(ref(this.db, 'users/' + user.uid), userMap);
+
+        this.userData = {};
+        this.setCurrentStep(1)
+
         return user;
       } else {
-        throw new Error('Usuário não encontrado após criação.');
+        throw new Error('Erro ao criar o usuário no Firebase.');
       }
     } catch (error) {
-      console.error('Erro ao registrar usuário:', error);
+      console.error('Erro ao registrar o usuário:', error);
       throw error;
+    }
+  }
+
+  private async getMaxUserId(): Promise<string> {
+    try {
+      const allUsers = await this.firebaseService.getAllUsers();
+
+      const allUserIds = allUsers.map(user => user['id']);
+
+      const maxId = Math.max(...allUserIds.map(id => parseInt(id, 10)));
+      const finalId = maxId + 1;
+
+      return finalId.toString().padStart(5, '0');
+    } catch (error) {
+      console.error('Erro ao buscar o maior ID de usuário:', error);
+      return '00000';
     }
   }
 }

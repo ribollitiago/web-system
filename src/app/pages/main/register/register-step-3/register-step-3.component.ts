@@ -51,11 +51,12 @@ export class RegisterStep3Component implements OnInit{
   }
 
   saveText() {
-    this.textSave = this.textTyped; // Salva o texto na variável
+    this.textSave = this.textTyped;
   }
 
   async submit() {
-    this.registerService.setCurrentStep(4);
+    await this.registerService.setStepData(3, { text: 'blablabla' });
+    //await this.registerService.registerUser();
   }
 
   async return() {

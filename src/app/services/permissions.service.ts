@@ -29,6 +29,10 @@ export class PermissionsService {
 
   constructor(private translationService: TranslationService) {}
 
+  // ------------------------------------------------------
+  // SEÇÃO: CARREGAMENTO DE PERMISSÕES
+  // ------------------------------------------------------
+
   async getPermissions(): Promise<Permissions> {
     try {
       const permissionsData = await this.loadPermissionsData();
@@ -50,6 +54,10 @@ export class PermissionsService {
     }
   }
 
+  // ------------------------------------------------------
+  // SEÇÃO: CARREGAMENTO DE DADOS
+  // ------------------------------------------------------
+
   private async loadPermissionsData() {
     return import('../../../public/assets/permissions/perm.json');
   }
@@ -57,6 +65,10 @@ export class PermissionsService {
   private async loadTranslations(language: string) {
     return import(`../../../public/assets/i18n/${language}.json`);
   }
+
+  // ------------------------------------------------------
+  // SEÇÃO: MAPEAMENTO DE PERMISSÕES
+  // ------------------------------------------------------
 
   private mapPermissions(permissions: Record<string, any>): Record<string, Permission> {
     return Object.keys(permissions).reduce((acc, key) => {
@@ -72,10 +84,13 @@ export class PermissionsService {
     }, {} as Record<string, Permission>);
   }
 
+  // ------------------------------------------------------
+  // SEÇÃO: TRADUÇÃO DE PERMISSÕES
+  // ------------------------------------------------------
+
   private translatePermissions(categorizedPermissions: Permissions, translate: any) {
     for (const category of Object.keys(categorizedPermissions) as (keyof Permissions)[]) {
       const categoryPermissions = categorizedPermissions[category];
-
       const categoryTranslations = translate.Permissions_Page.permissions;
 
       for (const permissionKey of Object.keys(categoryPermissions) as string[]) {
@@ -91,6 +106,10 @@ export class PermissionsService {
       }
     }
   }
+
+  // ------------------------------------------------------
+  // SEÇÃO: GESTÃO DE PERMISSÕES SELECIONADAS
+  // ------------------------------------------------------
 
   getSelectedPermissions(): Record<string, boolean> {
     return this.selectedPermissions;

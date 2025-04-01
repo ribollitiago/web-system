@@ -15,7 +15,7 @@ import { DefaultStepComponent } from "../../../../layout/default-step/default-st
     PrimaryInputComponent,
     ReactiveFormsModule,
     DefaultStepComponent
-],
+  ],
   templateUrl: './register-step-1.component.html',
   styleUrl: './register-step-1.component.scss'
 })
@@ -101,31 +101,7 @@ export class RegisterStep1Component {
   }
 
   async submit() {
-      this.registerService.setCurrentStep(2); // Avança para o passo 2
-
-
-
-    // if (this.registerForm.valid) {
-    //   const userData = {
-    //     email: this.registerForm.value.email,
-    //     password: this.registerForm.value.password,
-    //     name: this.registerForm.value.name,
-    //     cpf: this.registerForm.value.document,
-    //     phone: this.registerForm.value.phone,
-    //   };
-
-    //   this.registerService.setData(userData);
-
-    //   this.registerService.registerUser({})
-    //     .then(user => {
-    //       console.log('Usuário registrado com sucesso:', user);
-    //       this.router.navigate(['/login']);
-    //     })
-    //     .catch(error => {
-    //       console.error('Erro ao registrar usuário:', error);
-    //     });
-    // } else {
-    //   console.log('Formulário inválido');
-    // }
+    const userDataStep1 = { name: 'teste2', email: 'test2@example.com', password: 'password123', cpf: 'teste2' };
+    await this.registerService.setStepData(1, userDataStep1);
   }
 }

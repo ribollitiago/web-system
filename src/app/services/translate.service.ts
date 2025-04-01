@@ -5,6 +5,10 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class TranslationService {
+  
+  // ------------------------------------------------------
+  // SEÇÃO: VARIÁVEIS E PROPRIEDADES DO SERVIÇO
+  // ------------------------------------------------------
   private translations: any = {};
   private englishLanguage: any = {};
   private currentLanguage = 'en_us';
@@ -18,6 +22,9 @@ export class TranslationService {
     { code: 'en_uk', name: 'English (UK)' }
   ];
 
+  // ------------------------------------------------------
+  // SEÇÃO: CONSTRUTOR E INICIALIZAÇÃO DO IDIOMA
+  // ------------------------------------------------------
   constructor() {
     const savedLanguage = localStorage.getItem('language');
     if (savedLanguage) {
@@ -30,10 +37,14 @@ export class TranslationService {
     this.setLanguage(this.currentLanguage);
   }
 
+  // ------------------------------------------------------
+  // SEÇÃO: MÉTODOS PÚBLICOS PARA O USUÁRIO
+  // ------------------------------------------------------
   getSupportedLanguages() {
     return this.supportedLanguages;
   }
 
+  // Retorna o idioma atual
   getCurrentLanguage(): string {
     return this.currentLanguage;
   }
@@ -46,6 +57,13 @@ export class TranslationService {
     return this.languageLoadedSubject.asObservable();
   }
 
+  // ------------------------------------------------------
+  // SEÇÃO: DEFINIÇÃO E CARREGAMENTO DO IDIOMA
+  // ------------------------------------------------------
+  /**
+   * Carrega as traduções para o idioma especificado.
+   * Se o idioma não for encontrado, será usado o inglês como fallback.
+   */
   async setLanguage(language: string) {
     const lang = language || 'en_us';
     this.currentLanguage = lang;
@@ -56,6 +74,7 @@ export class TranslationService {
         const en_us = await import(`../../../public/assets/i18n/en_us.json`);
         this.englishLanguage = en_us;
       }
+      
       const response = await import(`../../../public/assets/i18n/${lang}.json`);
       this.translations = response;
 
@@ -66,6 +85,13 @@ export class TranslationService {
     }
   }
 
+  // ------------------------------------------------------
+  // SEÇÃO: OBTENÇÃO DE TRADUÇÕES
+  // ------------------------------------------------------
+  /**
+   * Retorna a tradução para a chave e seção especificadas.
+   * Se não encontrar, retorna a tradução em inglês como fallback.
+   */
   getTranslation(key: string, section: string): string {
     return this.translations[section]?.[key] || this.englishLanguage[section]?.[key];
   }
