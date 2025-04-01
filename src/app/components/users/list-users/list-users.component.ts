@@ -25,6 +25,7 @@ export class ListUsersComponent {
   @Input() itemsPerPage: number = 10;
   @Output() filteredUsersCount = new EventEmitter<number>();
   @Output() selectedCount = new EventEmitter<number>();
+  @Output() selectedUsersEvent = new EventEmitter<User[]>();
 
   filterId: string = 'Id';
   filterName: string = '';
@@ -157,13 +158,17 @@ export class ListUsersComponent {
     }
 
     this.lastSingleSelected = null;
-    this.selectedCount.emit(this.selectedUsersCount);
+    const selected = this.getSelectedUsers();
+    this.selectedUsersEvent.emit(selected);
+    this.selectedCount.emit(selected.length);
   }
 
   selectSingleUser(userId: number): void {
     this.selectedUsers.clear();
     this.lastSingleSelected = userId;
-    this.selectedCount.emit(this.selectedUsersCount);
+    const selected = this.getSelectedUsers();
+    this.selectedUsersEvent.emit(selected);
+    this.selectedCount.emit(selected.length);
   }
 
   isSelected(userId: number): boolean {
@@ -172,6 +177,26 @@ export class ListUsersComponent {
 
   get selectedUsersCount(): number {
     return Math.max(this.selectedUsers.size, this.lastSingleSelected ? 1 : 0);
+  }
+
+  private getSelectedUsers(): User[] {
+    let selectedUsers: User[] = [];
+
+    if (this.lastSingleSelected !== null) {
+      const user = this.filteredUsers.find(u => u.id === this.lastSingleSelected);
+      selectedUsers = user ? [user] : [];
+    } else {
+      selectedUsers = Array.from(this.selectedUsers)
+        .map(id => this.filteredUsers.find(u => u.id === id))
+        .filter((user): user is User => user !== undefined);
+    }
+
+    return selectedUsers;
+  }
+
+  private emitSelectedUsers(): void {
+    const selected = this.getSelectedUsers();
+    this.selectedUsersEvent.emit(selected);  // Emite User[]
   }
 
   //******************************************* APENAS PARA TESTE ***************************************************

@@ -99,7 +99,7 @@
         }
       }
 
-      .selected-count{
+      .selected-count {
         color: $rg-subtitle;
         margin-left: auto;
         font-size: 14px;
@@ -107,33 +107,17 @@
     }
   }
 
-  .users-container-details {
-    width: 25%;
-    height: 100%;
-    border-radius: 12px;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-
-    align-self: stretch;
-    height: auto;
-
-    background: $rg-bg;
-  }
-
   .pagination-controls {
     display: flex;
     gap: 15px;
     align-items: center;
-    justify-content: flex-end; // Alinha tudo à direita
+    justify-content: flex-end;
     width: 100%;
     margin-top: 20px;
 
-    position: absolute; // Altera para posicionamento absoluto
-    bottom: 30px; // Distância da base do container
-    right: 30px; // Alinhamento à direita
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
     z-index: 2;
 
     .pagination-button {
@@ -220,7 +204,94 @@
       }
     }
     .pagination-button:last-child {
-      order: 4; // Botão próximo
+      order: 4;
+    }
+  }
+
+  .users-container-details {
+    width: 25%;
+    height: 100%;
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    align-self: stretch;
+    height: auto;
+
+    padding: 40px 30px 30px 30px;
+    background: $rg-bg;
+
+    .users-header {
+      width: 100%;
+      position: relative;
+
+      .title {
+        font-size: 24px;
+        color: $text-color;
+        font-weight: 500;
+        margin-bottom: 15px;
+      }
+
+      .image-user {
+        width: 50px;
+    height: 50px;
+    border-radius: 50%;
+      }
+
+      .user-line {
+        display: flex; /* Coloca os elementos na mesma linha */
+        align-items: center; /* Centraliza verticalmente */
+        margin-bottom: 7px;
+        gap: 10px;
+
+        .name {
+          font-size: 15px;
+          font-weight: 300;
+        }
+
+        .situation {
+          font-size: 12px;
+          font-weight: 200;
+          display: flex;
+          align-items: center;
+
+
+          & > div {
+            display: flex;
+            align-items: center;
+            border: 0.5px solid $us-border-button;
+            padding: 4px 9px 4px 8px;
+            border-radius: 45px;
+
+            img {
+              width: 10px;
+              height: 10px;
+              margin-right: 7px;
+              position: relative;
+            }
+          }
+
+
+        }
+        .name,
+        .situation {
+          display: inline-block; /* Garante que fiquem na mesma linha */
+          color: $text-color;
+        }
+
+        .situation img {
+          vertical-align: middle; /* Alinha ícone com texto */
+          margin-right: 2px; /* Espaço mínimo entre ícone e texto (opcional) */
+        }
+      } /* Alinha verticalmente no centro */
+
+      .email {
+        font-size: 13px;
+        font-weight: 400;
+        color: $text-color;
+      }
     }
   }
 }

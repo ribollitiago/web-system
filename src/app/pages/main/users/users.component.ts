@@ -2,7 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { SearchInputComponent } from "../../../components/search-input/search-input.component";
 import { TranslationService } from '../../../services/translate.service';
 import { Subscription } from 'rxjs';
-import { ListUsersComponent } from "../../../components/users/list-users/list-users.component";
+import { ListUsersComponent, User } from "../../../components/users/list-users/list-users.component";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -26,6 +26,8 @@ export class UsersComponent implements OnDestroy{
   totalPages: number = 1;
   filteredUsersCount: number = 0;
   currentSelectedCount: number = 0;
+
+  selectedUser: User | null = null;
 
   private languageSubscription: Subscription;
 
@@ -137,5 +139,31 @@ export class UsersComponent implements OnDestroy{
 
   handleSelectedCount(count: number) {
     this.currentSelectedCount = count;
+  }
+
+  handleSelectedUsers(users: User[]): void {
+    if (users.length === 1) {
+      this.selectedUser = users[0];
+    } else {
+      this.selectedUser = null;
+    }
+  }
+
+  getSituationIcon(situation: string): string {
+    const iconMap: { [key: string]: string } = {
+      '1': 'situation-actived.svg',
+      '-1': 'situation-disabled.svg',
+      '0': 'situation-inactived.svg'
+    };
+    return `assets/svg/icon/users/${iconMap[situation] || 'situation-inactived.svg'}`;
+  }
+
+  translateSituation(situation: string): string {
+    const situationMap: { [key: string]: string } = {
+      '1': 'actived',
+      '0': 'inactived',
+      '-1': 'disabled'
+    };
+    return this.translationService.getTranslation(situationMap[situation], 'Users_Page');
   }
 }

@@ -15,7 +15,9 @@
       </div>
     </div>
     <app-list-users [searchQuery]="currentSearchQuery" [currentPage]="currentPage" [itemsPerPage]="itemsPerPage"
-      (filteredUsersCount)="handleFilteredUsersCount($event)" (selectedCount)="handleSelectedCount($event)"></app-list-users>
+      (filteredUsersCount)="handleFilteredUsersCount($event)" (selectedCount)="handleSelectedCount($event)"
+      (selectedUsersEvent)="handleSelectedUsers($event)">>
+    </app-list-users>
     <div class="pagination-controls">
       <select class="page-select" [(ngModel)]="itemsPerPage" (change)="onItemsPerPageChange()">
         <option value="10">10</option>
@@ -44,6 +46,21 @@
       </button>
     </div>
   </div>
-  <div class="users-container-details">
+  <div class="users-container-details" *ngIf="selectedUser">
+    <div class="users-header">
+      <div class="title">Details user</div>
+      <img class ="image-user" src="assets/user-photo.png" alt>
+      <div class="user-line">
+        <span class="name">{{ selectedUser.name }}</span>
+        <div class="situation">
+          <div>
+            <img [src]="getSituationIcon(selectedUser.situation)" />
+            {{ translateSituation(selectedUser.situation) }}
+          </div>
+        </div>
+      </div>
+      <div class="email">{{ selectedUser.email }}</div>
+
+    </div>
   </div>
 </div>
