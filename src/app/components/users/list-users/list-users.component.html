@@ -1,8 +1,8 @@
 <div class="list-wrapper">
   <!-- Cabeçalho com filtros -->
   <div class="filters-list">
-    <div class="checkbox">
-      <img src="assets/svg/icon/register/step-2/check-off.svg">
+    <div class="checkbox" (click)="toggleSelectAll($event)">
+      <img [src]="allSelected ? 'assets/svg/icon/register/step-2/check-on.svg' : 'assets/svg/icon/register/step-2/check-off.svg'">
     </div>
     <div class="filter-item id">
       {{filterId}}
@@ -30,13 +30,16 @@
   </div>
 
   <div class="list-scroll-container">
-    <div class="list-container" [class.selected]="isSelected(user.id)" *ngFor="let user of visibleUsers"
-      (click)="selectSingleUser(user.id)">
-      <div class="checkbox" (click)="toggleUserSelection(user.id, $event)">
-        <img [src]="isSelected(user.id) ?
-                  'assets/svg/icon/register/step-2/check-on.svg' :
-                  'assets/svg/icon/register/step-2/check-off.svg'">
-      </div>
+    <div class="list-container"
+     [class.selected]="isSelected(user.id)"
+     *ngFor="let user of visibleUsers"
+     (click)="selectSingleUser(user.id)">
+     <div class="checkbox" (click)="toggleUserSelection(user.id, $event)">
+      <img [src]="selectedUsers.has(user.id) ?
+                'assets/svg/icon/register/step-2/check-on.svg' :
+                'assets/svg/icon/register/step-2/check-off.svg'">
+    </div>
+
       <div class="list-item id">{{user.id}}</div>
       <div class="list-item name">{{user.name}}</div>
       <div class="list-item email">{{user.email}}</div>

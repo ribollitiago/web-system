@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { SearchInputComponent } from "../../../components/search-input/search-input.component";
 import { TranslationService } from '../../../services/translate.service';
 import { Subscription } from 'rxjs';
@@ -13,6 +13,8 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './users.component.scss'
 })
 export class UsersComponent implements OnDestroy{
+  @ViewChild(ListUsersComponent) listUsersComponent!: ListUsersComponent;
+
   currentSearchQuery: string = '';
 
   title: string = '';
@@ -30,6 +32,7 @@ export class UsersComponent implements OnDestroy{
   selectedUser: User | null = null;
 
   private languageSubscription: Subscription;
+  cdr: any;
 
   constructor (private translationService: TranslationService){this.languageSubscription = this.translationService.language$.subscribe(() => {
     this.loadTranslations();
@@ -64,17 +67,27 @@ export class UsersComponent implements OnDestroy{
   previousPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
+      this.listUsersComponent.refreshSelectionDisplay(); // Adicione esta linha
     }
   }
 
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
+      this.listUsersComponent.refreshSelectionDisplay(); // Adicione esta linha
+    }
+  }
+
+  goToPage(page: number | string): void {
+    if (typeof page === 'number' && page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.listUsersComponent.refreshSelectionDisplay(); // Adicione esta linha
     }
   }
 
   onItemsPerPageChange(): void {
     this.currentPage = 1;
+    this.listUsersComponent.resetSelections(); // Reset explícito apenas quando muda itemsPerPage
     this.updateTotalPages();
   }
 
@@ -126,12 +139,6 @@ export class UsersComponent implements OnDestroy{
     return pages;
   }
 
-  goToPage(page: number | string): void {
-    if (typeof page === 'number' && page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
-    }
-  }
-
   handleFilteredUsersCount(count: number): void {
     this.filteredUsersCount = count;
     this.updateTotalPages();
@@ -142,11 +149,7 @@ export class UsersComponent implements OnDestroy{
   }
 
   handleSelectedUsers(users: User[]): void {
-    if (users.length === 1) {
-      this.selectedUser = users[0];
-    } else {
-      this.selectedUser = null;
-    }
+    this.selectedUser = users.length === 1 ? users[0] : null;
   }
 
   getSituationIcon(situation: string): string {

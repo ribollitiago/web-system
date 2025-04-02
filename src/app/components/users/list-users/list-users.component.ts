@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, Output, SimpleChanges } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { TranslationService } from '../../../services/translate.service';
-import { CommonModule } from '@angular/common';
 import { FirebaseService } from '../../../services/firebase.service';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 export interface User {
@@ -19,7 +19,10 @@ export interface User {
   templateUrl: './list-users.component.html',
   styleUrl: './list-users.component.scss'
 })
-export class ListUsersComponent {
+export class ListUsersComponent implements OnDestroy {
+  // ======================================================
+  // INPUTS/OUTPUTS E PROPRIEDADES PÚBLICAS
+  // ======================================================
   @Input() searchQuery: string = '';
   @Input() currentPage: number = 1;
   @Input() itemsPerPage: number = 10;
@@ -27,6 +30,9 @@ export class ListUsersComponent {
   @Output() selectedCount = new EventEmitter<number>();
   @Output() selectedUsersEvent = new EventEmitter<User[]>();
 
+  // ======================================================
+  // ESTADO DO COMPONENTE
+  // ======================================================
   filterId: string = 'Id';
   filterName: string = '';
   filterEmail: string = 'Email';
@@ -36,16 +42,19 @@ export class ListUsersComponent {
 
   selectedUsers: Set<number> = new Set<number>();
   lastSingleSelected: number | null = null;
+  allSelected: boolean = false;
 
   users: User[] = [];
   filteredUsers: User[] = [];
-
   private languageSubscription: Subscription;
-  cdr: any;
 
+  // ======================================================
+  // CICLO DE VIDA DO COMPONENTE
+  // ======================================================
   constructor(
     private translationService: TranslationService,
-    private firebaseService: FirebaseService
+    private firebaseService: FirebaseService,
+    private cdr: ChangeDetectorRef
   ) {
     this.languageSubscription = this.translationService.language$.subscribe(() => {
       this.loadTranslations();
@@ -57,25 +66,32 @@ export class ListUsersComponent {
     this.loadUsers();
   }
 
-  ngOnChanges() {
-    this.filterUsers(); // <--- Adicione esta linha
-  }
-
-  ngOnDestroy() {
-    if (this.languageSubscription) {
-      this.languageSubscription.unsubscribe();
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['searchQuery'] || changes['itemsPerPage']) {
+      this.filterUsers();
+    }
+    else if (changes['currentPage']) {
+      this.updateAllSelectedState();
+      this.cdr.detectChanges();
     }
   }
 
-  private loadTranslations(): void {
-    const section2 = 'Users_Page'
-    this.filterName = this.translationService.getTranslation('filterName', section2);
-    this.filterDate = this.translationService.getTranslation('filterDate', section2);
-    this.filterSituation = this.translationService.getTranslation('filterSituation', section2);
-    this.filterMore = this.translationService.getTranslation('filterMore', section2);
+  ngOnDestroy() {
+    this.languageSubscription.unsubscribe();
   }
 
-  translateField(fieldName: string, fieldValue: any): string {
+  // ======================================================
+  // TRADUÇÕES E INTERNACIONALIZAÇÃO
+  // ======================================================
+  private loadTranslations(): void {
+    const section = 'Users_Page';
+    this.filterName = this.translationService.getTranslation('filterName', section);
+    this.filterDate = this.translationService.getTranslation('filterDate', section);
+    this.filterSituation = this.translationService.getTranslation('filterSituation', section);
+    this.filterMore = this.translationService.getTranslation('filterMore', section);
+  }
+
+  translateField(fieldName: string, fieldValue: string): string {
     const fieldMap: { [key: string]: { [key: string]: string } } = {
       situation: {
         '1': 'actived',
@@ -87,59 +103,54 @@ export class ListUsersComponent {
         '0': 'disabled'
       },
     };
-
     return this.translationService.getTranslation(fieldMap[fieldName][fieldValue], 'Users_Page');
   }
+
+  // ======================================================
+  // CARREGAMENTO DE DADOS DO FIREBASE
+  // ======================================================
 
   private loadUsers(): void {
     this.firebaseService.subscribeToUsers((users: any[]) => {
       this.users = users;
+      console.log('Filtered Users:', this.users);
       this.sortUsersById();
       this.filterUsers();
       this.filteredUsersCount.emit(this.filteredUsers.length);
+
     });
   }
 
-  //*****************************************************************************************************************
-  //*********************AO USAR PARA TESTAR JUNTO COM AS ULTIMAS FUNÇÕES, DESATIVAR O OUTRO LOAD USERS**************
-  // private loadUsers(): void {
-  //   this.users = this.generateMockUsers();
-  //   this.sortUsersById();
-  //   this.filterUsers();
-  //   this.updateTotalPages();
-  // }
-  //*****************************************************************************************************************
+  // ======================================================
+  // FILTRAGEM E PAGINAÇÃO DE USUÁRIOS
+  // ======================================================
 
   private sortUsersById(): void {
-    this.users = this.users.sort((a, b) => b.id - a.id);
-  }
-
-  getSituationIcon(situation: string): string {
-    const iconMap: { [key: string]: string } = {
-      '1': 'situation-actived.svg',
-      '-1': 'situation-disabled.svg',
-      '0': 'situation-inactived.svg'
-    };
-    return `assets/svg/icon/users/${iconMap[situation] || 'situation-inactived.svg'}`;
-  }
-
-  get listContainerHeight(): number {
-    const availableHeight = window.innerHeight - 350;
-    const rowHeight = 45;
-    return Math.floor(availableHeight / rowHeight) * rowHeight;
+    this.users.sort((a, b) => b.id - a.id);
   }
 
   private filterUsers(): void {
-    if (this.searchQuery) {
-      this.filteredUsers = this.users.filter(user =>
-        user.id.toString().includes(this.searchQuery) ||
-        user.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        user.email.toLowerCase().includes(this.searchQuery.toLowerCase())
-      );
-    } else {
-      this.filteredUsers = [...this.users];
-    }
+    const search = this.searchQuery.toLowerCase();
+
+    const previousSelection = new Set(this.selectedUsers);
+
+    this.filteredUsers = this.searchQuery
+      ? this.users.filter(user =>
+        user.id.toString().includes(search) ||
+        user.name.toLowerCase().includes(search) ||
+        user.email.toLowerCase().includes(search)
+      )
+      : [...this.users];
+
+    // Restaura apenas as seleções que existem na nova lista filtrada
+    this.selectedUsers = new Set(
+      Array.from(previousSelection).filter(id =>
+        this.filteredUsers.some(user => user.id === id)
+      ));
+
     this.filteredUsersCount.emit(this.filteredUsers.length);
+    this.updateAllSelectedState();
+    this.emitSelectedUsers();
   }
 
   get visibleUsers(): User[] {
@@ -148,106 +159,96 @@ export class ListUsersComponent {
     return this.filteredUsers.slice(start, end);
   }
 
+  // ======================================================
+  // GERENCIAMENTO DE SELEÇÃO DE USUÁRIOS
+  // ======================================================
   toggleUserSelection(userId: number, event: MouseEvent): void {
     event.stopPropagation();
-
-    if (this.selectedUsers.has(userId)) {
-      this.selectedUsers.delete(userId);
-    } else {
-      this.selectedUsers.add(userId);
-    }
-
-    this.lastSingleSelected = null;
-    const selected = this.getSelectedUsers();
-    this.selectedUsersEvent.emit(selected);
-    this.selectedCount.emit(selected.length);
+    this.selectedUsers.has(userId)
+      ? this.selectedUsers.delete(userId)
+      : this.selectedUsers.add(userId);
+    this.updateSelections();
   }
 
   selectSingleUser(userId: number): void {
-    this.selectedUsers.clear();
-    this.lastSingleSelected = userId;
-    const selected = this.getSelectedUsers();
-    this.selectedUsersEvent.emit(selected);
-    this.selectedCount.emit(selected.length);
-  }
-
-  isSelected(userId: number): boolean {
-    return this.selectedUsers.has(userId) || this.lastSingleSelected === userId;
-  }
-
-  get selectedUsersCount(): number {
-    return Math.max(this.selectedUsers.size, this.lastSingleSelected ? 1 : 0);
-  }
-
-  private getSelectedUsers(): User[] {
-    let selectedUsers: User[] = [];
-
-    if (this.lastSingleSelected !== null) {
-      const user = this.filteredUsers.find(u => u.id === this.lastSingleSelected);
-      selectedUsers = user ? [user] : [];
+    if (this.lastSingleSelected === userId) {
+      this.selectedUsers.clear();
+      this.lastSingleSelected = null;
     } else {
-      selectedUsers = Array.from(this.selectedUsers)
-        .map(id => this.filteredUsers.find(u => u.id === id))
-        .filter((user): user is User => user !== undefined);
+      this.selectedUsers.clear();
+      this.selectedUsers.add(userId);
+      this.lastSingleSelected = userId;
     }
-
-    return selectedUsers;
+    this.updateSelections();
   }
 
+  toggleSelectAll(event: MouseEvent): void {
+    event.stopPropagation();
+    const visibleIds = this.visibleUsers.map(user => user.id);
+    const allSelected = visibleIds.every(id => this.selectedUsers.has(id));
+
+    allSelected
+      ? visibleIds.forEach(id => this.selectedUsers.delete(id))
+      : visibleIds.forEach(id => this.selectedUsers.add(id));
+
+    this.updateSelections();
+  }
+
+  private updateSelections(): void {
+    this.lastSingleSelected = null;
+    this.updateAllSelectedState();
+    this.emitSelectedUsers();
+    this.selectedCount.emit(this.selectedUsers.size);
+    this.cdr.detectChanges();
+  }
+
+  private updateAllSelectedState(): void {
+    const visible = this.visibleUsers;
+    this.allSelected = visible.length > 0 && visible.every(user => this.selectedUsers.has(user.id));
+  }
+
+  public resetSelections(): void {
+    this.selectedUsers.clear();
+    this.lastSingleSelected = null;
+    this.allSelected = false;
+    this.emitSelectedUsers();
+  }
+
+  // ======================================================
+  // UTILITÁRIOS E MÉTODOS AUXILIARES
+  // ======================================================
+  isSelected(userId: number): boolean {
+    return this.selectedUsers.has(userId);
+  }
+
+  trackByUserId(user: User): number {
+    return user.id;
+  }
+
+  getSituationIcon(situation: string | null | undefined): string {
+    const situationValue = situation?.toString() || '0';
+    const iconMap: { [key: string]: string } = {
+      '1': 'situation-actived.svg',
+      '-1': 'situation-disabled.svg',
+      '0': 'situation-inactived.svg'
+    };
+    return `assets/svg/icon/users/${iconMap[situationValue] || 'situation-inactived.svg'}`;
+  }
+
+  // ======================================================
+  // COMUNICAÇÃO COM COMPONENTES PAI
+  // ======================================================
   private emitSelectedUsers(): void {
-    const selected = this.getSelectedUsers();
-    this.selectedUsersEvent.emit(selected);  // Emite User[]
+    const selected = Array.from(this.selectedUsers)
+      .map(id => this.filteredUsers.find(u => u.id === id))
+      .filter((user): user is User => !!user);
+    this.selectedUsersEvent.emit(selected);
   }
 
-  //******************************************* APENAS PARA TESTE ***************************************************
-  //******************************************* FIREBASE ************************************************************
-  // private createUser() {
-  //   const nextUID = this.filteredUsers.length + 1;
-
-  //   const name = `User ${nextUID}`;
-  //   const email = `user${nextUID}@gmail.com`;
-
-  //   const situations = ['actived', 'disabled', 'inactived'];
-  //   const situation = situations[Math.floor(Math.random() * situations.length)];
-
-  //   const randomMonth = Math.floor(Math.random() * 3) + 1;
-  //   const randomDay = Math.floor(Math.random() * 28) + 1;
-  //   const date = `${randomMonth.toString().padStart(2, '0')}/${randomDay.toString().padStart(2, '0')}/2025`;
-
-  //   const data = {
-  //     uid: nextUID,
-  //     id: nextUID.toString().padStart(5, '0'),
-  //     name: name,
-  //     email: email,
-  //     date: date,
-  //     situation: situation
-  //   };
-
-  //   console.log(`Usuário ${nextUID}:`, data);
-  //   this.firebaseService.addUser(data, `${nextUID}`);
-  // }
-  //******************************************* LOCAL ************************************************************
-  // private generateMockUsers(): User[] {
-  //   const mockUsers: User[] = [];
-  //   const situations = ['actived', 'disabled', 'inactived'];
-
-  //   for (let i = 1; i <= 100; i++) {
-  //     mockUsers.push({
-  //       id: i,
-  //       name: `User ${i}`,
-  //       email: `user${i}@example.com`,
-  //       date: this.generateRandomDate(),
-  //       situation: situations[Math.floor(Math.random() * situations.length)]
-  //     });
-  //   }
-  //   return mockUsers;
-  // }
-
-  // private generateRandomDate(): string {
-  //   const start = new Date(2020, 0, 1);
-  //   const end = new Date();
-  //   const randomDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-  //   return randomDate.toISOString().split('T')[0]; // Formato YYYY-MM-DD
-  // }
-  //*****************************************************************************************************************
+  // ======================================================
+  // ATUALIZAÇÃO DE INTERFACE
+  // ======================================================
+  public refreshSelectionDisplay(): void {
+    this.cdr.detectChanges();
+  }
 }
