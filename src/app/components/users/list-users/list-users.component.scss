@@ -285,4 +285,192 @@
       border-radius: 4px;
     }
   }
+
+  .pagination-controls {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    margin-top: 20px;
+
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    z-index: 2;
+
+    .pagination-button {
+      background: none;
+      border: none;
+      border-radius: 50%;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      order: 2;
+
+      &:hover:not(:disabled) {
+        background-color: $rg-bg-hover-extra;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+
+    .page-info {
+      font-size: 14px;
+      color: $rg-text;
+    }
+
+    .page-select {
+      padding: 5px 10px 5px 10px;
+      border: 1px solid $us-border-button;
+      border-radius: 8px;
+      appearance: none;
+      background: transparent;
+      background-size: 12px;
+      cursor: pointer;
+      width: auto;
+      color: $text-color;
+      order: 1;
+
+      &:focus {
+        outline: none;
+        border-color: $btn-color;
+        background-color: $rg-bg-hover-extra;
+      }
+    }
+
+    .arrow-icon.rotate-180 {
+      transform: rotate(180deg);
+    }
+
+    .page-numbers {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      margin: 0 10px;
+      order: 3;
+
+      .ellipsis {
+        color: $us-page-btn;
+        padding: 0 5px;
+      }
+
+      .page-button {
+        background: none;
+        border: none;
+        color: $us-page-btn;
+        padding: 8px 10px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        min-width: 32px;
+
+        &:hover:not(.active) {
+          background-color: $rg-bg-hover-extra;
+        }
+
+        &.active {
+          border-color: $us-border-button;
+          background-color: $btn-color;
+          color: $us-bg-filters;
+
+          cursor: default;
+          font-weight: bold;
+        }
+      }
+    }
+    .pagination-button:last-child {
+      order: 4;
+    }
+  }
+
+  .users-container-details {
+    width: 25%;
+    height: 100%;
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    align-self: stretch;
+    height: auto;
+
+    padding: 40px 30px 30px 30px;
+    background: $rg-bg;
+
+    .users-header {
+      width: 100%;
+      position: relative;
+
+      .title {
+        font-size: 24px;
+        color: $text-color;
+        font-weight: 500;
+        margin-bottom: 15px;
+      }
+
+      .image-user {
+        width: 50px;
+    height: 50px;
+    border-radius: 50%;
+      }
+
+      .user-line {
+        display: flex; /* Coloca os elementos na mesma linha */
+        align-items: center; /* Centraliza verticalmente */
+        margin-bottom: 7px;
+        gap: 10px;
+
+        .name {
+          font-size: 15px;
+          font-weight: 300;
+        }
+
+        .situation {
+          font-size: 12px;
+          font-weight: 200;
+          display: flex;
+          align-items: center;
+
+
+          & > div {
+            display: flex;
+            align-items: center;
+            border: 0.5px solid $us-border-button;
+            padding: 4px 9px 4px 8px;
+            border-radius: 45px;
+
+            img {
+              width: 10px;
+              height: 10px;
+              margin-right: 7px;
+              position: relative;
+            }
+          }
+
+
+        }
+        .name,
+        .situation {
+          display: inline-block; /* Garante que fiquem na mesma linha */
+          color: $text-color;
+        }
+
+        .situation img {
+          vertical-align: middle; /* Alinha ícone com texto */
+          margin-right: 2px; /* Espaço mínimo entre ícone e texto (opcional) */
+        }
+      } /* Alinha verticalmente no centro */
+
+      .email {
+        font-size: 13px;
+        font-weight: 400;
+        color: $text-color;
+      }
+    }
+  }
 }

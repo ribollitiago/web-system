@@ -1,5 +1,5 @@
 <div class="users-wrapper">
-  <div class="users-container-list">
+  <div class="users-container-list" [class.with-details]="isDetailsOpen">
     <div class="users-header">
       <h1 class="title">{{title}}</h1>
       <h2 class="subtitle">{{subtitle}}</h2>
@@ -14,42 +14,20 @@
         {{ currentSelectedCount }} usuário(s) selecionado(s)
       </div>
     </div>
-    <app-list-users [searchQuery]="currentSearchQuery" [currentPage]="currentPage" [itemsPerPage]="itemsPerPage"
-      (filteredUsersCount)="handleFilteredUsersCount($event)" (selectedCount)="handleSelectedCount($event)"
-      (selectedUsersEvent)="handleSelectedUsers($event)">>
+    <app-list-users (selectedCount)="handleSelectedCount($event)" (selectedUsersEvent)="handleSelectedUsers($event)">>
     </app-list-users>
-    <div class="pagination-controls">
-      <select class="page-select" [(ngModel)]="itemsPerPage" (change)="onItemsPerPageChange()">
-        <option value="10">10</option>
-        <option value="25">25</option>
-        <option value="50">50</option>
-        <option value="100">100</option>
-        <option value="200">200</option>
-      </select>
 
-      <button class="pagination-button" (click)="previousPage()" [disabled]="currentPage === 1">
-        <img src="assets/svg/icon/users/arrow-list.svg" alt="Previous page" class="arrow-icon rotate-180">
-      </button>
-
-      <div class="page-numbers">
-        <ng-container *ngFor="let page of displayedPages">
-          <span *ngIf="page === '...'" class="ellipsis">...</span>
-          <button *ngIf="page !== '...'" class="page-button" [class.active]="page === currentPage"
-            (click)="goToPage(page)">
-            {{page}}
-          </button>
-        </ng-container>
+  </div>
+  <div class="users-container-details" [class.active]="isDetailsOpen" *ngIf="selectedUser">
+    <div class="users-header">
+      <div class="line-header">
+        <div class="title">Details user</div>
+        <div class="close-icon" (click)="closeDetailsPanel()">
+          <img src="assets/svg/icon/input/clear.svg">
+        </div>
       </div>
 
-      <button class="pagination-button" (click)="nextPage()" [disabled]="currentPage === totalPages">
-        <img src="assets/svg/icon/users/arrow-list.svg" alt="Next page" class="arrow-icon">
-      </button>
-    </div>
-  </div>
-  <div class="users-container-details" *ngIf="selectedUser">
-    <div class="users-header">
-      <div class="title">Details user</div>
-      <img class ="image-user" src="assets/user-photo.png" alt>
+      <img class="image-user" src="assets/user-photo.png" alt>
       <div class="user-line">
         <span class="name">{{ selectedUser.name }}</span>
         <div class="situation">
@@ -60,7 +38,15 @@
         </div>
       </div>
       <div class="email">{{ selectedUser.email }}</div>
-
+      <div class="phone-and-document">
+        <div class="phone">
+          <img src="assets/svg/icon/users/phone.svg">
+          {{ selectedUser.phone }}</div>
+        <div class="document">
+          <img src="assets/svg/icon/users/document.svg">
+          {{ selectedUser.document }}</div>
+      </div>
+      <div class="divider"></div>
     </div>
   </div>
 </div>

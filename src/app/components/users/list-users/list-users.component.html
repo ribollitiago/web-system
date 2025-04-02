@@ -1,5 +1,4 @@
 <div class="list-wrapper">
-  <!-- Cabeçalho com filtros -->
   <div class="filters-list">
     <div class="checkbox" (click)="toggleSelectAll($event)">
       <img [src]="allSelected ? 'assets/svg/icon/register/step-2/check-on.svg' : 'assets/svg/icon/register/step-2/check-off.svg'">
@@ -28,7 +27,6 @@
       {{filterMore}}
     </div>
   </div>
-
   <div class="list-scroll-container">
     <div class="list-container"
      [class.selected]="isSelected(user.id)"
@@ -39,7 +37,6 @@
                 'assets/svg/icon/register/step-2/check-on.svg' :
                 'assets/svg/icon/register/step-2/check-off.svg'">
     </div>
-
       <div class="list-item id">{{user.id}}</div>
       <div class="list-item name">{{user.name}}</div>
       <div class="list-item email">{{user.email}}</div>
@@ -54,5 +51,32 @@
         <img src="assets/svg/icon/register/step-2/extra_info.svg">
       </div>
     </div>
+  </div>
+  <div class="pagination-controls">
+    <select class="page-select" [(ngModel)]="itemsPerPage" (change)="onItemsPerPageChange()">
+      <option value="10">10</option>
+      <option value="25">25</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+      <option value="200">200</option>
+    </select>
+
+    <button class="pagination-button" (click)="previousPage()" [disabled]="currentPage === 1">
+      <img src="assets/svg/icon/users/arrow-list.svg" alt="Previous page" class="arrow-icon rotate-180">
+    </button>
+
+    <div class="page-numbers">
+      <ng-container *ngFor="let page of displayedPages">
+        <span *ngIf="page === '...'" class="ellipsis">...</span>
+        <button *ngIf="page !== '...'" class="page-button" [class.active]="page === currentPage"
+          (click)="goToPage(page)">
+          {{page}}
+        </button>
+      </ng-container>
+    </div>
+
+    <button class="pagination-button" (click)="nextPage()" [disabled]="currentPage === totalPages">
+      <img src="assets/svg/icon/users/arrow-list.svg" alt="Next page" class="arrow-icon">
+    </button>
   </div>
 </div>

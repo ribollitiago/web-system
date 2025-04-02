@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { TranslationService } from '../../../services/translate.service';
 import { FirebaseService } from '../../../services/firebase.service';
@@ -10,25 +10,29 @@ export interface User {
   name: string;
   email: string;
   date: string;
+  phone: string;
+  document: string;
+  group: [];
   situation: string;
 }
 
 @Component({
   selector: 'app-list-users',
+  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './list-users.component.html',
   styleUrl: './list-users.component.scss'
 })
-export class ListUsersComponent implements OnDestroy {
+export class ListUsersComponent implements OnInit, OnDestroy {
   // ======================================================
   // INPUTS/OUTPUTS E PROPRIEDADES PÚBLICAS
   // ======================================================
   @Input() searchQuery: string = '';
   @Input() currentPage: number = 1;
   @Input() itemsPerPage: number = 10;
-  @Output() filteredUsersCount = new EventEmitter<number>();
   @Output() selectedCount = new EventEmitter<number>();
   @Output() selectedUsersEvent = new EventEmitter<User[]>();
+  @Output() filteredUsersCount = new EventEmitter<number>();
 
   // ======================================================
   // ESTADO DO COMPONENTE
@@ -40,9 +44,11 @@ export class ListUsersComponent implements OnDestroy {
   filterSituation: string = '';
   filterMore: string = '';
 
+  totalPages: number = 1;
+  allSelected: boolean = false;
+
   selectedUsers: Set<number> = new Set<number>();
   lastSingleSelected: number | null = null;
-  allSelected: boolean = false;
 
   users: User[] = [];
   filteredUsers: User[] = [];
@@ -67,12 +73,8 @@ export class ListUsersComponent implements OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['searchQuery'] || changes['itemsPerPage']) {
+    if (changes['searchQuery'] || changes['itemsPerPage'] || changes['currentPage']) {
       this.filterUsers();
-    }
-    else if (changes['currentPage']) {
-      this.updateAllSelectedState();
-      this.cdr.detectChanges();
     }
   }
 
@@ -109,22 +111,17 @@ export class ListUsersComponent implements OnDestroy {
   // ======================================================
   // CARREGAMENTO DE DADOS DO FIREBASE
   // ======================================================
-
   private loadUsers(): void {
     this.firebaseService.subscribeToUsers((users: any[]) => {
       this.users = users;
-      console.log('Filtered Users:', this.users);
       this.sortUsersById();
       this.filterUsers();
-      this.filteredUsersCount.emit(this.filteredUsers.length);
-
     });
   }
 
   // ======================================================
   // FILTRAGEM E PAGINAÇÃO DE USUÁRIOS
   // ======================================================
-
   private sortUsersById(): void {
     this.users.sort((a, b) => b.id - a.id);
   }
@@ -148,6 +145,7 @@ export class ListUsersComponent implements OnDestroy {
         this.filteredUsers.some(user => user.id === id)
       ));
 
+    this.updateTotalPages();
     this.filteredUsersCount.emit(this.filteredUsers.length);
     this.updateAllSelectedState();
     this.emitSelectedUsers();
@@ -157,6 +155,84 @@ export class ListUsersComponent implements OnDestroy {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     const end = start + this.itemsPerPage;
     return this.filteredUsers.slice(start, end);
+  }
+
+  private updateTotalPages(): void {
+    this.totalPages = Math.ceil(this.filteredUsers.length / this.itemsPerPage) || 1;
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = this.totalPages;
+    }
+  }
+
+  // ======================================================
+  // CONTROLES DE PAGINAÇÃO
+  // ======================================================
+  onItemsPerPageChange(): void {
+    this.currentPage = 1;
+    this.resetSelections();
+    this.filterUsers();
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.refreshSelectionDisplay();
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.refreshSelectionDisplay();
+    }
+  }
+
+  goToPage(page: number | string): void {
+    if (typeof page === 'number' && page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.refreshSelectionDisplay();
+    }
+  }
+
+  get displayedPages(): (number | string)[] {
+    const total = this.totalPages;
+    const current = this.currentPage;
+    const pages: (number | string)[] = [];
+
+    if (total <= 5) {
+      return Array.from({ length: total }, (_, i) => i + 1);
+    }
+
+    pages.push(1);
+
+    let start = Math.max(2, current - 1);
+    let end = Math.min(total - 1, current + 1);
+
+    if (current <= 3) {
+      end = 4;
+    } else if (current >= total - 2) {
+      start = total - 3;
+    }
+
+    if (start > 2) {
+      pages.push('...');
+    }
+
+    for (let i = start; i <= end; i++) {
+      if (i > 1 && i < total) {
+        pages.push(i);
+      }
+    }
+
+    if (end < total - 1) {
+      pages.push('...');
+    }
+
+    if (total > 1) {
+      pages.push(total);
+    }
+
+    return pages;
   }
 
   // ======================================================
@@ -212,6 +288,7 @@ export class ListUsersComponent implements OnDestroy {
     this.lastSingleSelected = null;
     this.allSelected = false;
     this.emitSelectedUsers();
+    this.updateSelections();
   }
 
   // ======================================================
