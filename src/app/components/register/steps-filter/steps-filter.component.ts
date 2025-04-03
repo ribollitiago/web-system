@@ -32,12 +32,12 @@ export class StepsFilterComponent implements OnChanges, OnDestroy {
   private permissions: any = null;
 
   constructor(
-    private permissionsservice: PermissionsService,
+    private permissionsService: PermissionsService,
     private translationService: TranslationService
   ) { }
 
   async ngOnInit() {
-    this.permissions = await this.permissionsservice.getPermissions();
+    this.permissions = await this.permissionsService.getPermissions();
     this.updateCurrentList();
     this.applySearchFilter();
     this.sortByCriticalLevel();
@@ -77,19 +77,19 @@ export class StepsFilterComponent implements OnChanges, OnDestroy {
       case 'route':
         this.resolvedList = Object.values(this.permissions.routes).map((item: any) => ({
           ...item,
-          checked: this.permissionsservice.getSelectedPermissions()[item.id] || false
+          checked: this.permissionsService.getSelectedPermissions()[item.id] || false
         }));
         break;
       case 'admin':
         this.resolvedList = Object.values(this.permissions.admin).map((item: any) => ({
           ...item,
-          checked: this.permissionsservice.getSelectedPermissions()[item.id] || false
+          checked: this.permissionsService.getSelectedPermissions()[item.id] || false
         }));
         break;
       default:
         this.resolvedList = Object.values(this.permissions.users).map((item: any) => ({
           ...item,
-          checked: this.permissionsservice.getSelectedPermissions()[item.id] || false
+          checked: this.permissionsService.getSelectedPermissions()[item.id] || false
         }));
         break;
     }
@@ -154,7 +154,7 @@ export class StepsFilterComponent implements OnChanges, OnDestroy {
   }
 
   onCheckboxChange(item: any) {
-    this.permissionsservice.setSelectedPermission(item.id, item.checked);
+    this.permissionsService.setSelectedPermission(item.id, item.checked);
     const selectedPermissions = this.filteredList.filter(i => i.checked);
     this.permissionSelected.emit(selectedPermissions);
     console.log('Checkbox alterado:', item);
