@@ -61,6 +61,11 @@ input[type="checkbox"] {
       height: 100%;
       padding: 4px;
 
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+
       &:hover .critical-tooltip {
         visibility: visible;
         opacity: 1;
@@ -94,6 +99,8 @@ input[type="checkbox"] {
       left: calc(100% + 5px);
       margin-left: 0;
       z-index: 1;
+
+
     }
 
     .menu-title {
@@ -156,6 +163,10 @@ input[type="checkbox"] {
     width: 12px;
     height: 12px;
     cursor: help;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
   }
 
   label {

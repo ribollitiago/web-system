@@ -68,6 +68,11 @@
       transition: all 0.3s ease;
       pointer-events: auto;
 
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+
       .clear-icon {
         width: 14px;
         height: 14px;
@@ -98,6 +103,11 @@
       height: 40px;
       border-radius: 12px;
       background-color: $input-color;
+
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
 
       img {
         height: 20px;

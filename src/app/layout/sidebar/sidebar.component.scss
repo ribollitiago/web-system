@@ -64,6 +64,11 @@
       transition: all 0.3s ease;
       position: relative;
 
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+
       &:hover .menu-tooltip {
         visibility: visible;
         opacity: 1;

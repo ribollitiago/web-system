@@ -39,6 +39,11 @@
     height: 35px;
     border-radius: 50%;
 
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+
     &:hover .notification-tooltip {
       visibility: visible;
       opacity: 1;
@@ -96,11 +101,17 @@
     width: 35px;
     height: 35px;
     border-radius: 50%;
+
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
   }
 }
 
 .menu,
 .menu-language {
+
   background: $sb-bg;
   color: $text-color;
   padding: 10px;
@@ -245,6 +256,7 @@
       margin: 0;
     }
   }
+
   .menu-item-language:hover {
     transition: background-color 0.3s ease;
 
@@ -255,5 +267,3 @@
     }
   }
 }
-
-

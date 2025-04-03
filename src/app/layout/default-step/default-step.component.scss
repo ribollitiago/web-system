@@ -126,6 +126,11 @@
       align-items: center;
       margin-bottom: 25px;
 
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+
       .step-txt {
         &.active {
           color: $rg-step-completed !important; // Cor para passo atual
@@ -211,7 +216,11 @@
       }
 
       .back-wrapper {
-        float: right ;
+        float: right;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
 
         &:hover .back-tooltip {
           visibility: visible;
