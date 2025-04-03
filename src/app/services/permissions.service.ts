@@ -27,7 +27,7 @@ interface Permissions {
 export class PermissionsService {
   private selectedPermissions: Record<string, boolean> = {};
 
-  constructor(private translationService: TranslationService) {}
+  constructor(private translationService: TranslationService) { }
 
   // ------------------------------------------------------
   // SEÇÃO: CARREGAMENTO DE PERMISSÕES
@@ -83,6 +83,38 @@ export class PermissionsService {
       return acc;
     }, {} as Record<string, Permission>);
   }
+
+  // ------------------------------------------------------
+  // SEÇÃO: FILTRAGEM DE PERMISSÕES
+  // ------------------------------------------------------
+
+  filterPermissionsByIds(permissions: Permissions, permissionIds: string[]): Permissions {
+    const filteredPermissions: Permissions = {
+      users: {},
+      routes: {},
+      admin: {}
+    };
+
+    filteredPermissions.users = this.filterCategoryPermissions(permissions.users, permissionIds);
+    filteredPermissions.routes = this.filterCategoryPermissions(permissions.routes, permissionIds);
+    filteredPermissions.admin = this.filterCategoryPermissions(permissions.admin, permissionIds);
+
+    return filteredPermissions;
+  }
+
+  filterCategoryPermissions = (categoryPermissions: Record<string, Permission>, permissionIds: string[]): Record<string, Permission> => {
+    
+    const filteredCategory: Record<string, Permission> = {};
+
+    Object.keys(categoryPermissions).forEach(key => {
+      const permission = categoryPermissions[key];
+      if (permissionIds.includes(permission.id)) {
+        filteredCategory[key] = permission;
+      }
+    });
+
+    return filteredCategory;
+  };
 
   // ------------------------------------------------------
   // SEÇÃO: TRADUÇÃO DE PERMISSÕES

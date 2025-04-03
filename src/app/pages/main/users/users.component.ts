@@ -4,6 +4,7 @@ import { TranslationService } from '../../../services/translate.service';
 import { Subscription } from 'rxjs';
 import { ListUsersComponent, User } from "../../../components/users/list-users/list-users.component";
 import { CommonModule } from '@angular/common';
+import { PermissionsService } from '../../../services/permissions.service';
 
 @Component({
   selector: 'app-users',
@@ -28,16 +29,22 @@ export class UsersComponent implements OnDestroy {
 
   private languageSubscription: Subscription;
 
-  constructor(private translationService: TranslationService) {
+  constructor(
+    private permissionsService: PermissionsService,
+    private translationService: TranslationService
+  ) {
     this.languageSubscription = this.translationService.language$.subscribe(() => {
       this.loadTranslations();
     });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.loadTranslations();
+    // const permissionIds = ['010003', '020002', '030003'];
+    // const filtered = this.permissionsService.filterPermissionsByIds(await this.permissionsService.getPermissions(), permissionIds);
+    // console.log('Permissões filtradas:', JSON.stringify(filtered, null, 2));
   }
-
+  
   ngOnDestroy() {
     this.languageSubscription.unsubscribe();
   }
