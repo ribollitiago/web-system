@@ -12,10 +12,13 @@ export class LoginService {
 
   private auth;
   private readonly LOGOUT_EVENT_KEY = 'app-logout-event';
+  private readonly LAST_LOGIN_KEY = 'last-login-time';
+  private readonly TOKEN_EXPIRATION_TIME = 168 * 60 * 60 * 1000;
 
   constructor(private router: Router) {
     this.auth = getAuth(firebaseApp);
     this.setupMultiTabLogoutListener();
+    this.checkTokenExpiration();
   }
 
   // ------------------------------------------------------
@@ -66,6 +69,7 @@ export class LoginService {
     const user = userCredential.user;
     if (user) {
       this.router.navigate(['/home']);
+      localStorage.setItem(this.LAST_LOGIN_KEY, new Date().toISOString());
       return { uid: user.uid };
     }
     throw new Error('User not found');
@@ -85,8 +89,23 @@ export class LoginService {
 
   getAuthState(): Observable<User | null> {
     return new Observable(subscriber => {
-      this.auth.onAuthStateChanged(subscriber);
+      this.auth.onAuthStateChanged(user => {
+        if (user) {
+          this.checkTokenExpiration();
+        }
+        subscriber.next(user);
+      });
     });
+  }
+
+  private checkTokenExpiration(): void {
+    const lastLoginTime = localStorage.getItem(this.LAST_LOGIN_KEY);
+    if (lastLoginTime) {
+      const timeElapsed = new Date().getTime() - new Date(lastLoginTime).getTime();
+      if (timeElapsed > this.TOKEN_EXPIRATION_TIME) {
+        this.logout();
+      }
+    }
   }
 
   // ------------------------------------------------------
