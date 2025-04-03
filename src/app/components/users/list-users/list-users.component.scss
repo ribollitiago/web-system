@@ -59,7 +59,7 @@
     .email {
       flex: 3 1 20%;
     }
-    .date {
+    .group {
       flex: 1 1 13%;
     }
     .situation {
@@ -104,7 +104,6 @@
           background-color: darken($rg-bg-hover-extra, 10%);
         }
       }
-
     }
 
     .list-item {
@@ -127,13 +126,14 @@
 
       // Área de clique aumentada
       &::after {
-        content: '';
+        content: "";
         position: absolute;
         width: 45px; // Área de clique maior
         height: 45px; // Área de clique maior
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%); // Centraliza a área de clique
+
         cursor: pointer;
       }
 
@@ -155,8 +155,8 @@
     .email {
       flex: 3 1 20%;
     }
-    .date {
-      flex: 1 1 13%;
+    .group {
+      flex: 1 1 12.5%;
     }
     .situation {
       flex: 1 1 10%;
@@ -209,9 +209,23 @@
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    max-height: calc(var(--visible-rows) * var(--row-height));
+    --row-height: 45px;
+    max-height: calc(var(--visible-rows, 6) * var(--row-height));
 
     min-height: 300px;
+
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: $us-bg-filters;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $us-page-btn;
+      border-radius: 4px;
+    }
 
     @media (min-height: 690px) {
       --visible-rows: 6;
@@ -266,23 +280,7 @@
     }
     @media (min-height: 2000px) {
       --visible-rows: 30;
-    }
-    @media (min-height: 2001px) {
-      --visible-rows: 30;
-      max-height: 80vh !important;
-    }
-
-    &::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: $us-bg-filters;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: $us-page-btn;
-      border-radius: 4px;
+      max-height: 80vh;
     }
   }
 
@@ -415,8 +413,8 @@
 
       .image-user {
         width: 50px;
-    height: 50px;
-    border-radius: 50%;
+        height: 50px;
+        border-radius: 50%;
       }
 
       .user-line {
@@ -436,7 +434,6 @@
           display: flex;
           align-items: center;
 
-
           & > div {
             display: flex;
             align-items: center;
@@ -451,8 +448,6 @@
               position: relative;
             }
           }
-
-
         }
         .name,
         .situation {

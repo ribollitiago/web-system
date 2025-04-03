@@ -43,6 +43,11 @@
       border: 1px solid $input-color;
       background-color: transparent;
       color: $text-color;
+      transition: background-color ease 0.3s;
+
+      &:hover {
+        background-color: darken($color: #ffffff, $amount: 85%);
+      }
     }
 
     .clear-wrapper {

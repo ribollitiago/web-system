@@ -15,8 +15,8 @@
       {{filterEmail}}
       <img src="assets/svg/icon/users/arrow-filter.svg">
     </div>
-    <div class="filter-item date">
-      {{filterDate}}
+    <div class="filter-item group">
+      {{filterGroup}}
       <img src="assets/svg/icon/users/arrow-filter.svg">
     </div>
     <div class="filter-item situation">
@@ -40,7 +40,7 @@
       <div class="list-item id">{{user.id}}</div>
       <div class="list-item name">{{user.name}}</div>
       <div class="list-item email">{{user.email}}</div>
-      <div class="list-item date">{{user.date}}</div>
+      <div class="list-item group">{{user.group}}</div>
       <div class="list-item situation">
         <div>
           <img [src]="getSituationIcon(user.situation)">

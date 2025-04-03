@@ -230,6 +230,13 @@
     "title": "List of Users",
     "subtitle": "List of users registered in the system",
     "btnFilters": "Filters",
-    "btnExport": "Export"
+    "btnExport": "Export",
+    "filterName": "Name",
+    "filterGroup": "Group",
+    "filterSituation": "Situation",
+    "filterMore": "More",
+    "inactived": "Inactived",
+    "actived": "Actived",
+    "disabled": "Disabled"
   }
 }

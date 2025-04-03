@@ -40,7 +40,7 @@ export class ListUsersComponent implements OnInit, OnDestroy {
   filterId: string = 'Id';
   filterName: string = '';
   filterEmail: string = 'Email';
-  filterDate: string = '';
+  filterGroup: string = '';
   filterSituation: string = '';
   filterMore: string = '';
 
@@ -88,7 +88,7 @@ export class ListUsersComponent implements OnInit, OnDestroy {
   private loadTranslations(): void {
     const section = 'Users_Page';
     this.filterName = this.translationService.getTranslation('filterName', section);
-    this.filterDate = this.translationService.getTranslation('filterDate', section);
+    this.filterGroup = this.translationService.getTranslation('filterGroup', section);
     this.filterSituation = this.translationService.getTranslation('filterSituation', section);
     this.filterMore = this.translationService.getTranslation('filterMore', section);
   }
