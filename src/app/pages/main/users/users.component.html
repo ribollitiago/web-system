@@ -5,20 +5,25 @@
       <h2 class="subtitle">{{subtitle}}</h2>
     </div>
     <div class="filters-wrapper">
-      <app-search-input [placeholder]="inputSearch" class="input-search" (searchChange)="handleSearchChange($event)">
+      <app-search-input [placeholder]="inputSearch" class="input-search"
+        (searchChange)="handleSearchChange($event)">
         <img src="assets/svg/icon/input/search.svg" alt />
       </app-search-input>
-      <button class="filters"><img src="assets/svg/icon/users/filters.svg">{{ btnFilters }}</button>
-      <button class="export"><img src="assets/svg/icon/users/export.svg">{{ btnExport }}</button>
+      <button class="filters"><img src="assets/svg/icon/users/filters.svg">{{
+        btnFilters }}</button>
+      <button class="export"><img src="assets/svg/icon/users/export.svg">{{
+        btnExport }}</button>
       <div class="selected-count" *ngIf="currentSelectedCount > 0">
         {{ currentSelectedCount }} usuário(s) selecionado(s)
       </div>
     </div>
-    <app-list-users (selectedCount)="handleSelectedCount($event)" (selectedUsersEvent)="handleSelectedUsers($event)">>
+    <app-list-users (selectedCount)="handleSelectedCount($event)"
+      (selectedUsersEvent)="handleSelectedUsers($event)">>
     </app-list-users>
 
   </div>
-  <div class="users-container-details" [class.active]="isDetailsOpen" *ngIf="selectedUser">
+  <div class="users-container-details" [class.active]="isDetailsOpen"
+    *ngIf="selectedUser">
     <div class="users-header">
       <div class="line-header">
         <div class="title">Details user</div>
@@ -47,6 +52,15 @@
           {{ selectedUser.document }}</div>
       </div>
       <div class="divider"></div>
+      <div class="permissions-container">
+        <div class="title">Permissions</div>
+        <div class="list-permissions">
+          <div class="permission" *ngFor="let permission of permissionUserSelected">
+            <img [src]="getSvgFileName(permission.critical)"
+                 class="critical-icon">
+            {{ permission.title }}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</div>

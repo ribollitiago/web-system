@@ -12,6 +12,7 @@ export interface User {
   date: string;
   phone: string;
   document: string;
+  permissions: [];
   group: [];
   situation: string;
 }

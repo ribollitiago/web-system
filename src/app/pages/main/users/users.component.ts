@@ -1,7 +1,7 @@
 import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { SearchInputComponent } from "../../../components/search-input/search-input.component";
 import { TranslationService } from '../../../services/translate.service';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { ListUsersComponent, User } from "../../../components/users/list-users/list-users.component";
 import { CommonModule } from '@angular/common';
 import { PermissionsService } from '../../../services/permissions.service';
@@ -27,6 +27,8 @@ export class UsersComponent implements OnDestroy {
   selectedUser: User | null = null;
   isDetailsOpen: boolean = false;
 
+  permissionUserSelected: any;
+
   private languageSubscription: Subscription;
 
   constructor(
@@ -44,7 +46,7 @@ export class UsersComponent implements OnDestroy {
     // const filtered = this.permissionsService.filterPermissionsByIds(await this.permissionsService.getPermissions(), permissionIds);
     // console.log('Permissões filtradas:', JSON.stringify(filtered, null, 2));
   }
-  
+
   ngOnDestroy() {
     this.languageSubscription.unsubscribe();
   }
@@ -71,6 +73,9 @@ export class UsersComponent implements OnDestroy {
   handleSelectedUsers(users: User[]): void {
     this.selectedUser = users.length === 1 ? users[0] : null;
     this.isDetailsOpen = !!this.selectedUser;
+    if (this.selectedUser) {
+      this.listPermissions(this.selectedUser);
+    }
   }
 
   closeDetailsPanel(): void {
@@ -95,5 +100,57 @@ export class UsersComponent implements OnDestroy {
       '-1': 'disabled'
     };
     return this.translationService.getTranslation(situationMap[situation], 'Users_Page');
+  }
+
+  async listPermissions(user: User) {
+    const filtered = this.permissionsService.filterPermissionsByIds(
+      await this.permissionsService.getPermissions(),
+      user.permissions
+    );
+
+    const permissions: any[] = []; // Mudamos para array de objetos
+
+    Object.keys(filtered).forEach(category => {
+      const categoryPermissions = filtered[category as keyof typeof filtered];
+
+      if (categoryPermissions && Object.keys(categoryPermissions).length > 0) {
+        Object.values(categoryPermissions).forEach(permission => {
+          if (permission.title) {
+            permissions.push({
+              title: permission.title,
+              critical: permission.critical
+            });
+          }
+        });
+      }
+    });
+
+    this.sortByCriticalLevel(permissions);
+    this.permissionUserSelected = permissions;
+  }
+
+  private sortByCriticalLevel(permissions: any[]) {
+    const levelOrder: { [key: string]: number } = {
+      'HIGH_LEVEL': 0,
+      'MEDIUM_LEVEL': 1,
+      'LOW_LEVEL': 2,
+      'ZERO_LEVEL': 3
+    };
+
+    permissions.sort((a, b) => {
+      const aOrder = levelOrder[a.critical] ?? 3;
+      const bOrder = levelOrder[b.critical] ?? 3;
+      return aOrder - bOrder;
+    });
+  }
+
+  getSvgFileName(critical: string): string {
+    const mapping: { [key: string]: string } = {
+      HIGH_LEVEL: 'high_level.svg',
+      MEDIUM_LEVEL: 'medium_level.svg',
+      LOW_LEVEL: 'low_level.svg',
+      ZERO_LEVEL: 'zero_level.svg'
+    };
+    return `assets/svg/icon/register/step-2/${mapping[critical] || 'default.svg'}`;
   }
 }
