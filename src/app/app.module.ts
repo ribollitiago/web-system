@@ -19,6 +19,8 @@ import { RegisterComponent } from './pages/main/register/register.component';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 
+import {MatTooltipModule} from '@angular/material/tooltip';
+
 @NgModule({
   declarations: [
   ],
@@ -38,6 +40,7 @@ import { HttpClientModule } from '@angular/common/http';
     RegisterStep3Component,
     CommonModule,
     HttpClientModule,
+    MatTooltipModule
   ],
 
 })

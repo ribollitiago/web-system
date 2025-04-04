@@ -1,4 +1,17 @@
-@import 'ngx-toastr/toastr';
+@use '@angular/material' as mat;
+@import './styles/variables.scss';
+
+html {
+  @include mat.theme((
+    color: (
+      theme-type: light,
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}@import 'ngx-toastr/toastr';
 @import "./styles/variables.scss";
 
 * {
@@ -23,3 +36,20 @@ main {
   width: 100%;
   height: 100%;
 }
+
+:root {
+  @include mat.tooltip-overrides((
+    container-color: $rg-bg-hover-extra,
+    supporting-text-color: $text-color,
+    container-shape: 8px,
+
+    supporting-text-font: 'Inter',
+    supporting-text-size: 12px,
+    supporting-text-weight: 300,
+    supporting-text-tracking: 0.5px,
+    supporting-text-line-height: 20px,
+  ));
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
