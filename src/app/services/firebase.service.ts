@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { getDatabase, ref, get, set, remove, onValue, DataSnapshot, off } from 'firebase/database';
 import firebaseApp from '../firebase.config';
 
-type User = {
+type Entity = {
     uid: string;
     [key: string]: any;
 };
@@ -13,39 +13,49 @@ type User = {
 })
 export class FirebaseService {
     private readonly db = getDatabase(firebaseApp);
-    private readonly usersRef = ref(this.db, 'users');
     private usersSubscription: (() => void) | null = null;
 
     // ------------------------------------------------------
     // SEÇÃO: CONEXÃO COM O FIREBASE
     // ------------------------------------------------------
 
-    private snapshotToUsers(snapshot: DataSnapshot): User[] {
+    private snapshotToUsers(snapshot: DataSnapshot): Entity[] {
         if (!snapshot.exists()) return [];
         return Object.entries(snapshot.val()).map(([uid, value]) => ({
             uid,
             ...(value as object),
-        } as User));
+        } as Entity));
+    }
+
+    // ------------------------------------------------------
+    // SEÇÃO: FUNÇÕES AUXILIARES DE BANCO DE DADOS
+    // ------------------------------------------------------
+
+    private setQueryRef(query: string) {
+        return ref(this.db, query);
+    }
+
+    private async setEntity(query: string, data: Partial<Entity>) {
+        const userRef = this.setQueryRef(query);
+        await set(userRef, data);
     }
 
     // ------------------------------------------------------
     // SEÇÃO: LEITURA DE DADOS
     // ------------------------------------------------------
 
-    async getAllUsers(): Promise<User[]> {
-        const snapshot = await get(this.usersRef);
+    async getAllEntity(query: string): Promise<Entity[]> {
+        const snapshot = await get(this.setQueryRef(query));
         return this.snapshotToUsers(snapshot);
     }
 
-    async getUsersByField<T extends keyof User>(field: T, value: User[T]): Promise<User[]> {
-        const snapshot = await get(this.usersRef);
-        const allUsers = this.snapshotToUsers(snapshot);
-        return allUsers.filter(user => user[field] === value);
-    }
+    async getEntityByField<T extends keyof Entity>(query: string, field: T, value: Entity[T]): Promise<Entity[]> {
+        const allEntity = await this.getAllEntity(query);
+        return allEntity.filter(entity => entity[field] === value);
+    }    
 
-    async getUserById(uid: string): Promise<User | null> {
-        const userRef = ref(this.db, `users/${uid}`);
-        const snapshot = await get(userRef);
+    async getEntityById(query: string, uid: string): Promise<Entity | null> {
+        const snapshot = await get(this.setQueryRef(`${query}/${uid}`));
         return snapshot.exists() ? { uid, ...snapshot.val() } : null;
     }
 
@@ -53,31 +63,28 @@ export class FirebaseService {
     // SEÇÃO: ESCRITA DE DADOS
     // ------------------------------------------------------
 
-    async updateUser(uid: string, data: Partial<User>) {
-        const userRef = ref(this.db, `users/${uid}`);
-        await set(userRef, data);
+    async updateEntity(query: string, uid: string, data: Record<string, any>) {
+        await this.setEntity(`${query}/${uid}`, data);
     }
 
-    async addUser(data: Omit<User, 'uid'>, uid: string): Promise<void> {
-        const userRef = ref(this.db, `users/${uid}`);
-        await set(userRef, data);
+    async addEntity(query: string, data: Record<string, any>, uid: string): Promise<void> {
+        await this.setEntity(`${query}/${uid}`, data);
     }
 
-    async deleteUser(uid: string) {
-        const userRef = ref(this.db, `users/${uid}`);
-        await remove(userRef);
+    async deleteEntity(query: string, uid: string) {
+        await remove(this.setQueryRef(`${query}/${uid}`));
     }
 
     // ------------------------------------------------------
     // SEÇÃO: INSCRIÇÃO EM EVENTOS (para sincronizar com o Firebase)
     // ------------------------------------------------------
 
-    subscribeToUsers(callback: (users: User[]) => void) {
+    subscribeToUsers(callback: (users: Entity[]) => void) {
         if (this.usersSubscription) {
             this.off();
         }
 
-        this.usersSubscription = onValue(this.usersRef, (snapshot) => {
+        this.usersSubscription = onValue(this.setQueryRef('users'), (snapshot) => {
             const users = this.snapshotToUsers(snapshot);
             callback(users);
         });
@@ -89,7 +96,7 @@ export class FirebaseService {
 
     off() {
         if (this.usersSubscription) {
-            off(this.usersRef);
+            off(this.setQueryRef('users'));
             this.usersSubscription = null;
         }
     }
