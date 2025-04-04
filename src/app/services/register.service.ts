@@ -70,12 +70,12 @@ export class RegisterService {
         throw new Error('Dados de usuário incompletos');
       }
 
-      const existingUserByCpf = await this.firebaseService.getUsersByField('cpf', this.userData['cpf']);
+      const existingUserByCpf = await this.firebaseService.getEntityByField('users','cpf', this.userData['cpf']);
       if (existingUserByCpf.length > 0) {
         throw new Error('Este CPF já está registrado.');
       }
 
-      const existingUserByEmail = await this.firebaseService.getUsersByField('email', this.userData['email']);
+      const existingUserByEmail = await this.firebaseService.getEntityByField('users', 'email', this.userData['email']);
       if (existingUserByEmail.length > 0) {
         throw new Error('Este email já está registrado.');
       }
@@ -105,7 +105,7 @@ export class RegisterService {
 
   private async getMaxUserId(): Promise<string> {
     try {
-      const allUsers = await this.firebaseService.getAllUsers();
+      const allUsers = await this.firebaseService.getAllEntity('users');
 
       const allUserIds = allUsers.map(user => user['id']);
 
