@@ -27,7 +27,7 @@
     <div class="users-header">
       <div class="line-header">
         <div class="title">Details user</div>
-        <div class="close-icon" (click)="closeDetailsPanel()">
+        <div class="close-icon" matTooltipPosition="above" matTooltip="Fechar Menu" (click)="closeDetailsPanel()">
           <img src="assets/svg/icon/input/clear.svg">
         </div>
       </div>
@@ -55,10 +55,24 @@
       <div class="permissions-container">
         <div class="title">Permissions</div>
         <div class="list-permissions">
-          <div class="permission" *ngFor="let permission of permissionUserSelected">
-            <img [src]="getSvgFileName(permission.critical)"
-                 class="critical-icon">
-            {{ permission.title }}
+          <div
+            class="permission"
+
+            *ngFor="let permission of permissionUserSelected">
+
+            <img
+              [matTooltip]="getCriticalText(permission.critical)"
+              [matTooltipClass]="'tooltip'"
+              matTooltipPosition="above"
+              [src]="getSvgFileName(permission.critical)"
+              class="critical-icon" />
+
+            <span class="title" matTooltipPosition="above" [matTooltipClass]="'tooltip'" matTooltip="{{permission.title}}">{{ permission.title }}</span>
+
+            <div class="extra-information">
+              <img src="assets/svg/icon/register/step-2/extra_info.svg" />
+            </div>
+
           </div>
         </div>
       </div>

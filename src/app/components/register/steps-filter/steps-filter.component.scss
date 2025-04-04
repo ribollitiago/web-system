@@ -66,13 +66,13 @@ input[type="checkbox"] {
       -moz-user-select: none;
       -ms-user-select: none;
 
-      &:hover .critical-tooltip {
+      &:hover .menu-tooltip {
         visibility: visible;
         opacity: 1;
       }
     }
 
-    .critical-tooltip {
+    .menu-tooltip {
       @extend .critical-tooltip;
       bottom: calc(100% + 8px);
       left: 50%;

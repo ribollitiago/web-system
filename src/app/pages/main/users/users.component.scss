@@ -3,14 +3,14 @@
 .users-wrapper {
   padding: 25px;
   display: flex;
-  min-height: calc(100vh - 70px); // Adicionar
-  overflow-y: auto; // Ajuste para altura total
+  min-height: calc(100vh - 70px);
+  overflow-y: auto;
   gap: 25px;
 
   .users-container-list {
-    flex: 1 1 auto; // Permite crescimento e redução
+    flex: 1 1 auto;
     min-height: min-content;
-    min-width: 0; // Permite que o conteúdo encolha
+    min-width: 0;
     height: auto;
     display: flex;
     flex-direction: column;
@@ -25,7 +25,7 @@
     flex-direction: column;
 
     >* {
-      flex-shrink: 0; // Evita compressão excessiva
+      flex-shrink: 0;
     }
 
     .users-header {
@@ -121,7 +121,6 @@
       }
     }
 
-
     .pagination-button:last-child {
       order: 4;
     }
@@ -190,9 +189,7 @@
 
       .user-line {
         display: flex;
-        /* Coloca os elementos na mesma linha */
         align-items: center;
-        /* Centraliza verticalmente */
         margin-bottom: 5px;
         gap: 10px;
 
@@ -310,32 +307,65 @@
           .permission {
             width: 100%;
             min-width: 0;
-            color: $text-color;
-            font-size: 10px;
-            font-weight: 300;
-            padding: 7px 8px;
+
+            padding: 0 8px;
+            height: 26px;
             background: $us-bg-permission;
             border-radius: 10px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
             box-sizing: border-box;
 
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 8px;
 
-            .critical-icon{
+            .critical-icon {
+              flex-shrink: 0;
 
               img {
                 width: 11px;
                 height: 11px;
               }
             }
+
+            .title {
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              flex: 1 1 auto;
+              min-width: 0;
+              color: $text-color;
+              margin-top: 9px;
+              font-size: 10px;
+              font-weight: 300;
+
+              line-height: 1;
+            }
+
+            .extra-information {
+              flex-shrink: 0;
+              width: 18px;
+              height: 18px;
+              border-radius: 3px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+
+              transition: background-color ease 0.3s;
+              cursor: pointer;
+
+              img {
+                width: 12px;
+                height: 12px;
+              }
+
+              &:hover {
+                background: $rg-bg-hover-extra;
+              }
+            }
           }
         }
       }
-
     }
   }
 }

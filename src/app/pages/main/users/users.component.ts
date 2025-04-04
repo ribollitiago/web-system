@@ -5,11 +5,11 @@ import { filter, Subscription } from 'rxjs';
 import { ListUsersComponent, User } from "../../../components/users/list-users/list-users.component";
 import { CommonModule } from '@angular/common';
 import { PermissionsService } from '../../../services/permissions.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-users',
-  standalone: true,
-  imports: [SearchInputComponent, ListUsersComponent, CommonModule],
+  imports: [SearchInputComponent, ListUsersComponent, CommonModule, MatTooltipModule],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
 })
@@ -21,6 +21,12 @@ export class UsersComponent implements OnDestroy {
   inputSearch: string = '';
   btnFilters: string = '';
   btnExport: string = '';
+
+  menuTooltip: string = '';
+  zeroTooltip: string = '';
+  lowTooltip: string = '';
+  mediumTooltip: string = '';
+  highTooltip: string = '';
 
   currentSearchQuery: string = '';
   currentSelectedCount: number = 0;
@@ -54,8 +60,16 @@ export class UsersComponent implements OnDestroy {
   private loadTranslations(): void {
     const globalSection = 'Global_Components';
     const usersSection = 'Users_Page';
+    const permissionSection = 'Permissions_Page';
+
+    this.menuTooltip = this.translationService.getTranslation('menuTooltip', permissionSection);
+    this.zeroTooltip = this.translationService.getTranslation('criticalTooltipZeroLevel', permissionSection);
+    this.lowTooltip = this.translationService.getTranslation('criticalTooltipLowLevel', permissionSection);
+    this.mediumTooltip = this.translationService.getTranslation('criticalTooltipMediumLevel', permissionSection);
+    this.highTooltip = this.translationService.getTranslation('criticalTooltipHighLevel', permissionSection);
 
     this.inputSearch = this.translationService.getTranslation('inputSearch', globalSection);
+
     this.title = this.translationService.getTranslation('title', usersSection);
     this.subtitle = this.translationService.getTranslation('subtitle', usersSection);
     this.btnFilters = this.translationService.getTranslation('btnFilters', usersSection);
@@ -152,5 +166,15 @@ export class UsersComponent implements OnDestroy {
       ZERO_LEVEL: 'zero_level.svg'
     };
     return `assets/svg/icon/register/step-2/${mapping[critical] || 'default.svg'}`;
+  }
+
+  getCriticalText(critical: string): string {
+    switch (critical) {
+      case 'HIGH_LEVEL': return this.highTooltip;
+      case 'MEDIUM_LEVEL': return this.mediumTooltip;
+      case 'LOW_LEVEL': return this.lowTooltip;
+      case 'ZERO_LEVEL': return this.zeroTooltip;
+      default: return '';
+    }
   }
 }
