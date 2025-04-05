@@ -63,12 +63,12 @@ export class FirebaseService {
     // SEÇÃO: ESCRITA DE DADOS
     // ------------------------------------------------------
 
-    async updateEntity(query: string, uid: string, data: Record<string, any>) {
-        await this.setEntity(`${query}/${uid}`, data);
+    async updateEntity(query: string, data: Record<string, any>) {
+        await this.setEntity(query, data);
     }
 
-    async addEntity(query: string, data: Record<string, any>, uid: string): Promise<void> {
-        await this.setEntity(`${query}/${uid}`, data);
+    async addEntity(query: string, data: Record<string, any>) {
+        await this.setEntity(query, data);
     }
 
     async deleteEntity(query: string, uid: string) {

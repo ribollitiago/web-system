@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { getAuth, createUserWithEmailAndPassword, User } from 'firebase/auth';
-import { getDatabase, ref, set, get } from 'firebase/database';
+import { getDatabase, ref, set, get, query } from 'firebase/database';
 import firebaseApp from '../firebase.config';
 import { BehaviorSubject } from 'rxjs';
 import { FirebaseService } from './firebase.service'; // Assumindo que você tem o FirebaseService
@@ -70,7 +70,7 @@ export class RegisterService {
         throw new Error('Dados de usuário incompletos');
       }
 
-      const existingUserByCpf = await this.firebaseService.getEntityByField('users','cpf', this.userData['cpf']);
+      const existingUserByCpf = await this.firebaseService.getEntityByField('users', 'cpf', this.userData['cpf']);
       if (existingUserByCpf.length > 0) {
         throw new Error('Este CPF já está registrado.');
       }
@@ -88,7 +88,7 @@ export class RegisterService {
       if (user) {
         const { password, ...userMap } = this.userData;
 
-        await set(ref(this.db, 'users/' + user.uid), userMap);
+        await this.firebaseService.addEntity('users/' + user.uid, userMap);
 
         this.userData = {};
         this.setCurrentStep(1)

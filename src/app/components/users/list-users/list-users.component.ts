@@ -13,7 +13,7 @@ export interface User {
   phone: string;
   document: string;
   permissions: [];
-  group: [];
+  group: any[];
   situation: string;
 }
 
@@ -52,6 +52,7 @@ export class ListUsersComponent implements OnInit, OnDestroy {
   lastSingleSelected: number | null = null;
 
   users: User[] = [];
+  groups: any[] = [];
   filteredUsers: User[] = [];
   private languageSubscription: Subscription;
 
@@ -68,8 +69,9 @@ export class ListUsersComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.loadTranslations();
+    this.groups = await this.firebaseService.getAllEntity('groups');
     this.loadUsers();
   }
 
@@ -115,10 +117,40 @@ export class ListUsersComponent implements OnInit, OnDestroy {
   private loadUsers(): void {
     this.firebaseService.subscribeToUsers((users: any[]) => {
       this.users = users;
+      this.addGroupDetailsToUsers();
       this.sortUsersById();
       this.filterUsers();
     });
   }
+
+  addGroupDetailsToUsers() {
+    this.users = this.users.map(user => {
+      const userWithGroupDetails = { ...user };
+  
+      if (Array.isArray(user.group)) {
+        userWithGroupDetails.group = user.group.map((groupUid: string) => {
+          const group = this.groups.find(g => g.uid === groupUid);
+          if (group) {
+            const { users, ...groupWithoutUsers } = group;
+            return groupWithoutUsers;
+          }
+          return null;
+        }).filter(group => group !== null);
+      } else {
+        userWithGroupDetails.group = [];
+      }
+      if (userWithGroupDetails.group.length === 0) {
+        userWithGroupDetails.group = [{ title: 'Sem grupo atribuído' }];
+      }
+  
+      return userWithGroupDetails;
+    });
+  
+    console.log('Usuários com detalhes dos grupos:', this.users);
+  }
+  
+  
+
 
   // ======================================================
   // FILTRAGEM E PAGINAÇÃO DE USUÁRIOS
@@ -140,7 +172,6 @@ export class ListUsersComponent implements OnInit, OnDestroy {
       )
       : [...this.users];
 
-    // Restaura apenas as seleções que existem na nova lista filtrada
     this.selectedUsers = new Set(
       Array.from(previousSelection).filter(id =>
         this.filteredUsers.some(user => user.id === id)
