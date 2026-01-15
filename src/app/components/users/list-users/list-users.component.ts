@@ -126,7 +126,7 @@ export class ListUsersComponent implements OnInit, OnDestroy {
   addGroupDetailsToUsers() {
     this.users = this.users.map(user => {
       const userWithGroupDetails = { ...user };
-  
+
       if (Array.isArray(user.group)) {
         userWithGroupDetails.group = user.group.map((groupUid: string) => {
           const group = this.groups.find(g => g.uid === groupUid);
@@ -142,14 +142,14 @@ export class ListUsersComponent implements OnInit, OnDestroy {
       if (userWithGroupDetails.group.length === 0) {
         userWithGroupDetails.group = [{ title: 'Sem grupo atribuído' }];
       }
-  
+
       return userWithGroupDetails;
     });
-  
+
     console.log('Usuários com detalhes dos grupos:', this.users);
   }
-  
-  
+
+
 
 
   // ======================================================
@@ -160,11 +160,11 @@ export class ListUsersComponent implements OnInit, OnDestroy {
   }
 
   private filterUsers(): void {
-    const search = this.searchQuery.toLowerCase();
+    const search = this.searchQuery?.toLowerCase().trim() || '';
 
     const previousSelection = new Set(this.selectedUsers);
 
-    this.filteredUsers = this.searchQuery
+    this.filteredUsers = search
       ? this.users.filter(user =>
         user.id.toString().includes(search) ||
         user.name.toLowerCase().includes(search) ||
@@ -175,7 +175,8 @@ export class ListUsersComponent implements OnInit, OnDestroy {
     this.selectedUsers = new Set(
       Array.from(previousSelection).filter(id =>
         this.filteredUsers.some(user => user.id === id)
-      ));
+      )
+    );
 
     this.updateTotalPages();
     this.filteredUsersCount.emit(this.filteredUsers.length);
