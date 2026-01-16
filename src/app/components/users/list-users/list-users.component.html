@@ -32,7 +32,7 @@
     <div class="list-container" [class.selected]="isSelected(user.id)" *ngFor="let user of visibleUsers"
       (click)="selectSingleUser(user.id)">
       <div class="checkbox" (click)="toggleUserSelection(user.id, $event)">
-        <img [src]="'assets/svg/icon/register/step-2/' + selectedUsers.has(user.id) ? 'check-on.svg' : 'check-off.svg'">
+        <img [src]="'assets/svg/icon/register/step-2/' + (selectedUsers.has(user.id) ? 'check-on.svg' : 'check-off.svg')">
       </div>
       <div class="list-item id">{{user.id}}</div>
       <div class="list-item name">{{user.name}}</div>

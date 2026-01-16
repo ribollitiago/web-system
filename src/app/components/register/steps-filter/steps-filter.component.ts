@@ -41,7 +41,7 @@ export class StepsFilterComponent implements OnChanges, OnDestroy {
     this.updateCurrentList();
     this.applySearchFilter();
     this.sortByCriticalLevel();
-    
+
     this.translationService.language$.subscribe(() => {
       this.loadTranslations();
     });
@@ -111,7 +111,7 @@ export class StepsFilterComponent implements OnChanges, OnDestroy {
       'LOW_LEVEL': 2,
       'ZERO_LEVEL': 3
     };
-  
+
     this.filteredList.sort((a, b) => {
       const aOrder = levelOrder[a.critical] ?? 3;
       const bOrder = levelOrder[b.critical] ?? 3;
@@ -151,6 +151,11 @@ export class StepsFilterComponent implements OnChanges, OnDestroy {
       case 'ZERO_LEVEL': return this.zeroTooltip;
       default: return '';
     }
+  }
+
+  toggleAndChange(item: any) {
+    item.checked = !item.checked;
+    this.onCheckboxChange(item);
   }
 
   onCheckboxChange(item: any) {

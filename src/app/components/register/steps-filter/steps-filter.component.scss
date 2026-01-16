@@ -1,5 +1,6 @@
 @import "../../../../styles/variables.scss";
 
+/* Esconde o checkbox nativo */
 input[type="checkbox"] {
   display: none;
 }
@@ -25,21 +26,34 @@ input[type="checkbox"] {
 }
 
 .checkbox-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 5px;
+  width: 100%;
   flex: 1 1 calc(50% - 10px);
   min-width: 325px;
   height: 40px;
   background-color: $rg-bg-checkbox;
-  padding: 10px 5px;
   border-radius: 10px;
   position: relative;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
   transition: background-color 0.3s ease;
 
   &:hover {
     background-color: darken($rg-bg-checkbox, 2%);
+  }
+
+  .item-content-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+
+    .item-title {
+      font-size: 14px;
+      font-weight: 350;
+      color: $rg-text;
+    }
   }
 
   .extra-information {
@@ -53,6 +67,10 @@ input[type="checkbox"] {
     position: relative;
     transition: background-color 0.3s ease;
 
+    &:hover {
+      background-color: $rg-bg-hover-extra;
+    }
+
     .icon-wrapper {
       display: flex;
       align-items: center;
@@ -60,11 +78,7 @@ input[type="checkbox"] {
       width: 100%;
       height: 100%;
       padding: 4px;
-
       user-select: none;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
 
       &:hover .menu-tooltip {
         visibility: visible;
@@ -72,17 +86,17 @@ input[type="checkbox"] {
       }
     }
 
+    img {
+      width: 13px;
+      height: 13px;
+      pointer-events: none;
+    }
+
     .menu-tooltip {
       @extend .critical-tooltip;
       bottom: calc(100% + 8px);
       left: 50%;
       margin-bottom: 4px;
-    }
-
-    img {
-      width: 13px;
-      height: 13px;
-      pointer-events: none;
     }
 
     .menu {
@@ -93,30 +107,20 @@ input[type="checkbox"] {
       border-radius: 8px;
       width: 200px;
       cursor: default;
-
       position: absolute;
       top: 0;
       left: calc(100% + 5px);
-      margin-left: 0;
       z-index: 1;
-
-
     }
 
     .menu-title {
       font-weight: bold;
       padding: 3px 5px;
-
     }
 
     .menu-item {
       padding: 3px 5px;
     }
-  }
-
-  .extra-information:hover {
-    background-color: $rg-bg-hover-extra;
-    cursor: pointer;
   }
 
   .critical-wrapper {
@@ -128,6 +132,13 @@ input[type="checkbox"] {
       visibility: visible;
       opacity: 1;
     }
+  }
+
+  .critical-icon {
+    width: 12px;
+    height: 12px;
+    cursor: help;
+    user-select: none;
   }
 
   .critical-tooltip {
@@ -159,56 +170,20 @@ input[type="checkbox"] {
     }
   }
 
-  .critical-icon {
-    width: 12px;
-    height: 12px;
-    cursor: help;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
+  .custom-checkbox-clickable {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    min-width: 26px;
+  }
+
+  .checkbox-icon {
+    width: 18px;
+    height: 18px;
   }
 
   label {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin-left: 45px;
-    padding: 10px 10px;
-    font-size: 12px;
-    color: $rg-text;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    cursor: pointer;
-
-    &::after {
-      position: relative;
-      top: 0;
-      right: 0;
-    }
+    display: none;
   }
-}
-
-input[type="checkbox"]+label::after {
-  content: "";
-  display: inline-block;
-  height: 18px;
-  width: 18px;
-  background: url('../../../../../public/assets/svg/icon/register/step-2/check-off.svg') no-repeat;
-  background-size: 18px 18px;
-  transition: 0.2s ease;
-}
-
-input[type="checkbox"]:checked+label::after {
-  content: "";
-  display: inline-block;
-  height: 18px;
-  width: 18px;
-  background: url('../../../../../public/assets/svg/icon/register/step-2/check-on.svg') no-repeat;
-  background-size: 18px 18px;
-  transition: 0.2s ease;
 }
