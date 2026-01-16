@@ -12,10 +12,10 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { LoginComponent } from './pages/login/login.component';
 import { AppComponent } from './app.component';
-import { RegisterStep1Component } from './pages/main/register/register-step-1/register-step-1.component';
-import { RegisterStep2Component } from './pages/main/register/register-step-2/register-step-2.component';
-import { RegisterStep3Component } from './pages/main/register/register-step-3/register-step-3.component';
-import { RegisterComponent } from './pages/main/register/register.component';
+import { RegisterStep1Component } from './features/register/register-step-1/register-step-1.component';
+import { RegisterStep2Component } from './features/register/register-step-2/register-step-2.component';
+import { RegisterStep3Component } from './features/register/register-step-3/register-step-3.component';
+import { RegisterComponent } from './features/register/register.component';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 

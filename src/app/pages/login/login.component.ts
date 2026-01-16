@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common'; // Importe o CommonModule
-import { LoginService } from '../../services/login.service';
+import { CommonModule } from '@angular/common';
+import { LoginService } from '../../core/services/login.service';
 import { ToastrService } from 'ngx-toastr';
-import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
+import { PrimaryInputComponent } from '../../shared/components/primary-input/primary-input.component';
 import { DefaultLoginLayoutComponent } from '../../layout/default-login-layout/default-login-layout.component';
-import { TranslationService } from '../../services/translate.service';
+import { TranslationService } from '../../core/services/translate.service';
 
 @Component({
   selector: 'app-login',

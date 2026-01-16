@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild, ElementRef, OnDestroy } from '@angular/core';
-import { LoginService } from '../../services/login.service';
+import { LoginService } from '../../core/services/login.service';
 import { Router } from '@angular/router';
-import { TranslationService } from '../../services/translate.service';
+import { TranslationService } from '../../core/services/translate.service';
 
 @Component({
   selector: 'app-header',

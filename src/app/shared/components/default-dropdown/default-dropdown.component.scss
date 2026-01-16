@@ -1,0 +1,35 @@
+@import "../../../../styles/variables.scss";
+
+.select-wrapper-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; // Alinha o label à esquerda
+}
+
+.select-wrapper {
+  font-size: 13px;
+  font-weight: 400;
+  background-color: transparent;
+  border: none;
+  border-radius: 8px;
+  color: $text-color;
+  padding: 10px;
+  outline: none;
+  cursor: pointer;
+
+  &:hover {
+    background-color: darken($text-color, 85%);
+  }
+
+  .option {
+    background-color: $login-bg;
+    color: $text-color;
+  }
+
+  &:focus,
+  &:active {
+    outline: none;
+    border: none;
+    box-shadow: none;
+  }
+}

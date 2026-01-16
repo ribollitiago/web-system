@@ -1,0 +1,30 @@
+@import "../../../../styles/variables.scss";
+
+* {
+  justify-content: center;
+  align-items: center;
+}
+
+.extra-wrapper {
+  .text-explanation{
+    font-size: 14px;
+    color: $text-color;
+    font-weight: 300;
+    margin-bottom: 25px;
+  }
+
+  .text-box {
+    width: 660px;
+    height: 120px;
+    padding: 15px;
+    overflow: auto;
+    resize: none;
+    border: none;
+    border-radius: 12px;
+    font-family: Arial, sans-serif;
+    margin-bottom: 50px;
+
+    background-color: $rg-bg-text-box;
+    color: $rg-text;
+  }
+}

@@ -1,13 +1,13 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login.component';
-import { AuthGuard } from './guard/auth.guard';
-import { HomeComponent } from './pages/main/home/home.component'; // Add this
+import { AuthGuard } from './core/guard/auth.guard';
+import { HomeComponent } from './pages/main/home/home.component';
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
-import { RegisterStep1Component } from './pages/main/register/register-step-1/register-step-1.component';
-import { UsersComponent } from './pages/main/users/users.component';
-import { RegisterStep2Component } from './pages/main/register/register-step-2/register-step-2.component';
-import { RegisterStep3Component } from './pages/main/register/register-step-3/register-step-3.component';
-import { RegisterComponent } from './pages/main/register/register.component';
+import { RegisterStep1Component } from './features/register/register-step-1/register-step-1.component';
+import { UsersComponent } from './features/users/users/users.component';
+import { RegisterStep2Component } from './features/register/register-step-2/register-step-2.component';
+import { RegisterStep3Component } from './features/register/register-step-3/register-step-3.component';
+import { RegisterComponent } from './features/register/register.component';
 
 export const routes: Routes = [
   {
