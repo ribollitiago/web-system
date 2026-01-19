@@ -1,24 +1,31 @@
 @import "../../../../styles/variables.scss";
 
+:host {
+  display: block; // Essencial para o componente aceitar largura
+  width: 100%;    // Ocupa o que o pai permitir
+}
+
 .select-wrapper-container {
   display: flex;
   flex-direction: column;
-  align-items: flex-start; // Alinha o label à esquerda
+  align-items: flex-start;
+  width: 100%;     /* Adicione isso */
 }
 
 .select-wrapper {
-  font-size: 13px;
-  font-weight: 400;
-  background-color: transparent;
-  border: none;
+  width: 100%;
+  font-size: 11px;
+  font-weight: 300;
+  background-color: darken($text-color, 97%);
   border-radius: 8px;
-  color: $text-color;
-  padding: 10px;
-  outline: none;
+  color: $us-border-button;
+  border: 1px solid;
+  border-color: $us-border-button;
+  padding: 8px;
   cursor: pointer;
 
   &:hover {
-    background-color: darken($text-color, 85%);
+    background-color: darken($text-color, 98%);
   }
 
   .option {
@@ -28,8 +35,6 @@
 
   &:focus,
   &:active {
-    outline: none;
-    border: none;
     box-shadow: none;
   }
 }

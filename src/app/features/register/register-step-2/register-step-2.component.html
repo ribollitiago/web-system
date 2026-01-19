@@ -1,29 +1,47 @@
-<app-default-step [title]="title" [subtitle]="subtitle" [currentStepState]="2" [btnLast]="btnLast" [returnStep]="1"
+<app-default-step [title]="title" [subtitle]="subtitle" [currentStepState]="2"
+  [btnLast]="btnLast" [returnStep]="1"
   (submit)="submit()">
+
+  <h2 class="group-title">{{ groupTitle }}</h2>
+
+  <app-default-dropdown
+    class="meu-dropdown-custom"
+    [options]="groupOptions"
+    [placeholder]="'Selecione um ou mais grupos'">
+  </app-default-dropdown>
+
+  <h2 class="permissions-title">{{ permissionsTitle }}</h2>
 
   <div class="filters-wrapper">
     <div class="filters">
-      <button class="users" type="button" [ngClass]="{ 'selected': selectedButton === 'users' }"
+      <button class="users" type="button"
+        [ngClass]="{ 'selected': selectedButton === 'users' }"
         (click)="selectButton('users')">
         {{ filterOne }}
       </button>
-      <button class="route" type="button" [ngClass]="{ 'selected': selectedButton === 'route' }"
+      <button class="route" type="button"
+        [ngClass]="{ 'selected': selectedButton === 'route' }"
         (click)="selectButton('route')">
         {{ filterTwo }}
       </button>
-      <button class="admin" type="button" [ngClass]="{ 'selected': selectedButton === 'admin' }"
+      <button class="admin" type="button"
+        [ngClass]="{ 'selected': selectedButton === 'admin' }"
         (click)="selectButton('admin')">
         {{ filterThree }}
       </button>
-      <app-search-input [placeholder]="inputSearch" (searchChange)="handleSearchChange($event)">
+      <app-search-input [placeholder]="inputSearch"
+        (searchChange)="handleSearchChange($event)">
         <img src="assets/svg/icon/input/search.svg" alt />
       </app-search-input>
     </div>
   </div>
+
   <form>
     <div class="permissions-form">
-      <app-steps-filter class="permissions-checkbox" [selectedFilter]="selectedButton"
-        [searchQuery]="currentSearchQuery" (permissionSelected)="handlePermissionSelection($event)">
+      <app-steps-filter class="permissions-checkbox"
+        [selectedFilter]="selectedButton"
+        [searchQuery]="currentSearchQuery"
+        (permissionSelected)="handlePermissionSelection($event)">
       </app-steps-filter>
     </div>
   </form>

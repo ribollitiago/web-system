@@ -67,6 +67,33 @@
   }
 }
 
+.group-title {
+  font-size: 14px;
+  color: $rg-title;
+  font-weight: 200;
+  margin-bottom: 15px;
+
+  margin-right: auto;
+  text-align: left;
+}
+
+.meu-dropdown-custom {
+  align-self: flex-start; // Força a saída do centro para a esquerda
+  width: 50%;
+
+  margin-bottom: 15px;
+}
+
+.permissions-title {
+  font-size: 14px;
+  color: $rg-title;
+  font-weight: 200;
+  margin-bottom: 15px;
+
+  margin-right: auto;
+  text-align: left;
+}
+
 .permissions-form {
   display: flex;
   flex-direction: column;

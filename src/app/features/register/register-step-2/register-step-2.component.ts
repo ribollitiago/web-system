@@ -7,6 +7,8 @@ import { SearchInputComponent } from '../../../shared/components/search-input/se
 import { CommonModule } from '@angular/common';
 import { StepsFilterComponent } from '../steps-filter/steps-filter.component';
 import { DefaultStepComponent } from '../../../shared/layout/default-step/default-step.component';
+import { TranslateDropdownComponent } from "../../../shared/components/translate-dropdown/translate-dropdown.component";
+import { DefaultDropdownComponent } from "../../../shared/components/default-dropdown/default-dropdown.component";
 
 @Component({
   selector: 'app-register-step-2',
@@ -14,7 +16,8 @@ import { DefaultStepComponent } from '../../../shared/layout/default-step/defaul
     SearchInputComponent,
     CommonModule,
     StepsFilterComponent,
-    DefaultStepComponent
+    DefaultStepComponent,
+    DefaultDropdownComponent
   ],
   templateUrl: './register-step-2.component.html',
   styleUrl: './register-step-2.component.scss',
@@ -24,6 +27,15 @@ export class RegisterStep2Component implements OnDestroy {
   currentSearchQuery: string = '';
   title: string = '';
   subtitle: string = '';
+
+  groupTitle: string = 'Selecione os grupos de permissões para o usuário';
+  groupOptions = [
+    { label: 'Administrador', value: 'admin' },
+    { label: 'Visualizador', value: 'viewer' },
+    { label: 'Editor', value: 'editor' }
+  ];
+
+  permissionsTitle: string = 'Selecione as permissões individuais para o usuário';
   btnLast: string = '';
   inputSearch: string = '';
   filterOne: string = '';
@@ -81,7 +93,7 @@ export class RegisterStep2Component implements OnDestroy {
       acc[permission] = true;
       return acc;
     }, {});
-    
+
     await this.registerService.setStepData(2, { permissions: allPermissions });
   }
 

@@ -50,7 +50,7 @@ input[type="checkbox"] {
     flex: 1;
 
     .item-title {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 350;
       color: $rg-text;
     }
@@ -181,6 +181,7 @@ input[type="checkbox"] {
   .checkbox-icon {
     width: 18px;
     height: 18px;
+    margin-right: 5px;
   }
 
   label {

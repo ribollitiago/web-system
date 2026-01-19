@@ -4,7 +4,6 @@ import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { SearchInputComponent } from '../../shared/components/search-input/search-input.component';
 import { TranslationService } from '../../core/services/translate.service';
 import { filter, Subscription } from 'rxjs';
-import { MatTooltip } from '@angular/material/tooltip';
 
 interface SidebarItem {
   routeLink?: string;
@@ -18,7 +17,7 @@ interface SidebarItem {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterModule, CommonModule, SearchInputComponent, MatTooltip],
+  imports: [RouterModule, CommonModule, SearchInputComponent],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
   providers: [TranslationService]

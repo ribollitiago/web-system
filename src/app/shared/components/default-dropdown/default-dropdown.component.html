@@ -1,4 +1,8 @@
-<select class="select-wrapper" id="language" [(ngModel)]="selectedLanguage"
-  (change)="onLanguageChange(selectedLanguage)">
-  <option class="option" *ngFor="let lang of supportedLanguages" [value]="lang.code">{{ lang.name }}</option>
-</select>
+<div class="select-wrapper-container">
+  <select class="select-wrapper" id="dropdown">
+    <option value="" disabled selected>{{ placeholder }}</option>
+    <option *ngFor="let opt of options" [value]="opt.value" class="option">
+      {{ opt.label }}
+    </option>
+  </select>
+</div>
