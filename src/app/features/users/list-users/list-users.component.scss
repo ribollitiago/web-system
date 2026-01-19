@@ -207,7 +207,7 @@
       &>div {
         display: flex;
         align-items: center;
-        border: 0.5px solid $us-border-button;
+        border: 0.5px solid $us-border-btn;
         padding: 4px 9px 4px 8px;
         border-radius: 45px;
       }
@@ -390,12 +390,12 @@
     .text-lines-page {
       font-size: 11px;
       font-weight: 400;
-      color: $us-border-button;
+      color: $us-border-btn;
     }
 
     .page-select {
       padding: 5px 10px 5px 10px;
-      border: 1px solid $us-border-button;
+      border: 1px solid $us-border-btn;
       border-radius: 8px;
       appearance: none;
       background: transparent;
@@ -443,7 +443,7 @@
         }
 
         &.active {
-          border-color: $us-border-button;
+          border-color: $us-border-btn;
           background-color: $btn-color;
           color: $us-bg-filters;
 
@@ -512,7 +512,7 @@
           &>div {
             display: flex;
             align-items: center;
-            border: 0.5px solid $us-border-button;
+            border: 0.5px solid $us-border-btn;
             padding: 4px 9px 4px 8px;
             border-radius: 45px;
 

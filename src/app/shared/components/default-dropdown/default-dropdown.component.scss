@@ -1,40 +1,82 @@
+.custom-dropdown, .dropdown-selected, .dropdown-option {
+  user-select: none;
+}
 @import "../../../../styles/variables.scss";
 
 :host {
   display: block; // Essencial para o componente aceitar largura
-  width: 100%;    // Ocupa o que o pai permitir
+  width: 100%; // Ocupa o que o pai permitir
 }
 
-.select-wrapper-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: 100%;     /* Adicione isso */
-}
 
-.select-wrapper {
+.custom-dropdown {
+  position: relative;
   width: 100%;
-  font-size: 11px;
-  font-weight: 300;
-  background-color: darken($text-color, 97%);
+  font-size: 12px;
+}
+
+.dropdown-selected {
+  width: 100%;
+  background-color: $dropdown-background;
   border-radius: 8px;
-  color: $us-border-button;
-  border: 1px solid;
-  border-color: $us-border-button;
+  color: $dropdown-txt;
+  border: 1px solid $dropdown-border;
   padding: 8px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  &.has-value {
+    border-color: $dropdown-border;
+    color: $dropdown-txt-active;
+    background-color: $dropdown-background;
+  }
+}
+
+.dropdown-arrow {
+  margin-right: 4px;
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  svg {
+    display: block;
+  }
+  &.open {
+    transform: rotate(90deg);
+  }
+}
+
+.dropdown-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: $dropdown-background;
+  border: 1px solid $dropdown-border;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  z-index: 10;
+  margin-top: 4px;
+
+  font-weight: 200;
+}
+
+.dropdown-option {
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.2s;
+  color: $dropdown-txt-active;
 
   &:hover {
-    background-color: darken($text-color, 98%);
+    background: darken($dropdown-background, 5%);
+    color: $dropdown-txt-active;
   }
 
-  .option {
-    background-color: $login-bg;
-    color: $text-color;
-  }
-
-  &:focus,
-  &:active {
-    box-shadow: none;
+  &.selected {
+    background: darken($dropdown-background, 10%);
+    color: $dropdown-txt-active;
+    font-weight: bold;
   }
 }

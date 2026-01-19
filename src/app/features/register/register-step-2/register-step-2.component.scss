@@ -27,14 +27,14 @@
       height: 28px;
       font-size: 12px;
       border-radius: 20px;
-      border: 1px solid white;
+      border: 1px solid $us-border-btn;
       color: $text-color;
       background: transparent;
       cursor: pointer;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      font-weight: 400;
+      font-weight: 200;
 
       &.selected {
         background-color: $rg-text;
@@ -68,7 +68,7 @@
 }
 
 .group-title {
-  font-size: 14px;
+  font-size: 15px;
   color: $rg-title;
   font-weight: 200;
   margin-bottom: 15px;
@@ -77,18 +77,37 @@
   text-align: left;
 }
 
-.meu-dropdown-custom {
-  align-self: flex-start; // Força a saída do centro para a esquerda
+.dropdown-wrapper {
+  position: relative;
+  align-self: flex-start;
   width: 50%;
 
-  margin-bottom: 15px;
+  .dropdown-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .meu-dropdown-custom {
+    width: 100%;
+  }
+
+  ::ng-deep .dropdown-selected {
+    padding-left: 35px !important;
+  }
 }
 
 .permissions-title {
-  font-size: 14px;
+  font-size: 15px;
   color: $rg-title;
   font-weight: 200;
   margin-bottom: 15px;
+  margin-top: 20px;
 
   margin-right: auto;
   text-align: left;
@@ -97,10 +116,112 @@
 .permissions-form {
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
   width: 100%;
-  flex-grow: 1;
+  height: auto;
+
+  background-color: $rg-bg-text-box;
+  border-radius: 12px;
+  padding: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 50px;
+
+  background-color: $bg-main;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #555;
+    border-radius: 4px;
+  }
 }
 
 .permissions-checkbox {
-  margin-bottom: 50px;
+  margin-bottom: 0px;
+}
+
+.selected-items-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  min-height: 30px;
+}
+
+.selected-groups-chips {
+  width: 100%;
+  justify-content: flex-start !important;
+
+  ::ng-deep {
+    .mat-mdc-standard-chip {
+      background-color: transparent !important;
+      border: 0.5px solid $rg-border-chip !important;
+      border-radius: 10px !important;
+
+      --mdc-chip-label-text-color: $text-color;
+      --mdc-chip-with-icon-icon-color: $text-color;
+      --mdc-chip-outline-color: transparent;
+
+      .mat-mdc-chip-action-label {
+        font-size: 12px !important;
+        color: $text-color !important;
+        font-weight: 200 !important;
+      }
+
+      button[matChipRemove] {
+        color: $rg-delete-chip !important;
+        opacity: 1 !important;
+
+        mat-icon {
+          font-size: 14px !important;
+          width: 14px !important;
+          height: 14px !important;
+        }
+      }
+    }
+  }
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: 1px solid $rg-border-chip;
+  border-radius: 4px;
+  padding: 4px 8px;
+  color: $text-color;
+  font-size: 12px;
+
+  .chip-label {
+    margin-right: 6px;
+  }
+
+  .btn-remove {
+    background: none;
+    border: none;
+    color: $text-color;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    font-size: 14px;
+    opacity: 0.7;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    mat-icon {
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
+    }
+  }
 }

@@ -64,7 +64,17 @@
               matTooltip="{{permission.title}}">{{ permission.title }}</span>
 
             <div class="extra-information">
-              <img src="assets/svg/icon/register/step-2/extra_info.svg" />
+              <div class="icon-wrapper" [matMenuTriggerFor]="detailsMenu">
+                <img src="assets/svg/icon/register/step-2/extra_info.svg" alt="Info"
+                  [matTooltip]="menuTooltip" matTooltipPosition="above" />
+              </div>
+
+              <mat-menu #detailsMenu="matMenu" class="permission-details-menu">
+                <div class="menu-content" (click)="$event.stopPropagation()">
+                  <div class="menu-title">{{ permission.title }}</div>
+                  <div class="menu-item">{{ permission.description }}</div>
+                </div>
+              </mat-menu>
             </div>
 
           </div>

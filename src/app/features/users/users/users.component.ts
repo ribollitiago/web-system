@@ -6,10 +6,11 @@ import { ListUsersComponent, User } from '../list-users/list-users.component';
 import { CommonModule } from '@angular/common';
 import { PermissionsService } from '../../../core/services/permissions.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-users',
-  imports: [SearchInputComponent, ListUsersComponent, CommonModule, MatTooltipModule],
+  imports: [SearchInputComponent, ListUsersComponent, CommonModule, MatTooltipModule, MatMenuModule],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
 })
@@ -132,7 +133,8 @@ export class UsersComponent implements OnDestroy {
           if (permission.title) {
             permissions.push({
               title: permission.title,
-              critical: permission.critical
+              critical: permission.critical,
+              description: permission.description
             });
           }
         });

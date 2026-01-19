@@ -30,14 +30,15 @@ input[type="checkbox"] {
   align-items: center;
   justify-content: space-between;
   padding: 10px 5px;
-  width: 100%;
-  flex: 1 1 calc(50% - 10px);
-  min-width: 325px;
+  width: calc(50% - 5px);
+  flex: 0 0 calc(50% - 5px);
+  min-width: 0;
   height: 40px;
   background-color: $rg-bg-checkbox;
   border-radius: 10px;
   position: relative;
   transition: background-color 0.3s ease;
+  box-sizing: border-box;
 
   &:hover {
     background-color: darken($rg-bg-checkbox, 2%);
@@ -79,11 +80,6 @@ input[type="checkbox"] {
       height: 100%;
       padding: 4px;
       user-select: none;
-
-      &:hover .menu-tooltip {
-        visibility: visible;
-        opacity: 1;
-      }
     }
 
     img {
@@ -91,47 +87,12 @@ input[type="checkbox"] {
       height: 13px;
       pointer-events: none;
     }
-
-    .menu-tooltip {
-      @extend .critical-tooltip;
-      bottom: calc(100% + 8px);
-      left: 50%;
-      margin-bottom: 4px;
-    }
-
-    .menu {
-      background: $rg-bg-hover-extra;
-      color: white;
-      padding: 5px;
-      font-size: 12px;
-      border-radius: 8px;
-      width: 200px;
-      cursor: default;
-      position: absolute;
-      top: 0;
-      left: calc(100% + 5px);
-      z-index: 1;
-    }
-
-    .menu-title {
-      font-weight: bold;
-      padding: 3px 5px;
-    }
-
-    .menu-item {
-      padding: 3px 5px;
-    }
   }
 
   .critical-wrapper {
     position: relative;
     display: inline-block;
     margin-right: 5px;
-
-    &:hover .critical-tooltip {
-      visibility: visible;
-      opacity: 1;
-    }
   }
 
   .critical-icon {
@@ -141,34 +102,6 @@ input[type="checkbox"] {
     user-select: none;
   }
 
-  .critical-tooltip {
-    position: absolute;
-    bottom: calc(100% + 5px);
-    left: 50%;
-    transform: translateX(-50%);
-    background: $rg-bg-hover-extra;
-    color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    white-space: nowrap;
-    z-index: 1000;
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-    pointer-events: none;
-
-    &::after {
-      content: '';
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      margin-left: -5px;
-      border-width: 5px;
-      border-style: solid;
-      border-color: $rg-bg-hover-extra transparent transparent transparent;
-    }
-  }
 
   .custom-checkbox-clickable {
     display: flex;
@@ -186,5 +119,34 @@ input[type="checkbox"] {
 
   label {
     display: none;
+  }
+}
+
+::ng-deep .permission-details-menu {
+  background-color: $rg-bg-hover-extra !important;
+  max-width: 250px;
+  border-radius: 8px !important;
+
+  .mat-mdc-menu-content {
+    padding: 8px !important;
+  }
+
+  .menu-content {
+    outline: none;
+  }
+
+  .menu-title {
+    font-weight: bold;
+    color: white;
+    font-size: 12px;
+    margin-bottom: 4px;
+    padding: 0 4px;
+  }
+
+  .menu-item {
+    color: white;
+    font-size: 12px;
+    padding: 0 4px;
+    white-space: normal;
   }
 }

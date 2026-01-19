@@ -55,7 +55,6 @@ export class RegisterStep3Component implements OnInit{
 
   async submit() {
     await this.registerService.setStepData(3, { text: 'blablabla' });
-    //await this.registerService.registerUser();
   }
 
   async return() {

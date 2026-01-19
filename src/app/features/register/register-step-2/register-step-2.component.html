@@ -4,11 +4,28 @@
 
   <h2 class="group-title">{{ groupTitle }}</h2>
 
-  <app-default-dropdown
-    class="meu-dropdown-custom"
-    [options]="groupOptions"
-    [placeholder]="'Selecione um ou mais grupos'">
-  </app-default-dropdown>
+  <div class="dropdown-wrapper">
+    <img src="assets/svg/icon/default/group_permissions.svg" class="dropdown-icon" alt="icon">
+    <app-default-dropdown
+      class="meu-dropdown-custom"
+      [options]="groupOptions"
+      [placeholder]="'Selecione um ou mais grupos'"
+      (optionSelected)="handleGroupSelected($event)">
+    </app-default-dropdown>
+  </div>
+
+  @if (selectedGroups.length > 0) {
+  <mat-chip-set class="selected-groups-chips" aria-label="Grupos selecionados">
+    @for (group of selectedGroups; track group.value) {
+    <mat-chip (removed)="removeGroup(group.value)">
+      {{group.label}}
+      <button matChipRemove [attr.aria-label]="'remover ' + group.label">
+        <mat-icon>cancel</mat-icon>
+      </button>
+    </mat-chip>
+    }
+  </mat-chip-set>
+  }
 
   <h2 class="permissions-title">{{ permissionsTitle }}</h2>
 
@@ -36,13 +53,11 @@
     </div>
   </div>
 
-  <form>
-    <div class="permissions-form">
-      <app-steps-filter class="permissions-checkbox"
-        [selectedFilter]="selectedButton"
-        [searchQuery]="currentSearchQuery"
-        (permissionSelected)="handlePermissionSelection($event)">
-      </app-steps-filter>
-    </div>
-  </form>
+  <div class="permissions-form">
+    <app-steps-filter class="permissions-checkbox"
+      [selectedFilter]="selectedButton"
+      [searchQuery]="currentSearchQuery"
+      (permissionSelected)="handlePermissionSelection($event)">
+    </app-steps-filter>
+  </div>
 </app-default-step>

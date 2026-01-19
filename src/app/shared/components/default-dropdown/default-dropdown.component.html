@@ -1,8 +1,22 @@
 <div class="select-wrapper-container">
-  <select class="select-wrapper" id="dropdown">
-    <option value="" disabled selected>{{ placeholder }}</option>
-    <option *ngFor="let opt of options" [value]="opt.value" class="option">
-      {{ opt.label }}
-    </option>
-  </select>
+  <div class="custom-dropdown" [class.open]="dropdownOpen">
+    <div class="dropdown-selected" (click)="toggleDropdown()" [class.has-value]="hasValue">
+      {{ selectedLabel || placeholder }}
+      <span class="dropdown-arrow" [class.open]="dropdownOpen">
+        <svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0.247654 1.03166L1.22024 0.059993L6.51765 5.35558C6.60305 5.44043 6.67081 5.54133 6.71706 5.65248C6.7633 5.76362 6.78711 5.88282 6.78711 6.0032C6.78711 6.12358 6.7633 6.24278 6.71706 6.35392C6.67081 6.46507 6.60305 6.56597 6.51765 6.65082L1.22024 11.9492L0.248571 10.9775L5.22057 6.00457L0.247654 1.03166Z" fill="white"/>
+        </svg>
+      </span>
+    </div>
+    <div class="dropdown-options" *ngIf="dropdownOpen">
+      <div
+        class="dropdown-option"
+        *ngFor="let opt of options"
+        [class.selected]="selectedValue === opt.value"
+        (click)="selectOption(opt)"
+      >
+        {{ opt.label }}
+      </div>
+    </div>
+  </div>
 </div>

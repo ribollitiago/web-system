@@ -44,13 +44,23 @@ $rg-text-secondary: #fff;
 $rg-bg-checkbox: #222222;
 $rg-bg-hover-extra: #303030;
 $rg-bg-text-box: #0C0C0C;
+$rg-delete-chip: #D35353;
+$rg-border-chip: #757575;
 
 //users
 $us-bg-filters: #252525;
 $us-filter-arrow: #A7A7A7;
-$us-border-button: #757575;
+$us-border-btn: #757575;
+$us-border-btn-active: #FFFFFF;
 $us-page-btn: #a0a0a0;
 $us-details-phone-document: #323232;
 $us-bg-permission: #222222;
+
+//styles default
+$dropdown-border: #757575;
+$dropdown-txt: #757575;
+$dropdown-border-active: #FFFFFF;
+$dropdown-txt-active: #FFFFFF;
+$dropdown-background: darken($text-color, 97%);
 
 
