@@ -24,6 +24,8 @@ export class HeaderComponent implements OnDestroy {
   help: string = '';
   feedback: string = '';
   titleLanguage: string = '';
+  userName: string = '';
+  userEmail: string = '';
 
   @ViewChild('menu') menuElement!: ElementRef;
   @ViewChild('userToggler') userTogglerElement!: ElementRef;
@@ -39,13 +41,24 @@ export class HeaderComponent implements OnDestroy {
   private languageMenuClickListener?: (event: MouseEvent) => void;
 
   ngOnInit(): void {
+
+    this.loginService.user$.subscribe(user => {
+      if (user) {
+        this.userName = user.name;
+        this.userEmail = user.email;
+      }
+    });
+
     this.supportedLanguages = this.translationService.getSupportedLanguages();
     this.selectedLanguage = this.translationService.getCurrentLanguage();
+
     this.translationService.language$.subscribe(() => {
       this.loadTranslations();
     });
+
     this.loadTranslations();
   }
+
 
   ngOnDestroy(): void {
     this.removeMainMenuClickListener();
@@ -130,6 +143,15 @@ export class HeaderComponent implements OnDestroy {
       document.removeEventListener('click', this.languageMenuClickListener);
       this.languageMenuClickListener = undefined;
     }
+  }
+
+  truncateText(text: string, maxLength: number = 30): string {
+    if (!text) return '';
+
+    if (text.length > maxLength) {
+      return text.substring(0, maxLength - 3) + '...';
+    }
+    return text;
   }
 
   onLanguageChange(languageCode: string): void {

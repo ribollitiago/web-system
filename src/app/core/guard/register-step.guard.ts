@@ -5,18 +5,18 @@ import { RegisterService } from '../services/register.service';
 @Injectable({
   providedIn: 'root',
 })
-export class RegisterStepGuard implements CanActivate {
+export class RegisterStepGuard {
   constructor(
     private router: Router,
     private registerService: RegisterService
   ) {}
 
   canActivate(route: any): boolean {
-    const requiredStep = route.data.requiredStep; // Get the required step from route data
+    const requiredStep = route.data.requiredStep;
     const currentStep = this.registerService.currentStep;
 
     if (currentStep < requiredStep) {
-      this.router.navigate(['/register']); // Navigate back to the first step
+      this.router.navigate(['/register']);
       return false;
     }
     return true;
