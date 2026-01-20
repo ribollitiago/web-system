@@ -1,8 +1,49 @@
 @import "../../../../styles/variables.scss";
 
-* {
-  justify-content: center;
-  align-items: center;
+.resume-user {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+
+  > div {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    > div {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+
+      h2 {
+        font-size: 14px;
+        color: $rg-title;
+        font-weight: 400;
+        margin: 0 0 5px 0;
+      }
+
+      p {
+        font-size: 13px;
+        color: $rg-subtitle;
+        font-weight: 500;
+        margin: 0;
+      }
+    }
+  }
+
+  .name {
+    align-items: flex-start;
+  }
+
+  .email {
+    align-items: center;
+  }
+
+  .phone {
+    align-items: flex-end;
+  }
 }
 
     .register-header {

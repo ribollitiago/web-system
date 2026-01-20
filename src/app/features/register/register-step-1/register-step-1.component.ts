@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { PrimaryInputComponent } from '../../../shared/components/primary-input/primary-input.component';
 import { TranslationService } from '../../../core/services/translate.service';
@@ -33,8 +32,8 @@ export class RegisterStep1Component {
   placeholderEmail: string = '';
   titlePhone: string = '';
   placeholderPhone: string = '';
-  titleDocument: string = '';
-  placeholderDocument: string = '';
+  titleEnrollment: string = '';
+  placeholderEnrollment: string = '';
   titlePassword: string = '';
   placeholderPassword: string = '';
   titleConfirmPassword: string = '';
@@ -43,8 +42,7 @@ export class RegisterStep1Component {
 
   constructor(
     private translationService: TranslationService,
-    private registerService: RegisterService,
-    private router: Router,
+    private registerService: RegisterService
   ) {
     this.registerForm = new FormGroup({
       name: new FormControl('', [Validators.required]),
@@ -53,10 +51,7 @@ export class RegisterStep1Component {
         Validators.required,
         Validators.pattern(/^\+?[1-9]\d{1,14}$/) // Basic phone validation
       ]),
-      document: new FormControl('', [
-        Validators.required,
-        Validators.pattern(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/) // CPF pattern
-      ]),
+      enrollment: new FormControl('', [Validators.required]),
       password: new FormControl('', [
         Validators.required,
         Validators.minLength(6)
@@ -91,8 +86,8 @@ export class RegisterStep1Component {
     this.placeholderEmail = this.translationService.getTranslation('inputEmail', section);
     this.titlePhone = this.translationService.getTranslation('titlePhone', section);
     this.placeholderPhone = this.translationService.getTranslation('inputPhone', section);
-    this.titleDocument = this.translationService.getTranslation('titleDocument', section);
-    this.placeholderDocument = this.translationService.getTranslation('inputDocument', section);
+    this.titleEnrollment = this.translationService.getTranslation('titleEnrollment', section);
+    this.placeholderEnrollment = this.translationService.getTranslation('inputEnrollment', section);
     this.titlePassword = this.translationService.getTranslation('titlePassword', section);
     this.placeholderPassword = this.translationService.getTranslation('inputPassword', section);
     this.titleConfirmPassword = this.translationService.getTranslation('titleConfirmPassword', section);
@@ -101,7 +96,7 @@ export class RegisterStep1Component {
   }
 
   async submit() {
-    const userDataStep1 = { name: 'teste2', email: 'test2@example.com', password: 'password123', cpf: 'teste2' };
+    const userDataStep1 = { name: 'teste2', email: 'test2@example.com', phone: '123456789', password: 'password123', enrollment: 'teste2' };
     await this.registerService.setStepData(1, userDataStep1);
   }
 }
