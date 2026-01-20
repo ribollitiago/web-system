@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { getAuth, createUserWithEmailAndPassword, User } from 'firebase/auth';
-import { getDatabase, ref, set, get, query } from 'firebase/database';
 import firebaseApp from '../../firebase.config';
 import { BehaviorSubject } from 'rxjs';
 import { FirebaseService } from './firebase.service'; // Assumindo que você tem o FirebaseService
@@ -30,7 +29,6 @@ export class RegisterService {
   }
 
   private auth = getAuth(firebaseApp);
-  private db = getDatabase(firebaseApp);
   private firebaseService: FirebaseService;
 
   constructor(firebaseService: FirebaseService) {
@@ -66,13 +64,13 @@ export class RegisterService {
   async registerUser(): Promise<User> {
     console.log('Dados antes do registro:', this.userData);
     try {
-      if (!this.userData['email'] || !this.userData['password'] || !this.userData['cpf']) {
+      if (!this.userData['email'] || !this.userData['password'] || !this.userData['enrollment']) {
         throw new Error('Dados de usuário incompletos');
       }
 
-      const existingUserByCpf = await this.firebaseService.getEntityByField('users', 'cpf', this.userData['cpf']);
-      if (existingUserByCpf.length > 0) {
-        throw new Error('Este CPF já está registrado.');
+      const existingUserByEnrollment = await this.firebaseService.getEntityByField('users', 'enrollment', this.userData['enrollment']);
+      if (existingUserByEnrollment.length > 0) {
+        throw new Error('Este matricula já está registrado.');
       }
 
       const existingUserByEmail = await this.firebaseService.getEntityByField('users', 'email', this.userData['email']);
