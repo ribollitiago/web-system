@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { from, Observable } from 'rxjs';
-
+import { BehaviorSubject, from, Observable } from 'rxjs';
 import { User, getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import firebaseApp from '../../firebase.config';
+import { FirebaseService } from './firebase.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,12 +13,22 @@ export class LoginService {
   private auth;
   private readonly LOGOUT_EVENT_KEY = 'app-logout-event';
   private readonly LAST_LOGIN_KEY = 'last-login-time';
-  private readonly TOKEN_EXPIRATION_TIME = 168 * 60 * 60 * 1000;
+  private readonly LAST_ACTIVITY_KEY = 'last-user-activity';
+  private readonly IDLE_TIMEOUT = 30 * 60 * 1000;
+  private readonly MAX_SESSION_TIME = 8 * 60 * 60 * 1000;
+  private readonly CHECK_INTERVAL = 10 * 1000;
+  private userSubject = new BehaviorSubject<any | null>(null);
+  user$ = this.userSubject.asObservable();
 
-  constructor(private router: Router) {
+
+  constructor(
+    private router: Router,
+    private firebaseService: FirebaseService,
+  ) {
     this.auth = getAuth(firebaseApp);
     this.setupMultiTabLogoutListener();
-    this.checkTokenExpiration();
+    this.startTokenExpirationWatcher();
+    this.trackUserActivity();
   }
 
   // ------------------------------------------------------
@@ -28,26 +38,21 @@ export class LoginService {
   private setupMultiTabLogoutListener(): void {
     window.addEventListener('storage', (event: StorageEvent) => {
       if (event.key === this.LOGOUT_EVENT_KEY && event.newValue === 'true') {
-        this.handleCrossTabLogout();
+        this.logout()
+          .catch(this.handleError);
       }
     });
-  }
-
-  private handleCrossTabLogout(): void {
-    localStorage.removeItem(this.LOGOUT_EVENT_KEY);
-    this.auth.signOut()
-      .then(() => {
-        this.router.navigate(['/login']);
-        console.log('Logout sincronizado entre abas');
-      })
-      .catch(this.handleError);
   }
 
   async logout(): Promise<void> {
     try {
       localStorage.setItem(this.LOGOUT_EVENT_KEY, 'true');
+      localStorage.setItem(this.LAST_ACTIVITY_KEY, new Date().toISOString());
       await this.auth.signOut();
+      this.clearSessionStorage();
+
       this.router.navigate(['/login']);
+
       setTimeout(() => localStorage.removeItem(this.LOGOUT_EVENT_KEY), 1000);
     } catch (err) {
       this.handleError(err);
@@ -65,15 +70,40 @@ export class LoginService {
     );
   }
 
-  private handleLoginSuccess(userCredential: any): { uid: string } {
+  private async handleLoginSuccess(userCredential: any): Promise<{ uid: string }> {
     const user = userCredential.user;
-    if (user) {
-      this.router.navigate(['/home']);
-      localStorage.setItem(this.LAST_LOGIN_KEY, new Date().toISOString());
-      return { uid: user.uid };
+
+    if (!user) {
+      throw new Error('User not found');
     }
-    throw new Error('User not found');
+
+    localStorage.setItem(this.LAST_LOGIN_KEY, new Date().toISOString());
+
+    // Se for necessario, adicione.
+    // await this.loadAndSetUser(user.uid);
+
+    this.router.navigate(['/home']);
+
+    return { uid: user.uid };
   }
+
+
+
+  async loadAndSetUser(uid: string): Promise<void> {
+    const userData = await this.firebaseService.getEntityById('users', uid);
+
+    if (!userData) {
+      throw new Error('Usuário não encontrado no banco');
+    }
+
+    localStorage.setItem('userData', JSON.stringify(userData));
+
+    const savedUser = localStorage.getItem('userData');
+    if (savedUser) {
+      this.userSubject.next(JSON.parse(savedUser));
+    }
+  }
+
 
   // ------------------------------------------------------
   // SEÇÃO: RECUPERAÇÃO DE SENHA
@@ -90,8 +120,8 @@ export class LoginService {
   getAuthState(): Observable<User | null> {
     return new Observable(subscriber => {
       this.auth.onAuthStateChanged(user => {
-        if (user) {
-          this.checkTokenExpiration();
+        if (!user) {
+          this.clearSessionStorage();
         }
         subscriber.next(user);
       });
@@ -99,14 +129,35 @@ export class LoginService {
   }
 
   private checkTokenExpiration(): void {
-    const lastLoginTime = localStorage.getItem(this.LAST_LOGIN_KEY);
-    if (lastLoginTime) {
-      const timeElapsed = new Date().getTime() - new Date(lastLoginTime).getTime();
-      if (timeElapsed > this.TOKEN_EXPIRATION_TIME) {
+    const lastActivity = localStorage.getItem(this.LAST_ACTIVITY_KEY);
+    const lastLogin = localStorage.getItem(this.LAST_LOGIN_KEY);
+
+    if (!lastLogin) return;
+
+    const now = new Date().getTime();
+
+    if (lastActivity) {
+      const idleTime = now - new Date(lastActivity).getTime();
+      if (idleTime > this.IDLE_TIMEOUT) {
+        console.log('Logout por inatividade');
         this.logout();
+        return;
       }
     }
+
+    const sessionTime = now - new Date(lastLogin).getTime();
+    if (sessionTime > this.MAX_SESSION_TIME) {
+      console.log('Logout por tempo máximo de sessão');
+      this.logout();
+    }
   }
+
+  private startTokenExpirationWatcher(): void {
+    setInterval(() => {
+      this.checkTokenExpiration();
+    }, this.CHECK_INTERVAL);
+  }
+
 
   // ------------------------------------------------------
   // SEÇÃO: FUNÇÕES AUXILIARES
@@ -120,6 +171,28 @@ export class LoginService {
     return from(operation()
       .then(() => console.log('Operação concluída com sucesso.'))
       .catch(this.handleError)
+    );
+  }
+
+  private clearSessionStorage(): void {
+    this.userSubject.next(null);
+    localStorage.removeItem('userData');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem(this.LOGOUT_EVENT_KEY);
+    localStorage.removeItem(this.LAST_LOGIN_KEY);
+    localStorage.removeItem(this.LAST_ACTIVITY_KEY);
+  }
+
+  private trackUserActivity(): void {
+    const events = ['click', 'mousemove', 'keydown', 'scroll', 'touchstart'];
+
+    const resetActivity = () => {
+      localStorage.setItem(this.LAST_ACTIVITY_KEY, new Date().toISOString());
+    };
+
+    events.forEach(event =>
+      window.addEventListener(event, resetActivity)
     );
   }
 }
