@@ -16,6 +16,7 @@ import { MatMenuModule } from '@angular/material/menu';
 export class StepsFilterComponent implements OnChanges, OnDestroy {
   @Input() selectedFilter: string = 'users';
   @Input() searchQuery: string = '';
+  @Input() lockedPermissions = new Set<string>();
   @Output() permissionSelected = new EventEmitter<any>();
 
   menuTooltip: string = '';
@@ -79,19 +80,19 @@ export class StepsFilterComponent implements OnChanges, OnDestroy {
       case 'route':
         this.resolvedList = Object.values(this.permissions.routes).map((item: any) => ({
           ...item,
-          checked: this.permissionsService.getSelectedPermissions()[item.id] || false
+          checked: this.permissionsService.getSelectedPermissions()[item.id] ?? false
         }));
         break;
       case 'admin':
         this.resolvedList = Object.values(this.permissions.admin).map((item: any) => ({
           ...item,
-          checked: this.permissionsService.getSelectedPermissions()[item.id] || false
+          checked: this.permissionsService.getSelectedPermissions()[item.id] ?? false
         }));
         break;
       default:
         this.resolvedList = Object.values(this.permissions.users).map((item: any) => ({
           ...item,
-          checked: this.permissionsService.getSelectedPermissions()[item.id] || false
+          checked: this.permissionsService.getSelectedPermissions()[item.id] ?? false
         }));
         break;
     }
@@ -140,8 +141,20 @@ export class StepsFilterComponent implements OnChanges, OnDestroy {
       default: return '';
     }
   }
+  
+  getCheckboxIcon(item: any): string {
+    if (this.lockedPermissions?.has(item.id)) {
+      return 'check-on.svg';
+    }
+
+    return item.checked ? 'check-on.svg' : 'check-off.svg';
+  }
 
   toggleAndChange(item: any) {
+    if (this.lockedPermissions.has(item.id)) {
+      return;
+    }
+
     item.checked = !item.checked;
     this.permissionSelected.emit(item);
   }

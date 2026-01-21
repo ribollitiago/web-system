@@ -1,25 +1,21 @@
-<app-default-step [title]="title" [subtitle]="subtitle" [currentStepState]="2"
-  [btnLast]="btnLast" [returnStep]="1"
+<app-default-step [title]="title" [subtitle]="subtitle" [currentStepState]="2" [btnLast]="btnLast" [returnStep]="1"
   (submit)="submit()">
 
   <h2 class="group-title">{{ groupTitle }}</h2>
 
   <div class="dropdown-wrapper">
     <img src="assets/svg/icon/default/group_permissions.svg" class="dropdown-icon" alt="icon">
-    <app-default-dropdown
-      class="meu-dropdown-custom"
-      [options]="groupOptions"
-      [placeholder]="'Selecione um ou mais grupos'"
-      (optionSelected)="handleGroupSelected($event)">
+    <app-default-dropdown class="meu-dropdown-custom" [options]="groupOptions"
+      [placeholder]="'Selecione um ou mais grupos'" (optionSelected)="handleGroupSelected($event)">
     </app-default-dropdown>
   </div>
 
   @if (selectedGroups.length > 0) {
   <mat-chip-set class="selected-groups-chips" aria-label="Grupos selecionados">
-    @for (group of selectedGroups; track group.value) {
-    <mat-chip (removed)="removeGroup(group.value)">
-      {{group.label}}
-      <button matChipRemove [attr.aria-label]="'remover ' + group.label">
+    @for (group of selectedGroups; track group.id) {
+    <mat-chip (removed)="removeGroup(group.id)">
+      {{ group.title }}
+      <button matChipRemove>
         <mat-icon>cancel</mat-icon>
       </button>
     </mat-chip>
@@ -31,33 +27,27 @@
 
   <div class="filters-wrapper">
     <div class="filters">
-      <button class="users" type="button"
-        [ngClass]="{ 'selected': selectedButton === 'users' }"
+      <button class="users" type="button" [ngClass]="{ 'selected': selectedButton === 'users' }"
         (click)="selectButton('users')">
         {{ filterOne }}
       </button>
-      <button class="route" type="button"
-        [ngClass]="{ 'selected': selectedButton === 'route' }"
+      <button class="route" type="button" [ngClass]="{ 'selected': selectedButton === 'route' }"
         (click)="selectButton('route')">
         {{ filterTwo }}
       </button>
-      <button class="admin" type="button"
-        [ngClass]="{ 'selected': selectedButton === 'admin' }"
+      <button class="admin" type="button" [ngClass]="{ 'selected': selectedButton === 'admin' }"
         (click)="selectButton('admin')">
         {{ filterThree }}
       </button>
-      <app-search-input [placeholder]="inputSearch"
-        (searchChange)="handleSearchChange($event)">
+      <app-search-input [placeholder]="inputSearch" (searchChange)="handleSearchChange($event)">
         <img src="assets/svg/icon/input/search.svg" alt />
       </app-search-input>
     </div>
   </div>
 
   <div class="permissions-form">
-    <app-steps-filter class="permissions-checkbox"
-      [selectedFilter]="selectedButton"
-      [searchQuery]="currentSearchQuery"
-      (permissionSelected)="handlePermissionSelection($event)">
+    <app-steps-filter class="permissions-checkbox" [selectedFilter]="selectedButton" [searchQuery]="currentSearchQuery"
+      [lockedPermissions]="lockedPermissions" (permissionSelected)="handlePermissionSelection($event)">
     </app-steps-filter>
   </div>
 </app-default-step>

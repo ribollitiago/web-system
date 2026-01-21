@@ -3,9 +3,8 @@
 
     <div class="item-content-left">
       <div class="extra-information">
-        <div class="icon-wrapper" [matMenuTriggerFor]="detailsMenu"
-             [matTooltip]="menuTooltip"
-             matTooltipPosition="above">
+        <div class="icon-wrapper" [matMenuTriggerFor]="detailsMenu" [matTooltip]="menuTooltip"
+          matTooltipPosition="above">
           <img src="assets/svg/icon/register/step-2/extra_info.svg" alt="Info" />
         </div>
 
@@ -19,14 +18,12 @@
 
       <div class="critical-wrapper">
         <img [src]="'assets/svg/icon/register/step-2/' + getSvgFileName(item.critical)" [alt]="item.critical"
-          class="critical-icon"
-          [matTooltip]="getCriticalText(item.critical)"
-          matTooltipPosition="above" />
+          class="critical-icon" [matTooltip]="getCriticalText(item.critical)" matTooltipPosition="above" />
       </div>
       <span class="item-title">{{ item.title }}</span>
     </div>
     <div class="custom-checkbox-clickable" (click)="toggleAndChange(item)">
-      <img [src]="'assets/svg/icon/register/step-2/' + (item.checked ? 'check-on.svg' : 'check-off.svg')"
+      <img [src]="'assets/svg/icon/register/step-2/' + getCheckboxIcon(item)"
         [alt]="item.checked ? 'Selecionado' : 'Não selecionado'" class="checkbox-icon">
     </div>
   </div>

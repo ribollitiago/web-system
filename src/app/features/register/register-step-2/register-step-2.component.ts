@@ -11,6 +11,7 @@ import { DefaultDropdownComponent, DropdownOption } from "../../../shared/compon
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { FormControl } from '@angular/forms';
+import { Group, GroupsService } from '../../../core/services/group.service';
 
 @Component({
   selector: 'app-register-step-2',
@@ -33,28 +34,21 @@ export class RegisterStep2Component implements OnDestroy {
   subtitle: string = '';
 
   groupTitle: string = 'Selecione os grupos de permissões para o usuário';
-  groupOptions: DropdownOption[] = [
-    { label: 'Administrador', value: 'admin' },
-    { label: 'Visualizador', value: 'viewer' },
-    { label: 'Editor', value: 'editor' },
-    { label: 'Editor', value: 'a' },
-    { label: 'Editor', value: 's' },
-    { label: 'Editor', value: 'd' },
-    { label: 'Editor', value: '3' },
-    { label: 'Editor', value: 't' },
-    { label: 'Editor', value: '5' },
-  ];
-  selectedGroups: DropdownOption[] = [];
+  groupOptions: DropdownOption[] = [];
+  get selectedGroups(): Group[] {
+    return this.groupsService.getSelectedGroups();
+  }
 
   separatorKeysCodes: number[] = [13, 188];
   itemCtrl = new FormControl('');
   filteredItems: Observable<string[]>;
-  selectedItems: string[] = ['Item Genérico 1'];
-  allItems: string[] = ['Item Genérico 1', 'Item Genérico 2', 'Item Genérico 3', 'Maçã', 'Banana', 'Laranja'];
+  selectedItems: string[] = [];
+  allItems: string[] = [];
 
   @ViewChild('itemInput') itemInput!: ElementRef<HTMLInputElement>;
 
   permissionsTitle: string = 'Selecione as permissões individuais para o usuário';
+  lockedPermissions = new Set<string>();
   btnLast: string = '';
   inputSearch: string = '';
   filterOne: string = '';
@@ -67,6 +61,7 @@ export class RegisterStep2Component implements OnDestroy {
     private translationService: TranslationService,
     private registerService: RegisterService,
     private permissionsService: PermissionsService,
+    private groupsService: GroupsService
   ) {
     this.languageSubscription = this.translationService.language$.subscribe(() => {
       this.loadTranslations();
@@ -112,6 +107,7 @@ export class RegisterStep2Component implements OnDestroy {
 
   ngOnInit() {
     this.loadTranslations();
+    this.loadGroups();
   }
 
   ngOnDestroy() {
@@ -141,39 +137,78 @@ export class RegisterStep2Component implements OnDestroy {
   }
 
   async submit(): Promise<void> {
-    const allSelected = Object.entries(this.permissionsService.getSelectedPermissions())
+    const permissions = Object.entries(this.permissionsService.getSelectedPermissions())
       .filter(([_, checked]) => checked)
-      .map(([id]) => id);
+      .reduce<Record<string, boolean>>((acc, [id]) => {
+        acc[id] = true;
+        return acc;
+      }, {});
 
-    const allPermissions = allSelected.reduce<{ [key: string]: boolean }>((acc, permission) => {
-      acc[permission] = true;
-      return acc;
-    }, {});
+    const groups = this.groupsService
+      .getSelectedGroupIds()
+      .reduce<Record<string, boolean>>((acc, id) => {
+        acc[id] = true;
+        return acc;
+      }, {});
 
-    await this.registerService.setStepData(2, { permissions: allPermissions });
+    await this.registerService.setStepData(2, {
+      permissions,
+      groups
+    });
   }
+
 
   handleSearchChange(query: string): void {
     this.currentSearchQuery = query;
   }
 
-  handlePermissionSelection(selectedPermissions: string[]): void {
-    console.log('Permissões selecionadas:', selectedPermissions);
+  handlePermissionSelection(
+    selectedPermission: { id: string; checked?: boolean }
+  ): void {
+    this.permissionsService.setSelectedPermission(
+      selectedPermission.id,
+      !!selectedPermission.checked
+    );
+
+    console.log('Permissão selecionada:', selectedPermission);
   }
 
   handleGroupSelected(option: DropdownOption) {
     if (!option) return;
-    const alreadyExists = this.selectedGroups.some(g => g.value === option.value);
 
-    if (!alreadyExists) {
-      this.selectedGroups.push(option);
-    }
+    if (this.groupsService.isGroupSelected(option.value)) return;
+
+    this.groupsService.selectGroup(option.value);
+
+    option.permissions?.forEach((permissionId: string) => {
+      this.handlePermissionSelection({ id: permissionId, checked: true });
+      this.lockedPermissions.add(permissionId);
+    });
   }
 
-  removeGroup(value: any) {
-    const index = this.selectedGroups.findIndex(g => g.value === value);
-    if (index >= 0) {
-      this.selectedGroups.splice(index, 1);
-    }
+  removeGroup(groupId: string) {
+    const group = this.groupsService.getSelectedGroups()
+      .find(g => g.id === groupId);
+
+    if (!group) return;
+
+    group.permissions.forEach(permissionId => {
+      this.lockedPermissions.delete(permissionId);
+      this.handlePermissionSelection({ id: permissionId, checked: false });
+    });
+
+    this.groupsService.unselectGroup(groupId);
   }
+
+  async loadGroups() {
+    const groups = await this.groupsService.loadGroups();
+
+    this.groupOptions = groups.map(group => ({
+      label: group.title,
+      value: group.id,
+      permissions: group.permissions
+    }));
+  }
+
+
 }

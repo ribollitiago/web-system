@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { getAuth, createUserWithEmailAndPassword, User } from 'firebase/auth';
 import firebaseApp from '../../firebase.config';
 import { BehaviorSubject } from 'rxjs';
-import { FirebaseService } from './firebase.service'; // Assumindo que você tem o FirebaseService
+import { FirebaseService } from './firebase.service'; 
 
 interface UserData {
   [key: string]: any;
@@ -46,7 +46,7 @@ export class RegisterService {
       }
 
       this.userData = { ...this.userData, ...data };
-      console.log(step, data)
+      console.log(step, this.userData)
 
       if (step < 4) {
         this.setCurrentStep(step + 1);

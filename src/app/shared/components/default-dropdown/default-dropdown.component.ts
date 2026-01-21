@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 
 export interface DropdownOption {
   label: string;
-  value: any;
+  value: string;
+  permissions?: string[];
 }
 
 @Component({
