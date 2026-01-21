@@ -49,8 +49,8 @@ export class RegisterStep2Component implements OnDestroy {
   separatorKeysCodes: number[] = [13, 188];
   itemCtrl = new FormControl('');
   filteredItems: Observable<string[]>;
-  selectedItems: string[] = ['Item Genérico 1'];
-  allItems: string[] = ['Item Genérico 1', 'Item Genérico 2', 'Item Genérico 3', 'Maçã', 'Banana', 'Laranja'];
+  selectedItems: string[] = [];
+  allItems: string[] = [];
 
   @ViewChild('itemInput') itemInput!: ElementRef<HTMLInputElement>;
 
@@ -157,8 +157,15 @@ export class RegisterStep2Component implements OnDestroy {
     this.currentSearchQuery = query;
   }
 
-  handlePermissionSelection(selectedPermissions: string[]): void {
-    console.log('Permissões selecionadas:', selectedPermissions);
+  handlePermissionSelection(
+    selectedPermission: { id: string; checked?: boolean }
+  ): void {
+    this.permissionsService.setSelectedPermission(
+      selectedPermission.id,
+      !!selectedPermission.checked
+    );
+
+    console.log('Permissão selecionada:', selectedPermission);
   }
 
   handleGroupSelected(option: DropdownOption) {

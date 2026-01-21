@@ -219,7 +219,9 @@
     "subtitle": "Add additional infomation for this user",
     "textExplanation": "Write extra information about the user:",
     "placeholderTextArea": "Write here...",
-    "btnRegister": "Resume"
+    "btnRegister": "Resume",
+    "attachments": "attachments",
+    "btnAttachment": "Attachment"
   },
   "Resume_Page": {
     "title": "Resume",
