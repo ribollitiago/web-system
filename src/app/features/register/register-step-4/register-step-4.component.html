@@ -6,7 +6,7 @@
   [returnStep]="3"
   (submit)="confirmRegistration()">
 
-  <div class="resume-user">
+  <div class="resume-data">
     <div class="name">
       <div>
         <h2>{{ titleName }}</h2>
@@ -25,6 +25,22 @@
         <p>{{ registrationData.phone || '-' }}</p>
       </div>
     </div>
+  </div>
+
+  <div class="resume-permissions">
+    <h2>{{ stepTwo }}</h2>
+    <div class="permissions-container"></div>
+  </div>
+
+  <div class="resume-extra-information">
+    <div>
+      <h2>{{ stepThree }}</h2>
+      <p>informaciones</p>
+    </div>
+  </div>
+
+  <div class="resume-attachments">
+    <h2>{{ attachment }}</h2>
   </div>
 
 </app-default-step>

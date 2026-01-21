@@ -1,17 +1,18 @@
 @import "../../../../styles/variables.scss";
 
-.resume-user {
+.resume-data {
   display: flex;
   justify-content: space-between;
   width: 100%;
   margin-top: 10px;
+  margin-bottom: 30px;
 
-  > div {
+  >div {
     flex: 1;
     display: flex;
     flex-direction: column;
 
-    > div {
+    >div {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -46,62 +47,119 @@
   }
 }
 
-    .register-header {
-      width: 100%;
-      text-align: left;
+.resume-permissions {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 25px;
 
-      .title {
-        font-size: 24px;
-        color: $rg-title;
-        font-weight: 500;
-        margin-bottom: 15px;
-        text-align: left;
-      }
+  h2 {
+    font-size: 14px;
+    color: $rg-title;
+    font-weight: 400;
+    margin: 0 0 5px 0;
+  }
+}
 
-      .subtitle {
-        font-size: 14px;
-        color: $rg-subtitle;
-        font-weight: 300;
-        margin-bottom: 25px;
-        text-align: left;
-      }
-      img {
-        position: absolute;
-        top: 30px;
-        right: 30px;
+.resume-extra-information {
+  display: flex;
+  width: 100%;
+  margin-bottom: 25px;
 
-        width: 40px;
-        height: 40px;
-        border-radius: 100%;
-        transition: all 0.3s ease;
-        cursor: pointer;
+  >div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
 
-        &:hover {
-          background-color: darken($text-color, 90%);
-        }
-      }
-    }
-    .permissions-form {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      width: 100%;
-    }
 
-    button {
-      width: 275px;
-      padding: 18px 0;
-      margin: auto 0;
-      border-radius: 12px;
-      border: none;
+    h2 {
       font-size: 14px;
-      font-weight: 600;
-      color: $btn-text-color;
-      background-color: $btn-color;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-
-      &:hover {
-        background-color: darken($btn-color, 8%);
-      }
+      color: $rg-title;
+      font-weight: 400;
+      margin: 0 0 5px 0;
     }
+
+    p {
+      font-size: 14px;
+      color: $rg-title;
+      font-weight: 200;
+    }
+  }
+}
+
+.resume-attachments {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 25px;
+
+  h2 {
+    font-size: 14px;
+    color: $rg-title;
+    font-weight: 400;
+    margin: 0 0 5px 0;
+  }
+}
+
+.register-header {
+  width: 100%;
+  text-align: left;
+
+  .title {
+    font-size: 24px;
+    color: $rg-title;
+    font-weight: 500;
+    margin-bottom: 15px;
+    text-align: left;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: $rg-subtitle;
+    font-weight: 300;
+    margin-bottom: 25px;
+    text-align: left;
+  }
+
+  img {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+    &:hover {
+      background-color: darken($text-color, 90%);
+    }
+  }
+}
+
+.permissions-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
+button {
+  width: 275px;
+  padding: 18px 0;
+  margin: auto 0;
+  border-radius: 12px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: $btn-text-color;
+  background-color: $btn-color;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: darken($btn-color, 8%);
+  }
+}

@@ -25,6 +25,9 @@ isLoading = false;
   titleEmail: string = '';
   titlePhone: string = '';
 
+  attachment: string = '';
+  btnAttachment: string = '';
+
   constructor(
     private translationService: TranslationService,
     private registerService: RegisterService,
@@ -53,6 +56,11 @@ isLoading = false;
     this.titleName = this.translationService.getTranslation('titleName', section2);
     this.titleEmail = this.translationService.getTranslation('titleEmail', section2);
     this.titlePhone = this.translationService.getTranslation('titlePhone', section2);
+
+    const section3 = 'Extra_info_page';
+    this.attachment = this.translationService.getTranslation('attachments', section3);
+    this.btnAttachment = this.translationService.getTranslation('btnAttachment', section3);
+
   }
 
   confirmRegistration() {

@@ -219,7 +219,9 @@
     "subtitle": "Adicione informações extras sobre este usuário",
     "textExplanation": "Adicione informações extras sobre este usuário, caso necessário:",
     "placeholderTextArea": "Escreva aqui...",
-    "btnRegister": "Resumo"
+    "btnRegister": "Resumo",
+    "attachments": "Anexos",
+    "btnAttachment": "Anexar"
   },
   "Resume_Page": {
     "title": "Resumo",
