@@ -25,6 +25,12 @@
         <p>{{ registrationData.phone || '-' }}</p>
       </div>
     </div>
+    <div class="enrollment">
+      <div>
+        <h2>{{ titleEnrollment }}</h2>
+        <p>{{ registrationData.enrollment || '-' }}</p>
+      </div>
+    </div>
   </div>
 
   <div class="resume-permissions">
@@ -32,10 +38,39 @@
     <div class="permissions-container"></div>
   </div>
 
+  <div class="list-permissions">
+    <div class="permission" *ngFor="let permission of permissionUserSelected">
+
+      <img [matTooltip]="getCriticalText(permission.critical)"
+        [matTooltipClass]="'tooltip'"
+        matTooltipPosition="above" [src]="getSvgFileName(permission.critical)"
+        class="critical-icon" />
+
+      <span class="title" matTooltipPosition="above"
+        [matTooltipClass]="'tooltip'"
+        matTooltip="{{permission.title}}">{{ permission.title }}</span>
+
+      <div class="extra-information">
+        <div class="icon-wrapper" [matMenuTriggerFor]="detailsMenu">
+          <img src="assets/svg/icon/register/step-2/extra_info.svg" alt="Info"
+            [matTooltip]="menuTooltip" matTooltipPosition="above" />
+        </div>
+
+        <mat-menu #detailsMenu="matMenu" class="permission-details-menu">
+          <div class="menu-content" (click)="$event.stopPropagation()">
+            <div class="menu-title">{{ permission.title }}</div>
+            <div class="menu-item">{{ permission.description }}</div>
+          </div>
+        </mat-menu>
+      </div>
+
+    </div>
+  </div>
+
   <div class="resume-extra-information">
     <div>
       <h2>{{ stepThree }}</h2>
-      <p>informaciones</p>
+      <p>{{ registrationData.text || '-' }}</p>
     </div>
   </div>
 

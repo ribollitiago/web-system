@@ -34,6 +34,11 @@ export class RegisterStep3Component implements OnInit{
   ) { }
 
   ngOnInit() {
+    this.registrationData = this.registerService.getUserData();
+    if (this.registrationData && this.registrationData.text) {
+      this.textTyped = this.registrationData.text;
+    }
+
     this.translationService.language$.subscribe(() => {
       this.loadTranslations();
     });
@@ -53,11 +58,11 @@ export class RegisterStep3Component implements OnInit{
     this.textSave = this.textTyped;
   }
 
-  async submit() {
-    await this.registerService.setStepData(3, { text: 'blablabla' });
-  }
-
   async return() {
     this.registerService.setCurrentStep(2);
+  }
+
+  async submit() {
+    await this.registerService.setStepData(3, { text: this.textTyped });
   }
 }
