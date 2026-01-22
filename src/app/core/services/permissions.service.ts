@@ -124,7 +124,7 @@ export class PermissionsService {
   private translatePermissions(categorizedPermissions: Permissions, translate: any) {
     for (const category of Object.keys(categorizedPermissions) as (keyof Permissions)[]) {
       const categoryPermissions = categorizedPermissions[category];
-      const categoryTranslations = translate.Permissions_Page.permissions;
+      const categoryTranslations = translate.Permissions;
 
       for (const permissionKey of Object.keys(categoryPermissions) as string[]) {
         const permission = categoryPermissions[permissionKey];
