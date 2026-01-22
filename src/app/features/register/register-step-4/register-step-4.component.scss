@@ -1,28 +1,44 @@
 @import "../../../../styles/variables.scss";
 
 .resume-data {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+
+  /* AQUI ESTÁ O AJUSTE FINO:
+     1fr   -> Nome (Tamanho normal)
+     1.3fr -> Email (Ganha +30% de espaço, pois emails são longos e evita quebra)
+     1fr   -> Telefone (Tamanho normal)
+     0.7fr -> Matrícula (Menor, reduzindo o buraco visual à esquerda dela)
+  */
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+
+  gap: 20px;
   width: 100%;
   margin-top: 10px;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
 
+  /* Colunas Padrão (1, 2 e 3) */
   >div {
-    flex: 1;
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
+    overflow: hidden;
 
     >div {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
       text-align: left;
+      width: 100%;
 
       h2 {
         font-size: 14px;
         color: $rg-title;
         font-weight: 400;
         margin: 0 0 5px 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
       }
 
       p {
@@ -30,34 +46,152 @@
         color: $rg-subtitle;
         font-weight: 500;
         margin: 0;
+        word-break: break-word;
       }
     }
   }
 
-  .name {
-    align-items: flex-start;
-  }
-
-  .email {
-    align-items: center;
-  }
-
-  .phone {
-    align-items: flex-end;
-  }
 }
 
 .resume-permissions {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  margin-bottom: 25px;
+  margin-bottom: 5px;
 
   h2 {
     font-size: 14px;
     color: $rg-title;
     font-weight: 400;
     margin: 0 0 5px 0;
+  }
+}
+
+.list-permissions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  width: 100%;
+  max-height: 150px;
+  overflow-y: auto;
+  background-color: $bg-main;
+  padding: 5px;
+  border-radius: 12px;
+  box-sizing: border-box;
+  margin-bottom: 25px;
+
+  grid-auto-rows: min-content;
+  align-content: flex-start;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $us-bg-filters;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $us-page-btn;
+    border-radius: 3px;
+  }
+
+  .permission {
+    width: 100%;
+    min-width: 0;
+
+    padding: 15px 10px;
+    height: 26px;
+    background: $us-bg-permission;
+    border-radius: 10px;
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+
+    .critical-icon {
+      flex-shrink: 0;
+
+      img {
+        width: 11px;
+        height: 11px;
+      }
+    }
+
+    .title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1 1 auto;
+      min-width: 0;
+      color: $text-color;
+      font-size: 11px;
+      font-weight: 300;
+
+      line-height: 1;
+    }
+
+    .extra-information {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      border-radius: 3px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      transition: background-color ease 0.3s;
+      cursor: pointer;
+
+      .icon-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+      }
+
+      img {
+        width: 12px;
+        height: 12px;
+      }
+
+      &:hover {
+        background: $rg-bg-hover-extra;
+      }
+    }
+  }
+}
+
+::ng-deep .permission-details-menu {
+  background-color: $rg-bg-hover-extra !important;
+  max-width: 250px;
+  border-radius: 8px !important;
+
+  .mat-mdc-menu-content {
+    padding: 8px !important;
+  }
+
+  .menu-content {
+    outline: none;
+  }
+
+  .menu-title {
+    font-weight: bold;
+    color: white;
+    font-size: 12px;
+    margin-bottom: 4px;
+    padding: 0 4px;
+  }
+
+  .menu-item {
+    color: white;
+    font-size: 12px;
+    padding: 0 4px;
+    white-space: normal;
   }
 }
 

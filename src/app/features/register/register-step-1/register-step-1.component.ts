@@ -5,6 +5,7 @@ import { PrimaryInputComponent } from '../../../shared/components/primary-input/
 import { TranslationService } from '../../../core/services/translate.service';
 import { RegisterService } from '../../../core/services/register.service';
 import { DefaultStepComponent } from '../../../shared/layout/default-step/default-step.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-register-step-1',
@@ -42,7 +43,8 @@ export class RegisterStep1Component {
 
   constructor(
     private translationService: TranslationService,
-    private registerService: RegisterService
+    private registerService: RegisterService,
+    private toastService: ToastrService,
   ) {
     this.registerForm = new FormGroup({
       name: new FormControl('', [Validators.required]),
@@ -96,7 +98,6 @@ export class RegisterStep1Component {
   }
 
   async submit() {
-    const userDataStep1 = { name: 'teste2', email: 'test2@example.com', phone: '123456789', password: 'password123', enrollment: 'teste2' };
-    await this.registerService.setStepData(1, userDataStep1);
+    await this.registerService.setStepData(1, this.registerForm.value);
   }
 }

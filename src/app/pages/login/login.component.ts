@@ -69,13 +69,7 @@ export class LoginComponent {
     this.placeholderPassword = this.translationService.getTranslation('inputPasswordLgn', section);
   }
 
-  submit() {
-    if (this.showForgotPasswordForm) {
-      this.submitForgotPassword();
-    } else {
-      this.submitLogin();
-    }
-  }
+
 
   submitLogin() {
     const email = this.loginForm.value.email;
@@ -117,8 +111,6 @@ export class LoginComponent {
       this.toastService.error('Por favor, insira um e-mail válido.');
     }
   }
-
-
   navigate() {
     this.showForgotPasswordForm = !this.showForgotPasswordForm;
 
@@ -139,6 +131,13 @@ export class LoginComponent {
       this.showForgotPasswordForm ? 'linkForgotPasswordFgt' : 'linkForgotPasswordLgn',
       section
     );
+  }
 
+  submit() {
+    if (this.showForgotPasswordForm) {
+      this.submitForgotPassword();
+    } else {
+      this.submitLogin();
+    }
   }
 }

@@ -142,28 +142,6 @@ export class RegisterStep2Component implements OnDestroy {
     this.selectedButton = buttonName;
   }
 
-  async submit(): Promise<void> {
-    const permissions = Object.entries(this.permissionsService.getSelectedPermissions())
-      .filter(([_, checked]) => checked)
-      .reduce<Record<string, boolean>>((acc, [id]) => {
-        acc[id] = true;
-        return acc;
-      }, {});
-
-    const groups = this.groupsService
-      .getSelectedGroupIds()
-      .reduce<Record<string, boolean>>((acc, id) => {
-        acc[id] = true;
-        return acc;
-      }, {});
-
-    await this.registerService.setStepData(2, {
-      permissions,
-      groups
-    });
-  }
-
-
   handleSearchChange(query: string): void {
     this.currentSearchQuery = query;
   }
@@ -227,5 +205,26 @@ export class RegisterStep2Component implements OnDestroy {
   async loadGroups() {
     this.allGroups = await this.groupsService.subscribeGroups();
     this.updateGroupOptions();
+  }
+
+  async submit(): Promise<void> {
+    const permissions = Object.entries(this.permissionsService.getSelectedPermissions())
+      .filter(([_, checked]) => checked)
+      .reduce<Record<string, boolean>>((acc, [id]) => {
+        acc[id] = true;
+        return acc;
+      }, {});
+
+    const groups = this.groupsService
+      .getSelectedGroupIds()
+      .reduce<Record<string, boolean>>((acc, id) => {
+        acc[id] = true;
+        return acc;
+      }, {});
+
+    await this.registerService.setStepData(2, {
+      permissions,
+      groups
+    });
   }
 }
