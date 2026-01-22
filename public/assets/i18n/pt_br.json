@@ -54,7 +54,8 @@
     "inputPassword": "Insira a Senha",
     "titleConfirmPassword": "Confirme a Senha",
     "inputPasswordConfirm": "Confirme a senha",
-    "btnRegister": "Próximo passo"
+    "btnRegister": "Próximo passo",
+    "tooltipEnrollment": "A mátricula não será possível alterar depois do usuário ser cadastrado."
   },
   "Permissions_Page": {
     "title": "Permissões",
@@ -62,157 +63,14 @@
     "filterOne": "Usuários",
     "filterTwo": "Rotas",
     "filterThree": "Admin",
-    "criticalTooltipZeroLevel": "Zero Risk",
-    "criticalTooltipLowLevel": "Low Risk",
+    "criticalTooltipZeroLevel": "Risco Zero",
+    "criticalTooltipLowLevel": "Risco Baixo",
     "criticalTooltipMediumLevel": "Risco Médio",
     "criticalTooltipHighLevel": "Risco Alto",
     "menuTooltip": "Descrição",
-    "permissions": {
-      "010001": {
-        "title": "Registrar novo usuário",
-        "description": "Permita o registro de um novo usuário de forma básica, não é possivel adicionar ou remover permissões, não terá acesso ao sistema de imediato, após o registro solicite ao um superior acesso."
-      },
-      "010002": {
-        "title": "teste2",
-        "description": "teste2 description"
-      },
-      "010003": {
-        "title": "teste3",
-        "description": "teste3 description"
-      },
-      "010004": {
-        "title": "teste4",
-        "description": "teste4 description"
-      },
-      "010005": {
-        "title": "Permissão de usuário 5",
-        "description": "Descrição da permissão de usuário 5."
-      },
-      "010006": {
-        "title": "Permissão de usuário 6",
-        "description": "Descrição da permissão de usuário 6."
-      },
-      "010007": {
-        "title": "Permissão de usuário 7",
-        "description": "Descrição da permissão de usuário 7."
-      },
-      "010008": {
-        "title": "Permissão de usuário 8",
-        "description": "Descrição da permissão de usuário 8."
-      },
-      "010009": {
-        "title": "Permissão de usuário 9",
-        "description": "Descrição da permissão de usuário 9."
-      },
-      "010010": {
-        "title": "Permissão de usuário 10",
-        "description": "Descrição da permissão de usuário 10."
-      },
-      "010011": {
-        "title": "Permissão de usuário 11",
-        "description": "Descrição da permissão de usuário 11."
-      },
-      "010012": {
-        "title": "Permissão de usuário 12",
-        "description": "Descrição da permissão de usuário 12."
-      },
-      "020001": {
-        "title": "teste1",
-        "description": "teste1 description"
-      },
-      "020002": {
-        "title": "teste2",
-        "description": "teste2 description"
-      },
-      "020003": {
-        "title": "teste3",
-        "description": "teste3 description"
-      },
-      "020004": {
-        "title": "teste4",
-        "description": "teste4 description"
-      },
-      "020005": {
-        "title": "Permissão de rota 5",
-        "description": "Descrição da permissão de rota 5."
-      },
-      "020006": {
-        "title": "Permissão de rota 6",
-        "description": "Descrição da permissão de rota 6."
-      },
-      "020007": {
-        "title": "Permissão de rota 7",
-        "description": "Descrição da permissão de rota 7."
-      },
-      "020008": {
-        "title": "Permissão de rota 8",
-        "description": "Descrição da permissão de rota 8."
-      },
-      "020009": {
-        "title": "Permissão de rota 9",
-        "description": "Descrição da permissão de rota 9."
-      },
-      "020010": {
-        "title": "Permissão de rota 10",
-        "description": "Descrição da permissão de rota 10."
-      },
-      "020011": {
-        "title": "Permissão de rota 11",
-        "description": "Descrição da permissão de rota 11."
-      },
-      "020012": {
-        "title": "Permissão de rota 12",
-        "description": "Descrição da permissão de rota 12."
-      },
-      "030001": {
-        "title": "teste1",
-        "description": "teste1 description"
-      },
-      "030002": {
-        "title": "teste2",
-        "description": "teste2 description"
-      },
-      "030003": {
-        "title": "teste3",
-        "description": "teste3 description"
-      },
-      "030004": {
-        "title": "teste4",
-        "description": "teste4 description"
-      },
-      "030005": {
-        "title": "Permissão de admin 5",
-        "description": "Descrição da permissão de admin 5."
-      },
-      "030006": {
-        "title": "Permissão de admin 6",
-        "description": "Descrição da permissão de admin 6."
-      },
-      "030007": {
-        "title": "Permissão de admin 7",
-        "description": "Descrição da permissão de admin 7."
-      },
-      "030008": {
-        "title": "Permissão de admin 8",
-        "description": "Descrição da permissão de admin 8."
-      },
-      "030009": {
-        "title": "Permissão de admin 9",
-        "description": "Descrição da permissão de admin 9."
-      },
-      "030010": {
-        "title": "Permissão de admin 10",
-        "description": "Descrição da permissão de admin 10."
-      },
-      "030011": {
-        "title": "Permissão de admin 11",
-        "description": "Descrição da permissão de admin 11."
-      },
-      "030012": {
-        "title": "Permissão de admin 12",
-        "description": "Descrição da permissão de admin 12."
-      }
-    }
+    "titleGroupPermissions": "Selecione os grupos de permissões para o usuário",
+    "inputGroupPermissions": "Selecione um ou mais grupos",
+    "titleSelectPermissions": "Selecione as permissões individuais para o usuário"
   },
   "Extra_info_page": {
     "title": "Informações extras",
@@ -240,5 +98,169 @@
     "inactived": "Inativo",
     "actived": "Ativo",
     "disabled": "Desativado"
+  },
+  "Permissions": {
+    "010001": {
+      "title": "Registrar novo usuário",
+      "description": "Permita o registro de um novo usuário de forma básica, não é possivel adicionar ou remover permissões, não terá acesso ao sistema de imediato, após o registro solicite ao um superior acesso."
+    },
+    "010002": {
+      "title": "teste2",
+      "description": "teste2 description"
+    },
+    "010003": {
+      "title": "teste3",
+      "description": "teste3 description"
+    },
+    "010004": {
+      "title": "teste4",
+      "description": "teste4 description"
+    },
+    "010005": {
+      "title": "Permissão de usuário 5",
+      "description": "Descrição da permissão de usuário 5."
+    },
+    "010006": {
+      "title": "Permissão de usuário 6",
+      "description": "Descrição da permissão de usuário 6."
+    },
+    "010007": {
+      "title": "Permissão de usuário 7",
+      "description": "Descrição da permissão de usuário 7."
+    },
+    "010008": {
+      "title": "Permissão de usuário 8",
+      "description": "Descrição da permissão de usuário 8."
+    },
+    "010009": {
+      "title": "Permissão de usuário 9",
+      "description": "Descrição da permissão de usuário 9."
+    },
+    "010010": {
+      "title": "Permissão de usuário 10",
+      "description": "Descrição da permissão de usuário 10."
+    },
+    "010011": {
+      "title": "Permissão de usuário 11",
+      "description": "Descrição da permissão de usuário 11."
+    },
+    "010012": {
+      "title": "Permissão de usuário 12",
+      "description": "Descrição da permissão de usuário 12."
+    },
+    "020001": {
+      "title": "teste1",
+      "description": "teste1 description"
+    },
+    "020002": {
+      "title": "teste2",
+      "description": "teste2 description"
+    },
+    "020003": {
+      "title": "teste3",
+      "description": "teste3 description"
+    },
+    "020004": {
+      "title": "teste4",
+      "description": "teste4 description"
+    },
+    "020005": {
+      "title": "Permissão de rota 5",
+      "description": "Descrição da permissão de rota 5."
+    },
+    "020006": {
+      "title": "Permissão de rota 6",
+      "description": "Descrição da permissão de rota 6."
+    },
+    "020007": {
+      "title": "Permissão de rota 7",
+      "description": "Descrição da permissão de rota 7."
+    },
+    "020008": {
+      "title": "Permissão de rota 8",
+      "description": "Descrição da permissão de rota 8."
+    },
+    "020009": {
+      "title": "Permissão de rota 9",
+      "description": "Descrição da permissão de rota 9."
+    },
+    "020010": {
+      "title": "Permissão de rota 10",
+      "description": "Descrição da permissão de rota 10."
+    },
+    "020011": {
+      "title": "Permissão de rota 11",
+      "description": "Descrição da permissão de rota 11."
+    },
+    "020012": {
+      "title": "Permissão de rota 12",
+      "description": "Descrição da permissão de rota 12."
+    },
+    "030001": {
+      "title": "teste1",
+      "description": "teste1 description"
+    },
+    "030002": {
+      "title": "teste2",
+      "description": "teste2 description"
+    },
+    "030003": {
+      "title": "teste3",
+      "description": "teste3 description"
+    },
+    "030004": {
+      "title": "teste4",
+      "description": "teste4 description"
+    },
+    "030005": {
+      "title": "Permissão de admin 5",
+      "description": "Descrição da permissão de admin 5."
+    },
+    "030006": {
+      "title": "Permissão de admin 6",
+      "description": "Descrição da permissão de admin 6."
+    },
+    "030007": {
+      "title": "Permissão de admin 7",
+      "description": "Descrição da permissão de admin 7."
+    },
+    "030008": {
+      "title": "Permissão de admin 8",
+      "description": "Descrição da permissão de admin 8."
+    },
+    "030009": {
+      "title": "Permissão de admin 9",
+      "description": "Descrição da permissão de admin 9."
+    },
+    "030010": {
+      "title": "Permissão de admin 10",
+      "description": "Descrição da permissão de admin 10."
+    },
+    "030011": {
+      "title": "Permissão de admin 11",
+      "description": "Descrição da permissão de admin 11."
+    },
+    "030012": {
+      "title": "Permissão de admin 12",
+      "description": "Descrição da permissão de admin 12."
+    }
+  },
+  "Exceptions": {
+    "Validators": {
+      "required": "Este campo é obrigatório.",
+      "email": "Por favor, insira um endereço de e-mail válido.",
+      "minlength": "O valor inserido é muito curto.",
+      "maxlength": "O valor inserido é muito longo.",
+      "pattern": "O valor inserido não corresponde ao formato esperado."
+    },
+    "LoginErrors": {
+      "loginSucess": "Login realizado com sucesso!",
+      "loginError": "Erro ao fazer login. Verifique suas credenciais.",
+      "loginInvalid": "Por favor, insira um e-mail e senha válidos.",
+      "loginEmailRecovery": "Email de recuperação enviado com sucesso!",
+      "loginEmailRecoveryError": "Erro ao enviar email de recuperação. Tente novamente mais tarde.",
+      "loginEmailRecoveryInvalid": "Por favor, insira um e-mail válido para recuperação.",
+      "loginBlockedUser": "Sua conta está bloqueada. Por favor, contate o suporte."
+    }
   }
 }

@@ -1,12 +1,12 @@
 <app-default-step [title]="title" [subtitle]="subtitle" [currentStepState]="2" [btnLast]="btnLast" [returnStep]="1"
   (submit)="submit()">
 
-  <h2 class="group-title">{{ groupTitle }}</h2>
+  <h2 class="group-title">{{ titleGroupPermissions }}</h2>
 
   <div class="dropdown-wrapper">
     <img src="assets/svg/icon/default/group_permissions.svg" class="dropdown-icon" alt="icon">
     <app-default-dropdown class="meu-dropdown-custom" [options]="groupOptions"
-      [placeholder]="'Selecione um ou mais grupos'" (optionSelected)="handleGroupSelected($event)">
+      [placeholder]="inputGroupPermissions" (optionSelected)="handleGroupSelected($event)">
     </app-default-dropdown>
   </div>
 
@@ -23,7 +23,7 @@
   </mat-chip-set>
   }
 
-  <h2 class="permissions-title">{{ permissionsTitle }}</h2>
+  <h2 class="permissions-title">{{ titleSelectPermissions }}</h2>
 
   <div class="filters-wrapper">
     <div class="filters">

@@ -26,12 +26,22 @@ export class LoginComponent {
   forgotPasswordForm: FormGroup;
   showForgotPasswordForm: boolean = false;
 
+  //Login Layout Texts
   title: string = '';
   subtitle: string = '';
   btnText: string = '';
   txtLink: string = '';
   placeholderEmail: string = '';
   placeholderPassword: string = '';
+
+  //Login Erros
+  loginSucess: string = '';
+  loginError: string = '';
+  loginInvalid: string = '';
+  loginEmailRecovery: string = '';
+  loginEmailRecoveryError: string = '';
+  loginEmailRecoveryInvalid: string = '';
+  loginBlockedUser: string = '';
 
   constructor(
     private router: Router,
@@ -67,9 +77,22 @@ export class LoginComponent {
     this.txtLink = this.translationService.getTranslation('linkForgotPasswordLgn', section);
     this.placeholderEmail = this.translationService.getTranslation('inputEmailLgn', section);
     this.placeholderPassword = this.translationService.getTranslation('inputPasswordLgn', section);
+
+
+    //Lógica para acessar 3 etapas do JSON de tradução
+    const sectionErrors = 'Exceptions';
+    const key = 'LoginErrors';
+
+    const errorsObject: any = this.translationService.getTranslation(key, sectionErrors);
+
+    this.loginSucess = errorsObject.loginSucess;
+    this.loginError = errorsObject.loginError;
+    this.loginInvalid = errorsObject.loginInvalid;
+    this.loginEmailRecovery = errorsObject.loginEmailRecovery;
+    this.loginEmailRecoveryError = errorsObject.loginEmailRecoveryError;
+    this.loginEmailRecoveryInvalid = errorsObject.loginEmailRecoveryInvalid;
+    this.loginBlockedUser = errorsObject.loginBlockedUser;
   }
-
-
 
   submitLogin() {
     const email = this.loginForm.value.email;
@@ -80,16 +103,16 @@ export class LoginComponent {
         next: (user) => {
           if (user) {
             console.log('Uid:', user.uid);
-            this.toastService.success('Login realizado com sucesso!');
+            this.toastService.success(this.loginSucess);
           }
         },
         error: (err) => {
           console.error('Erro no login:', err);
-          this.toastService.error('Erro ao fazer login. Verifique suas credenciais.');
+          this.toastService.error(this.loginError);
         }
       });
     } else {
-      this.toastService.error('Por favor, insira um e-mail e senha válidos.');
+      this.toastService.error(this.loginInvalid);
     }
   }
 
@@ -100,15 +123,15 @@ export class LoginComponent {
       this.loginService.recoverPassword(email).subscribe({
         next: () => {
           console.log('Email para recuperação:', email);
-          this.toastService.success('Email de recuperação enviado com sucesso!');
+          this.toastService.success(this.loginEmailRecovery);
         },
         error: (err) => {
           console.error('Erro ao tentar recuperar senha:', err);
-          this.toastService.error('Erro ao enviar email de recuperação. Tente novamente.');
+          this.toastService.error(this.loginEmailRecoveryError);
         }
       });
     } else {
-      this.toastService.error('Por favor, insira um e-mail válido.');
+      this.toastService.error(this.loginEmailRecoveryInvalid);
     }
   }
   navigate() {

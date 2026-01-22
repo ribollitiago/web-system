@@ -6,7 +6,7 @@
   [showBackIcon]="false"
   (submit)="submit()">
 
-  <form [formGroup]="registerForm" (ngSubmit)="submit()">
+  <form [formGroup]="registerForm">
     <div class="register-form">
       <div class="name">
         <h3>{{ titleName }}</h3>
@@ -25,7 +25,7 @@
           <img src="assets/svg/icon/input/email.svg" alt>
         </app-primary-input>
       </div>
-      <div class="phone-and-document">
+      <div class="phone-and-enrollment">
         <div class="phone">
           <h3>{{ titlePhone }}</h3>
           <app-primary-input
@@ -34,8 +34,14 @@
             <img src="assets/svg/icon/input/phone.svg" alt>
           </app-primary-input>
         </div>
-        <div class="document">
-          <h3>{{ titleEnrollment }}</h3>
+        <div class="enrollment">
+          <div class="title">
+            <h3>{{ titleEnrollment }}</h3>
+            <img src="assets/svg/icon/default/attention.svg"
+              alt="attention" class="attention-icon"
+              [matTooltip]="tooltipEnrollment"
+              matTooltipPosition="above">
+          </div>
           <app-primary-input
             formControlName="enrollment"
             [placeholder]="placeholderEnrollment">

@@ -7,6 +7,7 @@
 
 form {
   width: 100%;
+
   .register-form {
     display: flex;
     flex-direction: column;
@@ -30,7 +31,7 @@ form {
       width: 100%;
     }
 
-    .phone-and-document,
+    .phone-and-enrollment,
     .password-and-confirm {
       display: flex;
       gap: 20px;
@@ -41,6 +42,24 @@ form {
         width: 100%;
       }
     }
+
+    .enrollment .title {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 6px;
+
+      img {
+        margin-bottom: 4px;
+
+        width: 16px;
+        height: 16px;
+      }
+
+      cursor: help;
+    }
+
+
 
     .password,
     .confirm-password {

@@ -35,7 +35,7 @@ export class RegisterStep2Component implements OnDestroy {
 
   isGroupDropdownDisabled: boolean = false;
 
-  groupTitle: string = 'Selecione os grupos de permissões para o usuário';
+  titleGroupPermissions: string = '';
   groupOptions: DropdownOption[] = [];
   private allGroups: Group[] = [];
   lockedPermissions$!: Observable<Set<string>>;
@@ -52,12 +52,14 @@ export class RegisterStep2Component implements OnDestroy {
 
   @ViewChild('itemInput') itemInput!: ElementRef<HTMLInputElement>;
 
-  permissionsTitle: string = 'Selecione as permissões individuais para o usuário';
+  titleSelectPermissions: string = '';
   btnLast: string = '';
   inputSearch: string = '';
   filterOne: string = '';
   filterTwo: string = '';
   filterThree: string = '';
+
+  inputGroupPermissions: string = '';
 
   private languageSubscription: Subscription;
 
@@ -130,6 +132,10 @@ export class RegisterStep2Component implements OnDestroy {
     this.filterOne = this.translationService.getTranslation('filterOne', section);
     this.filterTwo = this.translationService.getTranslation('filterTwo', section);
     this.filterThree = this.translationService.getTranslation('filterThree', section);
+
+    this.inputGroupPermissions = this.translationService.getTranslation('inputGroupPermissions', section);
+    this.titleGroupPermissions = this.translationService.getTranslation('titleGroupPermissions', section);
+    this.titleSelectPermissions = this.translationService.getTranslation('titleSelectPermissions', section);
 
     const section2 = 'Register_Page';
     this.btnLast = this.translationService.getTranslation('btnRegister', section2);
