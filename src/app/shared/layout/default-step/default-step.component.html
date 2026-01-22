@@ -3,33 +3,32 @@
     <div class="register-header">
       <h1 class="title">{{title}}</h1>
       <h2 class="subtitle">{{subtitle}}</h2>
-      <div class="back-wrapper" ><img class="back-img"
-          *ngIf="showBackIcon"
-          src="assets/svg/icon/register/back-page.svg"
-          alt
-          (click)="return()" />
-        <div class="back-tooltip" >{{ tooltipBack }}</div>
+      <div class="back-wrapper"><img class="back-img" *ngIf="showBackIcon" src="assets/svg/icon/register/back-page.svg"
+          alt (click)="return()" />
+        <div class="back-tooltip">{{ tooltipBack }}</div>
 
+      </div>
+      <div class="steps">
+        <div class="step-1">
+          <img [src]="step1Image" alt>
+          <h4 class="step-txt" [ngClass]="step1TextClass">{{stepOne}}</h4>
+        </div>
+        <div class="divider-1" [ngClass]="divider1Color"></div>
+        <div class="step-2">
+          <img [src]="step2Image" alt>
+          <h4 class="step-txt" [ngClass]="step2TextClass">{{stepTwo}}</h4>
+        </div>
+        <div class="divider-2" [ngClass]="divider2Color"></div>
+        <div class="step-3">
+          <img [src]="step3Image" alt>
+          <h4 class="step-txt" [ngClass]="step3TextClass">{{stepThree}}</h4>
+        </div>
+      </div>
+      <form class="register-form">
+        <ng-content></ng-content>
+        <button type="button" (click)="submit()">
+          {{ btnLast }}
+        </button>
+      </form>
     </div>
-    <div class="steps">
-      <div class="step-1">
-        <img [src]="step1Image" alt>
-        <h4 class="step-txt" [ngClass]="step1TextClass">{{stepOne}}</h4>
-      </div>
-      <div class="divider-1" [ngClass]="divider1Color"></div>
-      <div class="step-2">
-        <img [src]="step2Image" alt>
-        <h4 class="step-txt" [ngClass]="step2TextClass">{{stepTwo}}</h4>
-      </div>
-      <div class="divider-2" [ngClass]="divider2Color"></div>
-      <div class="step-3">
-        <img [src]="step3Image" alt>
-        <h4 class="step-txt" [ngClass]="step3TextClass">{{stepThree}}</h4>
-      </div>
-    </div>
-    <form class="register-form" (submit)="submit()">
-      <ng-content></ng-content>
-      <button type="submit">{{btnLast}}</button>
-    </form>
   </div>
-</div>
