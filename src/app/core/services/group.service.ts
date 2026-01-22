@@ -15,11 +15,24 @@ export class GroupsService {
   private groups: Group[] = [];
   private selectedGroups = new Set<string>();
 
-  constructor(private firebaseService: FirebaseService) {}
+  constructor(private firebaseService: FirebaseService) { }
 
   // ------------------------------------------------------
   // CARREGAMENTO
   // ------------------------------------------------------
+
+  async subscribeGroups(): Promise<Group[]> {
+    if (this.groups.length) {
+      return Promise.resolve(this.groups);
+    }
+
+    return new Promise<Group[]>((resolve) => {
+      this.firebaseService.subscribeToGroups((groups: any[]) => {
+        this.groups = this.formatGroups(groups);
+        resolve(this.groups);
+      });
+    });
+  }
 
   async loadGroups(): Promise<Group[]> {
     if (this.groups.length) {
@@ -97,5 +110,18 @@ export class GroupsService {
       groups: this.getSelectedGroupIds(),
       permissions: this.getPermissionsFromGroups()
     };
+  }
+
+  // ------------------------------------------------------
+  // FORMATAÇÃO DE GRUPOS
+  // ------------------------------------------------------
+
+  private formatGroups(groups: any[]): Group[] {
+    return groups.map(group => ({
+      id: group.id,
+      title: group.title,
+      description: group.description,
+      permissions: group.permissions ?? []
+    }))
   }
 }

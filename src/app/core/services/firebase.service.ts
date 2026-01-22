@@ -14,6 +14,7 @@ type Entity = {
 export class FirebaseService {
     private readonly db = getDatabase(firebaseApp);
     private usersSubscription: (() => void) | null = null;
+    private groupsSubscription: (() => void) | null = null;
 
     // ------------------------------------------------------
     // SEÇÃO: CONEXÃO COM O FIREBASE
@@ -81,7 +82,7 @@ export class FirebaseService {
 
     subscribeToUsers(callback: (users: Entity[]) => void) {
         if (this.usersSubscription) {
-            this.off();
+            this.off('users');
         }
 
         this.usersSubscription = onValue(this.setQueryRef('users'), (snapshot) => {
@@ -90,13 +91,24 @@ export class FirebaseService {
         });
     }
 
+    subscribeToGroups(callback: (users: Entity[]) => void) {
+        if (this.groupsSubscription) {
+            this.off('groups');
+        }
+
+        this.groupsSubscription = onValue(this.setQueryRef('groups'), (snapshot) => {
+            const groups = this.snapshotToUsers(snapshot);
+            callback(groups);
+        });
+    }
+
     // ------------------------------------------------------
     // SEÇÃO: DESINSCRIÇÃO DE EVENTOS
     // ------------------------------------------------------
 
-    off() {
+    off(ref: string) {
         if (this.usersSubscription) {
-            off(this.setQueryRef('users'));
+            off(this.setQueryRef(ref));
             this.usersSubscription = null;
         }
     }

@@ -33,8 +33,15 @@ export class RegisterStep2Component implements OnDestroy {
   title: string = '';
   subtitle: string = '';
 
+  isGroupDropdownDisabled: boolean = false;
+
   groupTitle: string = 'Selecione os grupos de permissões para o usuário';
   groupOptions: DropdownOption[] = [];
+  private allGroups: Group[] = [];
+  get lockedPermissions(): Set<string> {
+    return this.permissionsService.getLockedPermissions();
+  }
+
   get selectedGroups(): Group[] {
     return this.groupsService.getSelectedGroups();
   }
@@ -48,7 +55,6 @@ export class RegisterStep2Component implements OnDestroy {
   @ViewChild('itemInput') itemInput!: ElementRef<HTMLInputElement>;
 
   permissionsTitle: string = 'Selecione as permissões individuais para o usuário';
-  lockedPermissions = new Set<string>();
   btnLast: string = '';
   inputSearch: string = '';
   filterOne: string = '';
@@ -181,9 +187,10 @@ export class RegisterStep2Component implements OnDestroy {
     this.groupsService.selectGroup(option.value);
 
     option.permissions?.forEach((permissionId: string) => {
+      this.permissionsService.setLockedPermission(permissionId, true);
       this.handlePermissionSelection({ id: permissionId, checked: true });
-      this.lockedPermissions.add(permissionId);
     });
+    this.updateGroupOptions();
   }
 
   removeGroup(groupId: string) {
@@ -193,22 +200,32 @@ export class RegisterStep2Component implements OnDestroy {
     if (!group) return;
 
     group.permissions.forEach(permissionId => {
-      this.lockedPermissions.delete(permissionId);
+      this.permissionsService.setLockedPermission(permissionId, false);
       this.handlePermissionSelection({ id: permissionId, checked: false });
     });
 
     this.groupsService.unselectGroup(groupId);
+    this.updateGroupOptions();
+  }
+
+  private updateGroupOptions(): void {
+    const selectedIds = new Set(
+      this.groupsService.getSelectedGroupIds()
+    )
+
+    this.groupOptions = this.allGroups
+      .filter(group => !selectedIds.has(group.id))
+      .map(group => ({
+        label: group.title,
+        value: group.id,
+        permissions: group.permissions
+      }));
+
+    this.isGroupDropdownDisabled = this.groupOptions.length === 0;
   }
 
   async loadGroups() {
-    const groups = await this.groupsService.loadGroups();
-
-    this.groupOptions = groups.map(group => ({
-      label: group.title,
-      value: group.id,
-      permissions: group.permissions
-    }));
+    this.allGroups = await this.groupsService.subscribeGroups();
+    this.updateGroupOptions();
   }
-
-
 }

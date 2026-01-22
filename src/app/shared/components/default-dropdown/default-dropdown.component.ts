@@ -20,6 +20,7 @@ export class DefaultDropdownComponent {
   @Input() options: DropdownOption[] = [];
   @Input() placeholder: string = 'Selecione uma opção';
   @Output() optionSelected = new EventEmitter<DropdownOption>();
+  @Input() disabled = false;
 
   selectedValue: any = '';
   selectedLabel: string = '';
@@ -30,6 +31,7 @@ export class DefaultDropdownComponent {
   }
 
   toggleDropdown() {
+    if (this.disabled) return;
     this.dropdownOpen = !this.dropdownOpen;
   }
 
@@ -40,7 +42,6 @@ export class DefaultDropdownComponent {
     this.dropdownOpen = false;
   }
 
-  // Fecha dropdown ao clicar fora
   constructor() {
     document.addEventListener('click', (event: any) => {
       if (!event.target.closest('.custom-dropdown')) {

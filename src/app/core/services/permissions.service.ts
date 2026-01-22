@@ -26,6 +26,7 @@ interface Permissions {
 })
 export class PermissionsService {
   private selectedPermissions: Record<string, boolean> = {};
+  private lockedPermissions = new Set<string>();
 
   constructor(private translationService: TranslationService) { }
 
@@ -149,5 +150,26 @@ export class PermissionsService {
 
   setSelectedPermission(id: string, checked: boolean): void {
     this.selectedPermissions[id] = checked;
+  }
+
+  // ------------------------------------------------------
+  // SEÇÃO: GESTÃO DE PERMISSÕES TRAVADAS
+  // ------------------------------------------------------
+
+  setLockedPermission(id: string, locked: boolean): void {
+    if (locked) {
+      this.lockedPermissions.add(id);
+      this.selectedPermissions[id] = true;
+    } else {
+      this.lockedPermissions.delete(id);
+    }
+  }
+
+  getLockedPermissions(): Set<string> {
+    return this.lockedPermissions;
+  }
+
+  isPermissionLocked(id: string): boolean {
+    return this.lockedPermissions.has(id);
   }
 }
