@@ -6,8 +6,7 @@
   <div class="dropdown-wrapper">
     <img src="assets/svg/icon/default/group_permissions.svg" class="dropdown-icon" alt="icon">
     <app-default-dropdown class="meu-dropdown-custom" [options]="groupOptions"
-      [placeholder]="'Selecione um ou mais grupos'" [disabled]="isGroupDropdownDisabled"
-      (optionSelected)="handleGroupSelected($event)">
+      [placeholder]="'Selecione um ou mais grupos'" (optionSelected)="handleGroupSelected($event)">
     </app-default-dropdown>
   </div>
 
@@ -48,7 +47,7 @@
 
   <div class="permissions-form">
     <app-steps-filter class="permissions-checkbox" [selectedFilter]="selectedButton" [searchQuery]="currentSearchQuery"
-      [lockedPermissions]="lockedPermissions" (permissionSelected)="handlePermissionSelection($event)">
+      [lockedPermissions]="lockedPermissions$ | async" (permissionSelected)="handlePermissionSelection($event)">
     </app-steps-filter>
   </div>
 </app-default-step>

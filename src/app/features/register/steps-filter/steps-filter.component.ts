@@ -16,7 +16,7 @@ import { MatMenuModule } from '@angular/material/menu';
 export class StepsFilterComponent implements OnChanges, OnDestroy {
   @Input() selectedFilter: string = 'users';
   @Input() searchQuery: string = '';
-  @Input() lockedPermissions = new Set<string>();
+  @Input() lockedPermissions: Set<string> | null = null;
   @Output() permissionSelected = new EventEmitter<any>();
 
   menuTooltip: string = '';
@@ -51,14 +51,17 @@ export class StepsFilterComponent implements OnChanges, OnDestroy {
     this.loadTranslations();
   }
 
-
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['selectedFilter'] && this.permissions) {
+    if (!this.permissions || !this.lockedPermissions) return;
+
+    if (changes['lockedPermissions'] || changes['selectedFilter']) {
       this.updateCurrentList();
     }
+
     if (changes['searchQuery']) {
       this.applySearchFilter();
     }
+
     this.sortByCriticalLevel();
   }
 
@@ -141,7 +144,7 @@ export class StepsFilterComponent implements OnChanges, OnDestroy {
       default: return '';
     }
   }
-  
+
   getCheckboxIcon(item: any): string {
     if (this.lockedPermissions?.has(item.id)) {
       return 'check-on.svg';
@@ -151,7 +154,7 @@ export class StepsFilterComponent implements OnChanges, OnDestroy {
   }
 
   toggleAndChange(item: any) {
-    if (this.lockedPermissions.has(item.id)) {
+    if (this.lockedPermissions?.has(item.id)) {
       return;
     }
 

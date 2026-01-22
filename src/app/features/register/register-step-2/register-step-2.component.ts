@@ -38,9 +38,7 @@ export class RegisterStep2Component implements OnDestroy {
   groupTitle: string = 'Selecione os grupos de permissões para o usuário';
   groupOptions: DropdownOption[] = [];
   private allGroups: Group[] = [];
-  get lockedPermissions(): Set<string> {
-    return this.permissionsService.getLockedPermissions();
-  }
+  lockedPermissions$!: Observable<Set<string>>;
 
   get selectedGroups(): Group[] {
     return this.groupsService.getSelectedGroups();
@@ -112,6 +110,8 @@ export class RegisterStep2Component implements OnDestroy {
   }
 
   ngOnInit() {
+    this.lockedPermissions$ = this.permissionsService.getLockedPermissions$();
+
     this.loadTranslations();
     this.loadGroups();
   }

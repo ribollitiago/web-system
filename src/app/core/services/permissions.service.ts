@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TranslationService } from './translate.service';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 export type CriticalLevel = 'HIGH_LEVEL' | 'MEDIUM_LEVEL' | 'LOW_LEVEL' | 'ZERO_LEVEL';
 
@@ -26,8 +27,7 @@ interface Permissions {
 })
 export class PermissionsService {
   private selectedPermissions: Record<string, boolean> = {};
-  private lockedPermissions = new Set<string>();
-
+  private lockedPermissions$ = new BehaviorSubject<Set<string>>(new Set());
   constructor(private translationService: TranslationService) { }
 
   // ------------------------------------------------------
@@ -156,20 +156,19 @@ export class PermissionsService {
   // SEÇÃO: GESTÃO DE PERMISSÕES TRAVADAS
   // ------------------------------------------------------
 
-  setLockedPermission(id: string, locked: boolean): void {
-    if (locked) {
-      this.lockedPermissions.add(id);
-      this.selectedPermissions[id] = true;
-    } else {
-      this.lockedPermissions.delete(id);
-    }
+  getLockedPermissions$(): Observable<Set<string>> {
+    return this.lockedPermissions$.asObservable();
   }
 
   getLockedPermissions(): Set<string> {
-    return this.lockedPermissions;
+    return this.lockedPermissions$.value;
   }
 
-  isPermissionLocked(id: string): boolean {
-    return this.lockedPermissions.has(id);
+  setLockedPermission(id: string, locked: boolean) {
+    const newSet = new Set(this.lockedPermissions$.value);
+
+    locked ? newSet.add(id) : newSet.delete(id);
+
+    this.lockedPermissions$.next(newSet);
   }
 }
