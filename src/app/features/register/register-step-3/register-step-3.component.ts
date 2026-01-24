@@ -1,52 +1,83 @@
+// ------------------------------------------------------
+// IMPORTS
+// ------------------------------------------------------
 import { Component, OnInit } from '@angular/core';
-import { TranslationService } from '../../../core/services/translate.service';
-import { RegisterService } from '../../../core/services/register.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
+import { TranslationService } from '../../../core/services/translate.service';
+import { RegisterData, RegisterService } from '../../../core/services/register.service';
 import { DefaultStepComponent } from '../../../shared/layout/default-step/default-step.component';
 
+// ------------------------------------------------------
+// COMPONENT
+// ------------------------------------------------------
 @Component({
   selector: 'app-register-step-3',
+  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
     DefaultStepComponent
-],
+  ],
   templateUrl: './register-step-3.component.html',
   styleUrl: './register-step-3.component.scss'
 })
-export class RegisterStep3Component implements OnInit{
+export class RegisterStep3Component implements OnInit {
+
+  // ------------------------------------------------------
+  // STATE
+  // ------------------------------------------------------
   isLoading = false;
   registrationData: any = {};
 
-  title: string = '';
-  subtitle: string = '';
-  textExplanation: string = '';
-  placeholderTextArea: string = '';
-  btnLast: string = '';
+  textTyped = '';
 
-  textTyped: string = '';
-  textSave: string = '';
+  // ------------------------------------------------------
+  // TEXTOS (TRADUÇÃO)
+  // ------------------------------------------------------
+  title = '';
+  subtitle = '';
+  textExplanation = '';
+  placeholderTextArea = '';
+  btnLast = '';
 
+  // ------------------------------------------------------
+  // CONSTRUCTOR
+  // ------------------------------------------------------
   constructor(
     private translationService: TranslationService,
-    private registerService: RegisterService,
-  ) { }
+    private registerService: RegisterService
+  ) {}
 
-  ngOnInit() {
-    this.registrationData = this.registerService.getUserData();
-    if (this.registrationData && this.registrationData.text) {
-      this.textTyped = this.registrationData.text;
-    }
+  // ------------------------------------------------------
+  // LIFECYCLE
+  // ------------------------------------------------------
+  ngOnInit(): void {
+    this.loadSavedData();
+    this.listenLanguageChanges();
+  }
 
+  // ------------------------------------------------------
+  // DADOS SALVOS
+  // ------------------------------------------------------
+  private loadSavedData(): void {
+    this.registrationData = this.registerService.getData();
+    this.textTyped = this.registrationData?.text ?? '';
+  }
+
+  // ------------------------------------------------------
+  // TRADUÇÕES
+  // ------------------------------------------------------
+  private listenLanguageChanges(): void {
     this.translationService.language$.subscribe(() => {
       this.loadTranslations();
     });
-    this.loadTranslations();
   }
 
-  loadTranslations() {
+  private loadTranslations(): void {
     const section = 'Extra_info_page';
+
     this.title = this.translationService.getTranslation('title', section);
     this.subtitle = this.translationService.getTranslation('subtitle', section);
     this.textExplanation = this.translationService.getTranslation('textExplanation', section);
@@ -54,15 +85,23 @@ export class RegisterStep3Component implements OnInit{
     this.btnLast = this.translationService.getTranslation('btnRegister', section);
   }
 
-  saveText() {
-    this.textSave = this.textTyped;
+  // ------------------------------------------------------
+  // SINCRONIZAÇÃO (SERVICE)
+  // ------------------------------------------------------
+  onFieldChange(field: keyof RegisterData, value: any): void {
+    this.registerService.updateData({
+      [field]: value
+    });
   }
 
-  async return() {
-    this.registerService.setCurrentStep(2);
+  // ------------------------------------------------------
+  // NAVEGAÇÃO
+  // ------------------------------------------------------
+  return(): void {
+    this.registerService.previousStep();
   }
 
-  async submit() {
-    await this.registerService.setStepData(3, { text: this.textTyped });
+  submit(): void {
+    this.registerService.nextStep();
   }
 }

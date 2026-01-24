@@ -1,40 +1,28 @@
 // ------------------------------------------------------
-// IMPORTS – Angular Core
+// IMPORTS
 // ------------------------------------------------------
-import { Component } from '@angular/core';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  ValidatorFn,
-  Validators
-} from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
-// ------------------------------------------------------
-// IMPORTS – Components
-// ------------------------------------------------------
 import { PrimaryInputComponent } from '../../../shared/components/primary-input/primary-input.component';
 import { DefaultStepComponent } from '../../../shared/layout/default-step/default-step.component';
 
-// ------------------------------------------------------
-// IMPORTS – Services
-// ------------------------------------------------------
 import { TranslationService } from '../../../core/services/translate.service';
-import { RegisterService } from '../../../core/services/register.service';
+import { RegisterData, RegisterService } from '../../../core/services/register.service';
 import { ToastrService } from 'ngx-toastr';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+
 // ------------------------------------------------------
-// COMPONENT METADATA
+// COMPONENT
 // ------------------------------------------------------
 @Component({
   selector: 'app-register-step-1',
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
+    FormsModule,
     PrimaryInputComponent,
     DefaultStepComponent,
     MatTooltipModule
@@ -42,16 +30,18 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   templateUrl: './register-step-1.component.html',
   styleUrl: './register-step-1.component.scss'
 })
-export class RegisterStep1Component {
+export class RegisterStep1Component implements OnInit {
 
   // ------------------------------------------------------
-  // FORMULÁRIO
+  // STATE
   // ------------------------------------------------------
-  registerForm: FormGroup;
+  name = '';
+  email = '';
+  phone = '';
+  enrollment = '';
+  password = '';
+  confirmPassword = '';
 
-  // ------------------------------------------------------
-  // TEXTOS (TRADUÇÃO)
-  // ------------------------------------------------------
   title = '';
   subtitle = '';
   stepOne = '';
@@ -60,24 +50,18 @@ export class RegisterStep1Component {
 
   titleName = '';
   placeholderName = '';
-
   titleEmail = '';
   placeholderEmail = '';
-
   titlePhone = '';
   placeholderPhone = '';
-
   titleEnrollment = '';
   placeholderEnrollment = '';
-
   titlePassword = '';
   placeholderPassword = '';
-
   titleConfirmPassword = '';
   placeholderConfirmPassword = '';
 
   btnLast = '';
-
   tooltipEnrollment = '';
 
   // ------------------------------------------------------
@@ -87,71 +71,47 @@ export class RegisterStep1Component {
     private translationService: TranslationService,
     private registerService: RegisterService,
     private toastService: ToastrService
-  ) {
-    // ------------------------------------------------------
-    // INICIALIZAÇÃO DO FORMULÁRIO
-    // ------------------------------------------------------
-    this.registerForm = new FormGroup(
-      {
-        name: new FormControl('', [
-          Validators.required,
-          fullNameValidator()
-        ]),
+  ) {}
 
-        email: new FormControl('', [
-          Validators.required,
-          Validators.email
-        ]),
-
-        phone: new FormControl('', [
-          Validators.required,
-          Validators.pattern(/^\+?[1-9]\d{1,14}$/)
-        ]),
-
-        enrollment: new FormControl('', [
-          Validators.required
-        ]),
-
-        password: new FormControl('', [
-          Validators.required,
-          Validators.minLength(6)
-        ]),
-
-        confirmPassword: new FormControl('', [
-          Validators.required
-        ])
-      },
-      {
-        validators: this.passwordMatchValidator as ValidatorFn
-      }
-    );
+  // ------------------------------------------------------
+  // LIFECYCLE
+  // ------------------------------------------------------
+  ngOnInit(): void {
+    this.loadSavedData();
+    this.listenLanguageChanges();
   }
 
   // ------------------------------------------------------
-  // LIFECYCLE – ON INIT
+  // DATA
   // ------------------------------------------------------
-  ngOnInit() {
+  private loadSavedData(): void {
+    const data = this.registerService.getData();
+    if (!data) return;
+
+    this.name = data.name ?? '';
+    this.email = data.email ?? '';
+    this.phone = data.phone ?? '';
+    this.enrollment = data.enrollment ?? '';
+    this.password = data.password ?? '';
+    this.confirmPassword = data['confirmPassword'] ?? '';
+  }
+
+  onFieldChange(field: keyof RegisterData, value: any): void {
+    this.registerService.updateData({
+      [field]: value
+    });
+  }
+
+  // ------------------------------------------------------
+  // TRANSLATIONS
+  // ------------------------------------------------------
+  private listenLanguageChanges(): void {
     this.translationService.language$.subscribe(() => {
       this.loadTranslations();
     });
   }
 
-  // ------------------------------------------------------
-  // VALIDADOR – CONFIRMAÇÃO DE SENHA
-  // ------------------------------------------------------
-  passwordMatchValidator(control: AbstractControl) {
-    const form = control as FormGroup;
-
-    return form.get('password')?.value ===
-      form.get('confirmPassword')?.value
-      ? null
-      : { mismatch: true };
-  }
-
-  // ------------------------------------------------------
-  // TRADUÇÕES
-  // ------------------------------------------------------
-  loadTranslations() {
+  private loadTranslations(): void {
     const section = 'Register_Page';
 
     this.title = this.translationService.getTranslation('title', section);
@@ -176,100 +136,87 @@ export class RegisterStep1Component {
     this.titlePassword = this.translationService.getTranslation('titlePassword', section);
     this.placeholderPassword = this.translationService.getTranslation('inputPassword', section);
 
-    this.titleConfirmPassword = this.translationService.getTranslation('titleConfirmPassword', section);
-    this.placeholderConfirmPassword = this.translationService.getTranslation('inputPasswordConfirm', section);
+    this.titleConfirmPassword =
+      this.translationService.getTranslation('titleConfirmPassword', section);
+    this.placeholderConfirmPassword =
+      this.translationService.getTranslation('inputPasswordConfirm', section);
 
     this.btnLast = this.translationService.getTranslation('btnRegister', section);
-
-    this.tooltipEnrollment = this.translationService.getTranslation('tooltipEnrollment', section);
+    this.tooltipEnrollment =
+      this.translationService.getTranslation('tooltipEnrollment', section);
   }
 
   // ------------------------------------------------------
-  // VALIDAÇÃO CENTRALIZADA DO FORMULÁRIO
+  // VALIDATION
   // ------------------------------------------------------
-  private validateForm(): boolean {
-    const form = this.registerForm;
-    const errors: string[] = [];
+  private async validateForm(): Promise<boolean> {
 
-    const validations = [
-      {
-        invalid: form.get('name')?.hasError('required') ||
-          form.get('name')?.hasError('fullName'),
-        message: 'Informe o nome completo'
-      },
-      {
-        invalid: form.get('email')?.invalid,
-        message: 'Informe um email válido'
-      },
-      {
-        invalid: form.get('phone')?.invalid,
-        message: 'Informe um número de telefone válido'
-      },
-      {
-        invalid: form.get('enrollment')?.invalid,
-        message: 'Informe a matrícula'
-      },
-      {
-        invalid: form.get('password')?.hasError('minlength'),
-        message: 'A senha deve ter no mínimo 6 caracteres'
-      },
-      {
-        invalid: form.hasError('mismatch'),
-        message: 'As senhas não coincidem'
-      }
-    ];
+    const ERROR_FIELD_MAP: Record<string, string> = {
+      INVALID_NAME: this.placeholderName,
+      INVALID_EMAIL: this.placeholderEmail,
+      INVALID_PHONE: this.placeholderPhone,
+      ENROLLMENT_REQUIRED: this.placeholderEnrollment,
+      PASSWORD_TOO_SHORT: this.placeholderPassword,
+      PASSWORD_MISMATCH: this.placeholderConfirmPassword
+    };
 
-    validations.forEach(v => {
-      if (v.invalid) {
-        errors.push(v.message);
-      }
-    });
+    const validations = await Promise.all([
+      this.registerService.validate('NAME', this.name),
+      this.registerService.validate('EMAIL', this.email),
+      this.registerService.validate('PHONE', this.phone),
+      this.registerService.validate('ENROLLMENT', this.enrollment),
+      this.registerService.validate('PASSWORD', this.password),
+      this.registerService.validate('PASSWORD_MATCH', null, {
+        password: this.password,
+        confirmPassword: this.confirmPassword
+      })
+    ]);
 
-    if (errors.length === 0) return true;
+    const errors = validations.filter(v => !v.valid);
 
-    this.showValidationToast(errors);
-    return false;
-  }
-
-  // ------------------------------------------------------
-  // EXIBIÇÃO DE ERROS (TOAST)
-  // ------------------------------------------------------
-  private showValidationToast(errors: string[]): void {
     if (errors.length === 1) {
-      this.toastService.error(errors[0]);
-      return;
+      const error = errors[0];
+
+      const ERROR_MESSAGE_MAP: Record<string, string> = {
+        PASSWORD_MISMATCH: 'As senhas não conferem',
+        EMAIL_ALREADY_EXISTS: 'Já existe um Email',
+        ENROLLMENT_ALREADY_EXISTS: 'Já existe essa Matrícula'
+      };
+
+      const message = ERROR_MESSAGE_MAP[error.error!];
+      if (message) this.toastServiceError(message);
+
+      this.toastServiceError(
+        `Erro no campo: ${ERROR_FIELD_MAP[error.error!] ?? 'desconhecido'}`
+      );
     }
 
     if (errors.length === 2) {
-      this.toastService.error(`${errors[0]} e ${errors[1]}.`);
-      return;
+      const fields = errors.map(e => ERROR_FIELD_MAP[e.error!]);
+      this.toastServiceError(
+        `Erro nos campos: ${fields.join(' e ')}. Corrija para continuar.`
+      );
     }
 
-    this.toastService.error(
-      'Existem vários campos inválidos. Verifique os dados informados.'
-    );
+    if (errors.length >= 3) {
+      this.toastServiceError(
+        'Existem vários campos inválidos. Revise o formulário.'
+      );
+    }
+
+    return errors.length === 0;
+  }
+
+  toastServiceError(message: string): void {
+    this.toastService.clear();
+    this.toastService.error(message);
   }
 
   // ------------------------------------------------------
-  // SUBMIT DO FORMULÁRIO
+  // SUBMIT
   // ------------------------------------------------------
-  async submit() {
-    if (!this.validateForm()) return;
-
-    await this.registerService.setStepData(1, this.registerForm.value);
+  async submit(): Promise<void> {
+    if (!(await this.validateForm())) return;
+    this.registerService.nextStep();
   }
-}
-
-// ------------------------------------------------------
-// VALIDADOR – NOME COMPLETO
-// ------------------------------------------------------
-export function fullNameValidator(): ValidatorFn {
-  return (control: AbstractControl) => {
-    const value = control.value?.trim();
-
-    if (!value) return null;
-
-    const parts = value.split(' ');
-    return parts.length >= 2 ? null : { fullName: true };
-  };
 }

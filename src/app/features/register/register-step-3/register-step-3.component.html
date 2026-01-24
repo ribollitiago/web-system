@@ -1,16 +1,9 @@
-<app-default-step
-  [title]="title"
-  [subtitle]="subtitle"
-  [currentStepState]="3"
-  [btnLast]="btnLast"
-  [returnStep]="2"
+<app-default-step [title]="title" [subtitle]="subtitle" [currentStepState]="3" [btnLast]="btnLast" [returnStep]="2"
   (submit)="submit()">
 
   <div class="extra-wrapper">
-      <h2 class="text-explanation">{{textExplanation}}</h2>
-      <textarea
-        class="text-box"
-        [(ngModel)]="textTyped"
-        placeholder={{placeholderTextArea}}></textarea>
-    </div>
+    <h2 class="text-explanation">{{textExplanation}}</h2>
+    <textarea class="text-box" [(ngModel)]="textTyped" (ngModelChange)="onFieldChange('email', $event)"
+      placeholder={{placeholderTextArea}}></textarea>
+  </div>
 </app-default-step>

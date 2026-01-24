@@ -1,76 +1,66 @@
-<app-default-step
-  [title]="title"
-  [subtitle]="subtitle"
-  [currentStepState]="1"
-  [btnLast]="btnLast"
-  [showBackIcon]="false"
-  (submit)="submit()">
+<app-default-step [title]="title" [subtitle]="subtitle" [currentStepState]="1" [btnLast]="btnLast"
+  [showBackIcon]="false" (submit)="submit()">
 
-  <form [formGroup]="registerForm">
+  <form>
     <div class="register-form">
+
       <div class="name">
         <h3>{{ titleName }}</h3>
-        <app-primary-input
-          formControlName="name"
+        <app-primary-input [(ngModel)]="name" (ngModelChange)="onFieldChange('name', $event)" name="name"
           [placeholder]="placeholderName">
           <img src="assets/svg/icon/input/user.svg" alt>
         </app-primary-input>
       </div>
+
       <div class="email">
         <h3>{{ titleEmail }}</h3>
-        <app-primary-input
-          formControlName="email"
-          type="email"
-          [placeholder]="placeholderEmail">
+        <app-primary-input [(ngModel)]="email" (ngModelChange)="onFieldChange('email', $event)" name="email"
+          type="email" [placeholder]="placeholderEmail">
           <img src="assets/svg/icon/input/email.svg" alt>
         </app-primary-input>
       </div>
+
       <div class="phone-and-enrollment">
         <div class="phone">
           <h3>{{ titlePhone }}</h3>
-          <app-primary-input
-            formControlName="phone"
+          <app-primary-input [(ngModel)]="phone" (ngModelChange)="onFieldChange('phone', $event)" name="phone"
             [placeholder]="placeholderPhone">
             <img src="assets/svg/icon/input/phone.svg" alt>
           </app-primary-input>
         </div>
+
         <div class="enrollment">
           <div class="title">
             <h3>{{ titleEnrollment }}</h3>
-            <img src="assets/svg/icon/default/attention.svg"
-              alt="attention" class="attention-icon"
-              [matTooltip]="tooltipEnrollment"
-              matTooltipPosition="above">
+            <img src="assets/svg/icon/default/attention.svg" alt="attention" class="attention-icon"
+              [matTooltip]="tooltipEnrollment" matTooltipPosition="above">
           </div>
-          <app-primary-input
-            formControlName="enrollment"
-            [placeholder]="placeholderEnrollment">
+
+          <app-primary-input [(ngModel)]="enrollment" (ngModelChange)="onFieldChange('enrollment', $event)"
+            name="enrollment" [placeholder]="placeholderEnrollment">
             <img src="assets/svg/icon/input/document.svg" alt>
           </app-primary-input>
         </div>
       </div>
+
       <div class="password-and-confirm">
         <div class="password">
           <h3>{{ titlePassword }}</h3>
-          <app-primary-input
-            formControlName="password"
-            type="password"
-            [placeholder]="placeholderPassword"
-            [isPassword]="true">
+          <app-primary-input [(ngModel)]="password" (ngModelChange)="onFieldChange('password', $event)" name="password"
+            type="password" [placeholder]="placeholderPassword" [isPassword]="true">
             <img src="assets/svg/icon/input/password.svg" alt>
           </app-primary-input>
         </div>
+
         <div class="confirm-password">
           <h3>{{ titleConfirmPassword }}</h3>
-          <app-primary-input
-            formControlName="confirmPassword"
-            type="password"
-            [placeholder]="placeholderConfirmPassword"
-            [isPassword]="true">
+          <app-primary-input [(ngModel)]="confirmPassword" (ngModelChange)="onFieldChange('confirmPassword', $event)"
+            name="confirmPassword" type="password" [placeholder]="placeholderConfirmPassword" [isPassword]="true">
             <img src="assets/svg/icon/input/password.svg" alt>
           </app-primary-input>
         </div>
       </div>
+
     </div>
   </form>
 </app-default-step>

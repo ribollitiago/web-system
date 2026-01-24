@@ -99,7 +99,7 @@ export class DefaultStepComponent {
   }
 
   async return() {
-    this.registerService.setCurrentStep(this.returnStep);
+    this.registerService.previousStep();
   }
 
   submit() {

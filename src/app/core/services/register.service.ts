@@ -1,119 +1,229 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+
 import { getAuth, createUserWithEmailAndPassword, User } from 'firebase/auth';
 import firebaseApp from '../../firebase.config';
-import { BehaviorSubject } from 'rxjs';
-import { FirebaseService } from './firebase.service'; 
 
-interface UserData {
+import { FirebaseService } from './firebase.service';
+
+
+// ======================================================
+// INTERFACES
+// ======================================================
+
+export interface RegisterData {
+  id?: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  enrollment?: string;
+  password?: string;
   [key: string]: any;
+}
+
+export interface ValidationResult {
+  valid: boolean;
+  error?: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class RegisterService {
-  private userData: Partial<UserData> = {};
-  private currentStepSubject = new BehaviorSubject<number>(1);
-  currentStep$ = this.currentStepSubject.asObservable();
+
+  // ======================================================
+  // CONFIGURAÇÕES
+  // ======================================================
+
+  private readonly MAX_STEP = 4;
+  private auth = getAuth(firebaseApp);
+
+
+  // ======================================================
+  // CONTROLE DE STEPS
+  // ======================================================
+
+  private stepSubject = new BehaviorSubject<number>(1);
+
+  step$ = this.stepSubject.asObservable();
 
   get currentStep(): number {
-    return this.currentStepSubject.value;
+    return this.stepSubject.value;
   }
 
-  setCurrentStep(step: number): void {
-    this.currentStepSubject.next(step);
-  }
-
-  getUserData() {
-    return this.userData
-  }
-
-  private auth = getAuth(firebaseApp);
-  private firebaseService: FirebaseService;
-
-  constructor(firebaseService: FirebaseService) {
-    this.firebaseService = firebaseService;
-  }
-
-  // ------------------------------------------------------
-  // SEÇÃO: ARMAZENAMENTO DE DADOS DE CADA ETAPA
-  // ------------------------------------------------------
-
-  async setStepData(step: number, data: UserData): Promise<void> {
-    try {
-      if (step < 1 || step > 4) {
-        throw new Error('Etapa inválida');
-      }
-
-      this.userData = { ...this.userData, ...data };
-      console.log(step, this.userData)
-
-      if (step < 4) {
-        this.setCurrentStep(step + 1);
-      }
-    } catch (error) {
-      console.error('Erro ao armazenar dados na etapa:', error);
-      throw error;
+  nextStep(): void {
+    if (this.currentStep < this.MAX_STEP) {
+      this.stepSubject.next(this.currentStep + 1);
     }
   }
 
-  // ------------------------------------------------------
-  // SEÇÃO: REGISTRO FINAL DO USUÁRIO
-  // ------------------------------------------------------
-
-  async registerUser(): Promise<User> {
-    console.log('Dados antes do registro:', this.userData);
-    try {
-      if (!this.userData['email'] || !this.userData['password'] || !this.userData['enrollment']) {
-        throw new Error('Dados de usuário incompletos');
-      }
-
-      const existingUserByEnrollment = await this.firebaseService.getEntityByField('users', 'enrollment', this.userData['enrollment']);
-      if (existingUserByEnrollment.length > 0) {
-        throw new Error('Este matricula já está registrado.');
-      }
-
-      const existingUserByEmail = await this.firebaseService.getEntityByField('users', 'email', this.userData['email']);
-      if (existingUserByEmail.length > 0) {
-        throw new Error('Este email já está registrado.');
-      }
-
-      this.userData['id'] = await this.getMaxUserId();
-
-      const userCredential = await createUserWithEmailAndPassword(this.auth, this.userData['email'], this.userData['password']);
-      const user = userCredential.user;
-
-      if (user) {
-        const { password, ...userMap } = this.userData;
-
-        await this.firebaseService.addEntity('users/' + user.uid, userMap);
-
-        this.userData = {};
-        this.setCurrentStep(1)
-
-        return user;
-      } else {
-        throw new Error('Erro ao criar o usuário no Firebase.');
-      }
-    } catch (error) {
-      console.error('Erro ao registrar o usuário:', error);
-      throw error;
+  previousStep(): void {
+    if (this.currentStep > 1) {
+      this.stepSubject.next(this.currentStep - 1);
     }
   }
 
-  private async getMaxUserId(): Promise<string> {
-    try {
-      const allUsers = await this.firebaseService.getAllEntity('users');
-
-      const allUserIds = allUsers.map(user => user['id']);
-
-      const maxId = Math.max(...allUserIds.map(id => parseInt(id, 10)));
-      const finalId = maxId + 1;
-
-      return finalId.toString().padStart(5, '0');
-    } catch (error) {
-      console.error('Erro ao buscar o maior ID de usuário:', error);
-      return '00000';
+  setStep(step: number): void {
+    if (step >= 1 && step <= this.MAX_STEP) {
+      this.stepSubject.next(step);
     }
   }
+
+
+  // ======================================================
+  // CONTROLE DE DADOS DO REGISTRO
+  // ======================================================
+
+  private dataSubject = new BehaviorSubject<RegisterData>({});
+  data$ = this.dataSubject.asObservable();
+
+  updateData(partial: Partial<RegisterData>): void {
+    this.dataSubject.next({
+      ...this.dataSubject.value,
+      ...partial
+    });
+  }
+
+  getData(): RegisterData {
+    return this.dataSubject.value;
+  }
+
+
+  // ======================================================
+  // RESET GERAL
+  // ======================================================
+
+  reset(): void {
+    this.dataSubject.next({});
+    this.stepSubject.next(1);
+  }
+
+
+  // ======================================================
+  // CONSTRUTOR
+  // ======================================================
+
+  constructor(
+    private firebaseService: FirebaseService
+  ) { }
+
+
+  // ======================================================
+  // VALIDAÇÕES DE FORMULÁRIO (FRONT-END)
+  // ======================================================
+
+  async validate(
+    type: string,
+    value?: any,
+    data?: RegisterData
+  ): Promise<ValidationResult> {
+
+    switch (type) {
+
+      case 'NAME':
+        if (!value || value.trim().split(' ').length < 2) {
+          return { valid: false, error: 'INVALID_NAME' };
+        }
+        return { valid: true };
+
+      case 'EMAIL':
+        if (!value || !value.includes('@')) {
+          return { valid: false, error: 'INVALID_EMAIL' };
+        }
+
+        const emailExists = await this.firebaseService.getEntityByField(
+          'users',
+          'email',
+          value
+        );
+
+        if (emailExists.length) {
+          return { valid: false, error: 'EMAIL_ALREADY_EXISTS' };
+        }
+
+        return { valid: true };
+
+      case 'PHONE':
+        if (!value) {
+          return { valid: false, error: 'INVALID_PHONE' };
+        }
+        return { valid: true };
+
+      case 'ENROLLMENT':
+        if (!value) {
+          return { valid: false, error: 'ENROLLMENT_REQUIRED' };
+        }
+
+        const enrollmentExists = await this.firebaseService.getEntityByField(
+          'users',
+          'enrollment',
+          value
+        );
+
+        if (enrollmentExists.length) {
+          return { valid: false, error: 'ENROLLMENT_ALREADY_EXISTS' };
+        }
+
+        return { valid: true };
+
+      case 'PASSWORD':
+        if (!value || value.length < 6) {
+          return { valid: false, error: 'PASSWORD_TOO_SHORT' };
+        }
+        return { valid: true };
+
+      case 'PASSWORD_MATCH':
+        if (!data?.password || data.password !== data['confirmPassword']) {
+          return { valid: false, error: 'PASSWORD_MISMATCH' };
+        }
+        return { valid: true };
+
+      default:
+        return { valid: true };
+    }
+  }
+
+  // ======================================================
+  // REGISTRO FINAL
+  // ======================================================
+
+  async register() {
+
+    const data = this.getData();
+
+    data.id = await this.generateNextUserId();
+
+    const credential = await createUserWithEmailAndPassword(
+      this.auth,
+      data.email!,
+      data.password!
+    );
+
+    const { password, ...userMap } = data;
+
+    await this.firebaseService.addEntity(
+      `users/${credential.user.uid}`,
+      userMap
+    );
+
+    this.reset();
+  }
+
+
+  // ======================================================
+  // UTILIDADES
+  // ======================================================
+
+  private async generateNextUserId(): Promise<string> {
+    const users = await this.firebaseService.getAllEntity('users');
+
+    if (!users.length) return '00001';
+
+    const maxId = Math.max(
+      ...users.map(u => Number(u['id'] ?? 0))
+    );
+
+    return String(maxId + 1).padStart(5, '0');
+  }
+
 }

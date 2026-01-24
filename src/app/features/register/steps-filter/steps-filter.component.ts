@@ -1,30 +1,53 @@
+// ------------------------------------------------------
+// IMPORTS
+// ------------------------------------------------------
 import { CommonModule } from '@angular/common';
-import { Component, Input, SimpleChanges, OnChanges, OnDestroy } from '@angular/core';
-import { PermissionsService } from '../../../core/services/permissions.service';
-import { TranslationService } from '../../../core/services/translate.service';
-import { Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, SimpleChanges, OnChanges, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 
+import { PermissionsService } from '../../../core/services/permissions.service';
+import { TranslationService } from '../../../core/services/translate.service';
+
+// ------------------------------------------------------
+// COMPONENT
+// ------------------------------------------------------
 @Component({
   selector: 'app-steps-filter',
-  imports: [CommonModule, FormsModule, MatTooltipModule, MatMenuModule],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatTooltipModule,
+    MatMenuModule
+  ],
   templateUrl: './steps-filter.component.html',
   styleUrls: ['./steps-filter.component.scss']
 })
 export class StepsFilterComponent implements OnChanges, OnDestroy {
-  @Input() selectedFilter: string = 'users';
-  @Input() searchQuery: string = '';
+
+  // ------------------------------------------------------
+  // INPUTS / OUTPUTS
+  // ------------------------------------------------------
+  @Input() selectedFilter = 'users';
+  @Input() searchQuery = '';
   @Input() lockedPermissions: Set<string> | null = null;
   @Output() permissionSelected = new EventEmitter<any>();
 
-  menuTooltip: string = '';
-  zeroTooltip: string = '';
-  lowTooltip: string = '';
-  mediumTooltip: string = '';
-  highTooltip: string = '';
+  // ------------------------------------------------------
+  // TOOLTIP TEXTOS
+  // ------------------------------------------------------
+  menuTooltip = '';
+  zeroTooltip = '';
+  lowTooltip = '';
+  mediumTooltip = '';
+  highTooltip = '';
 
+  // ------------------------------------------------------
+  // STATE
+  // ------------------------------------------------------
   filteredList: any[] = [];
   resolvedList: any[] = [];
   hoveredCriticalId: number | null = null;
@@ -33,12 +56,18 @@ export class StepsFilterComponent implements OnChanges, OnDestroy {
   private clickListener?: (event: MouseEvent) => void;
   private permissions: any = null;
 
+  // ------------------------------------------------------
+  // CONSTRUCTOR
+  // ------------------------------------------------------
   constructor(
     private permissionsService: PermissionsService,
     private translationService: TranslationService
-  ) { }
+  ) {}
 
-  async ngOnInit() {
+  // ------------------------------------------------------
+  // LIFECYCLE
+  // ------------------------------------------------------
+  async ngOnInit(): Promise<void> {
     this.permissions = await this.permissionsService.getPermissions();
     this.updateCurrentList();
     this.applySearchFilter();
@@ -51,7 +80,7 @@ export class StepsFilterComponent implements OnChanges, OnDestroy {
     this.loadTranslations();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (!this.permissions || !this.lockedPermissions) return;
 
     if (changes['lockedPermissions'] || changes['selectedFilter']) {
@@ -69,8 +98,12 @@ export class StepsFilterComponent implements OnChanges, OnDestroy {
     this.removeDocumentClickListener();
   }
 
-  loadTranslations() {
+  // ------------------------------------------------------
+  // TRADUÇÕES
+  // ------------------------------------------------------
+  private loadTranslations(): void {
     const section = 'Permissions_Page';
+
     this.menuTooltip = this.translationService.getTranslation('menuTooltip', section);
     this.zeroTooltip = this.translationService.getTranslation('criticalTooltipZeroLevel', section);
     this.lowTooltip = this.translationService.getTranslation('criticalTooltipLowLevel', section);
@@ -78,7 +111,10 @@ export class StepsFilterComponent implements OnChanges, OnDestroy {
     this.highTooltip = this.translationService.getTranslation('criticalTooltipHighLevel', section);
   }
 
-  updateCurrentList() {
+  // ------------------------------------------------------
+  // LISTAGEM E FILTROS
+  // ------------------------------------------------------
+  private updateCurrentList(): void {
     switch (this.selectedFilter) {
       case 'route':
         this.resolvedList = Object.values(this.permissions.routes).map((item: any) => ({
@@ -86,12 +122,14 @@ export class StepsFilterComponent implements OnChanges, OnDestroy {
           checked: this.permissionsService.getSelectedPermissions()[item.id] ?? false
         }));
         break;
+
       case 'admin':
         this.resolvedList = Object.values(this.permissions.admin).map((item: any) => ({
           ...item,
           checked: this.permissionsService.getSelectedPermissions()[item.id] ?? false
         }));
         break;
+
       default:
         this.resolvedList = Object.values(this.permissions.users).map((item: any) => ({
           ...item,
@@ -99,23 +137,25 @@ export class StepsFilterComponent implements OnChanges, OnDestroy {
         }));
         break;
     }
+
     this.applySearchFilter();
     this.sortByCriticalLevel();
   }
 
-  private applySearchFilter() {
+  private applySearchFilter(): void {
     const searchTerm = this.searchQuery.toLowerCase();
+
     this.filteredList = this.resolvedList.filter(item =>
       item.title.toLowerCase().includes(searchTerm)
     );
   }
 
-  private sortByCriticalLevel() {
-    const levelOrder: { [key: string]: number } = {
-      'HIGH_LEVEL': 0,
-      'MEDIUM_LEVEL': 1,
-      'LOW_LEVEL': 2,
-      'ZERO_LEVEL': 3
+  private sortByCriticalLevel(): void {
+    const levelOrder: Record<string, number> = {
+      HIGH_LEVEL: 0,
+      MEDIUM_LEVEL: 1,
+      LOW_LEVEL: 2,
+      ZERO_LEVEL: 3
     };
 
     this.filteredList.sort((a, b) => {
@@ -125,6 +165,9 @@ export class StepsFilterComponent implements OnChanges, OnDestroy {
     });
   }
 
+  // ------------------------------------------------------
+  // HELPERS
+  // ------------------------------------------------------
   getCriticalText(level: string): string {
     switch (level) {
       case 'ZERO_LEVEL': return this.zeroTooltip;
@@ -153,19 +196,23 @@ export class StepsFilterComponent implements OnChanges, OnDestroy {
     return item.checked ? 'check-on.svg' : 'check-off.svg';
   }
 
-  toggleAndChange(item: any) {
-    if (this.lockedPermissions?.has(item.id)) {
-      return;
-    }
+  // ------------------------------------------------------
+  // AÇÕES
+  // ------------------------------------------------------
+  toggleAndChange(item: any): void {
+    if (this.lockedPermissions?.has(item.id)) return;
 
     item.checked = !item.checked;
     this.permissionSelected.emit(item);
   }
 
-  removeDocumentClickListener() {
-    if (this.clickListener) {
-      document.removeEventListener('click', this.clickListener);
-      this.clickListener = undefined;
-    }
+  // ------------------------------------------------------
+  // CLEANUP
+  // ------------------------------------------------------
+  private removeDocumentClickListener(): void {
+    if (!this.clickListener) return;
+
+    document.removeEventListener('click', this.clickListener);
+    this.clickListener = undefined;
   }
 }
