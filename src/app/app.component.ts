@@ -1,6 +1,6 @@
 import { Component, HostListener, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { TranslationService } from './core/services/translate.service';
+import { TranslationService } from './core/services/i18n/translate.service';
 import { CommonModule } from '@angular/common';
 import { SidebarComponent } from './layout/sidebar/sidebar.component';
 import { HeaderComponent } from "./layout/header/header.component";

@@ -8,10 +8,11 @@ import { FormsModule } from '@angular/forms';
 import { PrimaryInputComponent } from '../../../shared/components/primary-input/primary-input.component';
 import { DefaultStepComponent } from '../../../shared/layout/default-step/default-step.component';
 
-import { TranslationService } from '../../../core/services/translate.service';
-import { RegisterData, RegisterService } from '../../../core/services/register.service';
+import { TranslationService } from '../../../core/services/i18n/translate.service';
+import { RegisterData, RegisterService } from '../../../core/services/auth/register.service';
 import { ToastrService } from 'ngx-toastr';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { ValidatorsService } from '../../../core/services/validators/validators.service';
 
 
 // ------------------------------------------------------
@@ -70,8 +71,9 @@ export class RegisterStep1Component implements OnInit {
   constructor(
     private translationService: TranslationService,
     private registerService: RegisterService,
+    private validatorsService: ValidatorsService,
     private toastService: ToastrService
-  ) {}
+  ) { }
 
   // ------------------------------------------------------
   // LIFECYCLE
@@ -85,7 +87,7 @@ export class RegisterStep1Component implements OnInit {
   // DATA
   // ------------------------------------------------------
   private loadSavedData(): void {
-    const data = this.registerService.getData();
+    const data = this.registerService.getData('users');
     if (!data) return;
 
     this.name = data.name ?? '';
@@ -97,7 +99,7 @@ export class RegisterStep1Component implements OnInit {
   }
 
   onFieldChange(field: keyof RegisterData, value: any): void {
-    this.registerService.updateData({
+    this.registerService.updateData('users', {
       [field]: value
     });
   }
@@ -160,13 +162,19 @@ export class RegisterStep1Component implements OnInit {
       PASSWORD_MISMATCH: this.placeholderConfirmPassword
     };
 
+    const ERROR_MESSAGE_MAP: Record<string, string> = {
+      PASSWORD_MISMATCH: 'As senhas não conferem',
+      EMAIL_ALREADY_EXISTS: 'Já existe esse Email',
+      ENROLLMENT_ALREADY_EXISTS: 'Já existe essa Matrícula'
+    };
+
     const validations = await Promise.all([
-      this.registerService.validate('NAME', this.name),
-      this.registerService.validate('EMAIL', this.email),
-      this.registerService.validate('PHONE', this.phone),
-      this.registerService.validate('ENROLLMENT', this.enrollment),
-      this.registerService.validate('PASSWORD', this.password),
-      this.registerService.validate('PASSWORD_MATCH', null, {
+      this.validatorsService.validate('NAME', this.name),
+      this.validatorsService.validate('EMAIL', this.email),
+      this.validatorsService.validate('PHONE', this.phone),
+      this.validatorsService.validate('ENROLLMENT', this.enrollment),
+      this.validatorsService.validate('PASSWORD', this.password),
+      this.validatorsService.validate('PASSWORD_MATCH', null, {
         password: this.password,
         confirmPassword: this.confirmPassword
       })
@@ -174,42 +182,48 @@ export class RegisterStep1Component implements OnInit {
 
     const errors = validations.filter(v => !v.valid);
 
-    if (errors.length === 1) {
-      const error = errors[0];
+    // ======================================================
+    // SEPARA ERROS ESPECIAIS E ERROS DE CAMPO
+    // ======================================================
 
-      const ERROR_MESSAGE_MAP: Record<string, string> = {
-        PASSWORD_MISMATCH: 'As senhas não conferem',
-        EMAIL_ALREADY_EXISTS: 'Já existe um Email',
-        ENROLLMENT_ALREADY_EXISTS: 'Já existe essa Matrícula'
-      };
+    const specialErrors = errors.filter(e => ERROR_MESSAGE_MAP[e.error!]);
+    const fieldErrors = errors.filter(e => !ERROR_MESSAGE_MAP[e.error!]);
 
-      const message = ERROR_MESSAGE_MAP[error.error!];
-      if (message) this.toastServiceError(message);
+    // ======================================================
+    // MOSTRA ERROS DE CAMPO (um bloco de toast)
+    // ======================================================
+    if (fieldErrors.length > 0) {
+      let message = '';
 
-      this.toastServiceError(
-        `Erro no campo: ${ERROR_FIELD_MAP[error.error!] ?? 'desconhecido'}`
-      );
+      if (fieldErrors.length === 1) {
+        message = `Erro no campo: ${ERROR_FIELD_MAP[fieldErrors[0].error!] ?? 'desconhecido'}`;
+      } else if (fieldErrors.length === 2) {
+        const fields = fieldErrors.map(e => ERROR_FIELD_MAP[e.error!]);
+        message = `Erro nos campos: ${fields.join(' e ')}. Corrija para continuar.`;
+      } else {
+        message = 'Existem vários campos inválidos. Revise o formulário.';
+      }
+
+      // Limpa apenas uma vez para não acumular infinitos toasts
+      this.toastService.clear();
+      this.toastService.error(message);
     }
 
-    if (errors.length === 2) {
-      const fields = errors.map(e => ERROR_FIELD_MAP[e.error!]);
-      this.toastServiceError(
-        `Erro nos campos: ${fields.join(' e ')}. Corrija para continuar.`
-      );
+    // ======================================================
+    // MOSTRA ERROS ESPECIAIS (outro bloco de toast)
+    // ======================================================
+    if (specialErrors.length > 0) {
+      // Limpa novamente antes do segundo bloco
+      for (const error of specialErrors) {
+        const message = ERROR_MESSAGE_MAP[error.error!];
+        if (message) this.toastService.error(message);
+      }
     }
 
-    if (errors.length >= 3) {
-      this.toastServiceError(
-        'Existem vários campos inválidos. Revise o formulário.'
-      );
-    }
-
+    // ======================================================
+    // RETORNA SE HOUVE ERROS
+    // ======================================================
     return errors.length === 0;
-  }
-
-  toastServiceError(message: string): void {
-    this.toastService.clear();
-    this.toastService.error(message);
   }
 
   // ------------------------------------------------------
@@ -217,6 +231,6 @@ export class RegisterStep1Component implements OnInit {
   // ------------------------------------------------------
   async submit(): Promise<void> {
     if (!(await this.validateForm())) return;
-    this.registerService.nextStep();
+    this.registerService.nextStep('users');
   }
 }

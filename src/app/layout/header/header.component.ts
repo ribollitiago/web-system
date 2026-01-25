@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild, ElementRef, OnDestroy } from '@angular/core';
-import { LoginService } from '../../core/services/login.service';
 import { Router } from '@angular/router';
-import { TranslationService } from '../../core/services/translate.service';
+import { TranslationService } from '../../core/services/i18n/translate.service';
+import { SessionService } from '../../core/services/auth/session.service';
+import { LoginService } from '../../core/services/auth/login.service';
 
 @Component({
   selector: 'app-header',
@@ -11,7 +12,9 @@ import { TranslationService } from '../../core/services/translate.service';
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent implements OnDestroy {
-  constructor(private loginService: LoginService,
+  constructor(
+    private sessionService: SessionService,
+    private loginService: LoginService,
     private router: Router,
     private translationService: TranslationService) { }
 
@@ -42,7 +45,7 @@ export class HeaderComponent implements OnDestroy {
 
   ngOnInit(): void {
 
-    this.loginService.user$.subscribe(user => {
+    this.sessionService.user$.subscribe(user => {
       if (user) {
         this.userName = user.name;
         this.userEmail = user.email;

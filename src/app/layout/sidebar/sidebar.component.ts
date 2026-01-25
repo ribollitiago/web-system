@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Output, Input, ViewChild, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { SearchInputComponent } from '../../shared/components/search-input/search-input.component';
-import { TranslationService } from '../../core/services/translate.service';
+import { TranslationService } from '../../core/services/i18n/translate.service';
 import { filter, Subscription } from 'rxjs';
 
 interface SidebarItem {

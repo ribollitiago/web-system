@@ -1,12 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { LoginService } from '../../core/services/login.service';
+import { LoginService } from '../../core/services/auth/login.service';
 import { ToastrService } from 'ngx-toastr';
 import { PrimaryInputComponent } from '../../shared/components/primary-input/primary-input.component';
 import { DefaultLoginLayoutComponent } from '../../layout/default-login-layout/default-login-layout.component';
-import { TranslationService } from '../../core/services/translate.service';
+import { TranslationService } from '../../core/services/i18n/translate.service';
 
 @Component({
   selector: 'app-login',
@@ -21,34 +21,42 @@ import { TranslationService } from '../../core/services/translate.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent {
-  loginForm: FormGroup;
-  forgotPasswordForm: FormGroup;
-  showForgotPasswordForm: boolean = false;
+export class LoginComponent implements OnInit {
 
-  //Login Layout Texts
-  title: string = '';
-  subtitle: string = '';
-  btnText: string = '';
-  txtLink: string = '';
-  placeholderEmail: string = '';
-  placeholderPassword: string = '';
+  loginForm!: FormGroup;
+  forgotPasswordForm!: FormGroup;
+  showForgotPasswordForm = false;
 
-  //Login Erros
-  loginSucess: string = '';
-  loginError: string = '';
-  loginInvalid: string = '';
-  loginEmailRecovery: string = '';
-  loginEmailRecoveryError: string = '';
-  loginEmailRecoveryInvalid: string = '';
-  loginBlockedUser: string = '';
+  title = '';
+  subtitle = '';
+  btnText = '';
+  txtLink = '';
+  placeholderEmail = '';
+  placeholderPassword = '';
+
+  messages: any = {};
 
   constructor(
     private router: Router,
     private loginService: LoginService,
-    private toastService: ToastrService,
-    private translationService: TranslationService
-  ) {
+    private toast: ToastrService,
+    private translate: TranslationService
+  ) {}
+
+  ngOnInit(): void {
+    this.createForms();
+    this.translate.language$.subscribe(() => this.loadTranslations());
+
+    if (sessionStorage.getItem('refresh-token')) {
+      this.router.navigate(['home']);
+    }
+  }
+
+  // =========================
+  // FORMULÁRIOS
+  // =========================
+
+  private createForms(): void {
     this.loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required, Validators.minLength(6)])
@@ -59,108 +67,120 @@ export class LoginComponent {
     });
   }
 
-  async ngOnInit() {
-    this.translationService.language$.subscribe(() => {
-      this.loadTranslations();
+  // =========================
+  // TRADUÇÕES
+  // =========================
+
+  private loadTranslations(): void {
+    const section = 'Login_form';
+    const errors = this.translate.getTranslation('LoginErrors', 'Exceptions');
+
+    this.messages = errors;
+
+    this.updateTexts(section);
+  }
+
+  private updateTexts(section: string): void {
+    const isForgot = this.showForgotPasswordForm;
+
+    this.title = this.translate.getTranslation(isForgot ? 'titleFgt' : 'titleLgn', section);
+    this.subtitle = this.translate.getTranslation(isForgot ? 'subtitleFgt' : 'subtitleLgn', section);
+    this.btnText = this.translate.getTranslation(isForgot ? 'btnLoginFgt' : 'btnLoginLgn', section);
+    this.txtLink = this.translate.getTranslation(
+      isForgot ? 'linkForgotPasswordFgt' : 'linkForgotPasswordLgn',
+      section
+    );
+
+    this.placeholderEmail = this.translate.getTranslation('inputEmailLgn', section);
+    this.placeholderPassword = this.translate.getTranslation('inputPasswordLgn', section);
+  }
+
+  // =========================
+  // SUBMIT
+  // =========================
+
+  submit(): void {
+    this.showForgotPasswordForm
+      ? this.submitForgotPassword()
+      : this.submitLogin();
+  }
+
+  private submitLogin(): void {
+    if (this.loginForm.invalid) {
+      this.toast.error(this.messages.loginInvalid);
+      return;
+    }
+
+    const { email, password } = this.loginForm.value;
+
+    this.loginService.login(email, password).subscribe({
+      next: user => {
+        if (user) {
+          this.toast.success(this.messages.loginSucess);
+          this.router.navigate(['home']);
+        }
+      },
+      error: err => this.handleAuthError(err)
     });
-    const token = sessionStorage.getItem('refresh-token');
-    if (token) {
-      this.router.navigate(['home']);
+  }
+
+  private submitForgotPassword(): void {
+    if (this.forgotPasswordForm.invalid) {
+      this.toast.error(this.messages.loginEmailRecoveryInvalid);
+      return;
+    }
+
+    const { email } = this.forgotPasswordForm.value;
+
+    this.loginService.recoverPassword(email).subscribe({
+      next: () => this.toast.success(this.messages.loginEmailRecovery),
+      error: err => this.handleAuthError(err, true)
+    });
+  }
+
+  // =========================
+  // ERROS CENTRALIZADOS
+  // =========================
+
+  private handleAuthError(error: any, isRecovery = false): void {
+    const code = error?.code || error?.error;
+
+    switch (code) {
+      case 'auth/user-not-found':
+        this.toast.error(this.messages.loginInvalid);
+        break;
+
+      case 'auth/wrong-password':
+        this.toast.error(this.messages.loginInvalid);
+        break;
+
+      case 'auth/user-disabled':
+        this.toast.error(this.messages.loginBlockedUser);
+        break;
+
+      case 'auth/invalid-email':
+        this.toast.error(
+          isRecovery
+            ? this.messages.loginEmailRecoveryInvalid
+            : this.messages.loginInvalid
+        );
+        break;
+
+      default:
+        this.toast.error(
+          isRecovery
+            ? this.messages.loginEmailRecoveryError
+            : this.messages.loginError
+        );
     }
   }
 
-  loadTranslations() {
-    const section = 'Login_form';
-    this.title = this.translationService.getTranslation('titleLgn', section);
-    this.subtitle = this.translationService.getTranslation('subtitleLgn', section);
-    this.btnText = this.translationService.getTranslation('btnLoginLgn', section);
-    this.txtLink = this.translationService.getTranslation('linkForgotPasswordLgn', section);
-    this.placeholderEmail = this.translationService.getTranslation('inputEmailLgn', section);
-    this.placeholderPassword = this.translationService.getTranslation('inputPasswordLgn', section);
+  // =========================
+  // TOGGLE FORM
+  // =========================
 
-
-    //Lógica para acessar 3 etapas do JSON de tradução
-    const sectionErrors = 'Exceptions';
-    const key = 'LoginErrors';
-
-    const errorsObject: any = this.translationService.getTranslation(key, sectionErrors);
-
-    this.loginSucess = errorsObject.loginSucess;
-    this.loginError = errorsObject.loginError;
-    this.loginInvalid = errorsObject.loginInvalid;
-    this.loginEmailRecovery = errorsObject.loginEmailRecovery;
-    this.loginEmailRecoveryError = errorsObject.loginEmailRecoveryError;
-    this.loginEmailRecoveryInvalid = errorsObject.loginEmailRecoveryInvalid;
-    this.loginBlockedUser = errorsObject.loginBlockedUser;
-  }
-
-  submitLogin() {
-    const email = this.loginForm.value.email;
-    const password = this.loginForm.value.password;
-
-    if (this.loginForm.valid) {
-      this.loginService.login(email, password).subscribe({
-        next: (user) => {
-          if (user) {
-            console.log('Uid:', user.uid);
-            this.toastService.success(this.loginSucess);
-          }
-        },
-        error: (err) => {
-          console.error('Erro no login:', err);
-          this.toastService.error(this.loginError);
-        }
-      });
-    } else {
-      this.toastService.error(this.loginInvalid);
-    }
-  }
-
-  submitForgotPassword() {
-    const email = this.forgotPasswordForm.value.email;
-
-    if (this.forgotPasswordForm.valid) {
-      this.loginService.recoverPassword(email).subscribe({
-        next: () => {
-          console.log('Email para recuperação:', email);
-          this.toastService.success(this.loginEmailRecovery);
-        },
-        error: (err) => {
-          console.error('Erro ao tentar recuperar senha:', err);
-          this.toastService.error(this.loginEmailRecoveryError);
-        }
-      });
-    } else {
-      this.toastService.error(this.loginEmailRecoveryInvalid);
-    }
-  }
-  navigate() {
+  navigate(): void {
     this.showForgotPasswordForm = !this.showForgotPasswordForm;
-
-    const section = 'Login_form';
-    this.title = this.translationService.getTranslation(
-      this.showForgotPasswordForm ? 'titleFgt' : 'titleLgn',
-      section
-    );
-    this.subtitle = this.translationService.getTranslation(
-      this.showForgotPasswordForm ? 'subtitleFgt' : 'subtitleLgn',
-      section
-    );
-    this.btnText = this.translationService.getTranslation(
-      this.showForgotPasswordForm ? 'btnLoginFgt' : 'btnLoginLgn',
-      section
-    );
-    this.txtLink = this.translationService.getTranslation(
-      this.showForgotPasswordForm ? 'linkForgotPasswordFgt' : 'linkForgotPasswordLgn',
-      section
-    );
-  }
-
-  submit() {
-    if (this.showForgotPasswordForm) {
-      this.submitForgotPassword();
-    } else {
-      this.submitLogin();
-    }
+    this.updateTexts('Login_form');
   }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { TranslationService } from './translate.service';
+import { TranslationService } from '../i18n/translate.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 export type CriticalLevel = 'HIGH_LEVEL' | 'MEDIUM_LEVEL' | 'LOW_LEVEL' | 'ZERO_LEVEL';
@@ -60,11 +60,11 @@ export class PermissionsService {
   // ------------------------------------------------------
 
   private async loadPermissionsData() {
-    return import('../../../../public/assets/permissions/perm.json');
+    return import('../../../../../public/assets/permissions/perm.json');
   }
 
   private async loadTranslations(language: string) {
-    return import(`../../../../public/assets/i18n/${language}.json`);
+    return import(`../../../../../public/assets/i18n/${language}.json`);
   }
 
   // ------------------------------------------------------

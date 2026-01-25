@@ -4,7 +4,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { RegisterService } from '../../core/services/register.service';
+import { RegisterService } from '../../core/services/auth/register.service';
 
 import { RegisterStep1Component } from './register-step-1/register-step-1.component';
 import { RegisterStep2Component } from './register-step-2/register-step-2.component';
@@ -41,15 +41,18 @@ export class RegisterComponent {
   // ------------------------------------------------------
   // CONSTRUCTOR
   // ------------------------------------------------------
-  constructor(private registerService: RegisterService) {}
+  constructor(private registerService: RegisterService) { }
 
   // ------------------------------------------------------
   // LIFECYCLE
   // ------------------------------------------------------
   ngOnInit(): void {
-    this.registerService.step$.subscribe(step => {
+    const entityType = 'users';
+    this.registerService.step$.subscribe(stepsMap => {
+      const step = stepsMap[entityType] || 1;
+
       if (step < 1 || step > 4) {
-        this.registerService.setStep(1);
+        this.registerService.setStep(entityType, 1);
         this.currentStep = 1;
         return;
       }

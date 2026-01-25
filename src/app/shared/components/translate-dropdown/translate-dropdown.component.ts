@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { TranslationService } from '../../../core/services/translate.service';
+import { TranslationService } from '../../../core/services/i18n/translate.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 

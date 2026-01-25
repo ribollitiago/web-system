@@ -8,8 +8,8 @@ import { FormsModule } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 
-import { PermissionsService } from '../../../core/services/permissions.service';
-import { TranslationService } from '../../../core/services/translate.service';
+import { PermissionsService } from '../../../core/services/permissions/permissions.service';
+import { TranslationService } from '../../../core/services/i18n/translate.service';
 
 // ------------------------------------------------------
 // COMPONENT

@@ -1,7 +1,15 @@
 import { Injectable } from '@angular/core';
-
-import { getDatabase, ref, get, set, remove, onValue, DataSnapshot, off } from 'firebase/database';
-import firebaseApp from '../../firebase.config';
+import {
+    getDatabase,
+    ref,
+    get,
+    set,
+    remove,
+    onValue,
+    DataSnapshot,
+    off
+} from 'firebase/database';
+import firebaseApp from '../../../firebase.config';
 
 type Entity = {
     uid: string;
@@ -12,12 +20,17 @@ type Entity = {
     providedIn: 'root',
 })
 export class FirebaseService {
+
+    // ------------------------------------------------------
+    // SEÇÃO: CONFIGURAÇÕES
+    // ------------------------------------------------------
+
     private readonly db = getDatabase(firebaseApp);
     private usersSubscription: (() => void) | null = null;
     private groupsSubscription: (() => void) | null = null;
 
     // ------------------------------------------------------
-    // SEÇÃO: CONEXÃO COM O FIREBASE
+    // SEÇÃO: CONVERSÃO DE SNAPSHOT
     // ------------------------------------------------------
 
     private snapshotToUsers(snapshot: DataSnapshot): Entity[] {
@@ -29,7 +42,7 @@ export class FirebaseService {
     }
 
     // ------------------------------------------------------
-    // SEÇÃO: FUNÇÕES AUXILIARES DE BANCO DE DADOS
+    // SEÇÃO: REFERÊNCIAS DE BANCO
     // ------------------------------------------------------
 
     private setQueryRef(query: string) {
@@ -37,8 +50,8 @@ export class FirebaseService {
     }
 
     private async setEntity(query: string, data: Partial<Entity>) {
-        const userRef = this.setQueryRef(query);
-        await set(userRef, data);
+        const entityRef = this.setQueryRef(query);
+        await set(entityRef, data);
     }
 
     // ------------------------------------------------------
@@ -50,7 +63,11 @@ export class FirebaseService {
         return this.snapshotToUsers(snapshot);
     }
 
-    async getEntityByField<T extends keyof Entity>(query: string, field: T, value: Entity[T]): Promise<Entity[]> {
+    async getEntityByField<T extends keyof Entity>(
+        query: string,
+        field: T,
+        value: Entity[T]
+    ): Promise<Entity[]> {
         const allEntity = await this.getAllEntity(query);
         return allEntity.filter(entity => entity[field] === value);
     }
@@ -77,39 +94,38 @@ export class FirebaseService {
     }
 
     // ------------------------------------------------------
-    // SEÇÃO: INSCRIÇÃO EM EVENTOS (para sincronizar com o Firebase)
+    // SEÇÃO: INSCRIÇÃO EM EVENTOS
     // ------------------------------------------------------
 
     subscribeToUsers(callback: (users: Entity[]) => void) {
         if (this.usersSubscription) {
-            this.off('users');
+            this.offSubscription('users');
         }
 
-        this.usersSubscription = onValue(this.setQueryRef('users'), (snapshot) => {
-            const users = this.snapshotToUsers(snapshot);
-            callback(users);
-        });
+        this.usersSubscription = onValue(
+            this.setQueryRef('users'),
+            snapshot => callback(this.snapshotToUsers(snapshot))
+        );
     }
 
-    subscribeToGroups(callback: (users: Entity[]) => void) {
+    subscribeToGroups(callback: (groups: Entity[]) => void) {
         if (this.groupsSubscription) {
-            this.off('groups');
+            this.offSubscription('groups');
         }
 
-        this.groupsSubscription = onValue(this.setQueryRef('groups'), (snapshot) => {
-            const groups = this.snapshotToUsers(snapshot);
-            callback(groups);
-        });
+        this.groupsSubscription = onValue(
+            this.setQueryRef('groups'),
+            snapshot => callback(this.snapshotToUsers(snapshot))
+        );
     }
 
     // ------------------------------------------------------
     // SEÇÃO: DESINSCRIÇÃO DE EVENTOS
     // ------------------------------------------------------
 
-    off(ref: string) {
-        if (this.usersSubscription) {
-            off(this.setQueryRef(ref));
-            this.usersSubscription = null;
-        }
+    offSubscription(refPath: string) {
+        off(this.setQueryRef(refPath));
+        if (refPath === 'users') this.usersSubscription = null;
+        if (refPath === 'groups') this.groupsSubscription = null;
     }
 }

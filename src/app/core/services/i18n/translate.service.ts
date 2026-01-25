@@ -7,11 +7,13 @@ import { BehaviorSubject } from 'rxjs';
 export class TranslationService {
 
   // ------------------------------------------------------
-  // SEÇÃO: VARIÁVEIS E PROPRIEDADES DO SERVIÇO
+  // SEÇÃO: CONFIGURAÇÕES
   // ------------------------------------------------------
+
   private translations: any = {};
   private englishLanguage: any = {};
   private currentLanguage = 'en_us';
+
   private languageSubject = new BehaviorSubject<string>(this.currentLanguage);
   private languageLoadedSubject = new BehaviorSubject<boolean>(false);
 
@@ -23,10 +25,12 @@ export class TranslationService {
   ];
 
   // ------------------------------------------------------
-  // SEÇÃO: CONSTRUTOR E INICIALIZAÇÃO DO IDIOMA
+  // SEÇÃO: CONSTRUTOR
   // ------------------------------------------------------
+
   constructor() {
     const savedLanguage = localStorage.getItem('language');
+
     if (savedLanguage) {
       this.currentLanguage = savedLanguage;
     } else {
@@ -38,13 +42,13 @@ export class TranslationService {
   }
 
   // ------------------------------------------------------
-  // SEÇÃO: MÉTODOS PÚBLICOS PARA O USUÁRIO
+  // SEÇÃO: API PÚBLICA
   // ------------------------------------------------------
+
   getSupportedLanguages() {
     return this.supportedLanguages;
   }
 
-  // Retorna o idioma atual
   getCurrentLanguage(): string {
     return this.currentLanguage;
   }
@@ -58,41 +62,38 @@ export class TranslationService {
   }
 
   // ------------------------------------------------------
-  // SEÇÃO: DEFINIÇÃO E CARREGAMENTO DO IDIOMA
+  // SEÇÃO: CARREGAMENTO DE IDIOMA
   // ------------------------------------------------------
-  /**
-   * Carrega as traduções para o idioma especificado.
-   * Se o idioma não for encontrado, será usado o inglês como fallback.
-   */
+
   async setLanguage(language: string) {
     const lang = language || 'en_us';
     this.currentLanguage = lang;
     localStorage.setItem('language', lang);
 
     try {
-      if (lang != 'en_us') {
-        const en_us = await import(`../../../../public/assets/i18n/en_us.json`).then(m => m.default || m);
+      if (lang !== 'en_us') {
+        const en_us = await import(`../../../../../public/assets/i18n/en_us.json`).then(m => m.default || m);
         this.englishLanguage = en_us;
       }
 
-      const response = await import(`../../../../public/assets/i18n/${lang}.json`);
+      const response = await import(`../../../../../public/assets/i18n/${lang}.json`);
       this.translations = response;
 
       this.languageSubject.next(lang);
       this.languageLoadedSubject.next(true);
     } catch (error) {
-      console.error(`Erro ao carregar o arquivo de tradução para o idioma: ${lang}`, error);
+      console.error(`Erro ao carregar tradução: ${lang}`, error);
     }
   }
 
   // ------------------------------------------------------
-  // SEÇÃO: OBTENÇÃO DE TRADUÇÕES
+  // SEÇÃO: TRADUÇÕES
   // ------------------------------------------------------
-  /**
-   * Retorna a tradução para a chave e seção especificadas.
-   * Se não encontrar, retorna a tradução em inglês como fallback.
-   */
+
   getTranslation(key: string, section: string): string {
-    return this.translations[section]?.[key] || this.englishLanguage[section]?.[key];
+    return (
+      this.translations[section]?.[key] ||
+      this.englishLanguage[section]?.[key]
+    );
   }
 }

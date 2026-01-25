@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
-import { LoginService } from '../services/login.service';
-import { RegisterService } from '../services/register.service';
 import { User } from 'firebase/auth';
-import { map, Observable, take, switchMap } from 'rxjs';
+import { map, Observable, take, switchMap, of } from 'rxjs';
+import { SessionService } from '../services/auth/session.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,12 +10,17 @@ import { map, Observable, take, switchMap } from 'rxjs';
 export class AuthGuard implements CanActivate {
   constructor(
     private router: Router,
-    private loginService: LoginService,
-    private registerService: RegisterService
+    private sessionService: SessionService
   ) { }
 
   canActivate(): Observable<boolean> {
-    return this.loginService.getAuthState().pipe(
+    if (this.sessionService.isSessionExpired()) {
+      console.log('AuthGuard: Sessão expirada localmente. Redirecionando...');
+      this.sessionService.logout();
+      return of(false);
+    }
+
+    return this.sessionService.getAuthState().pipe(
       take(1),
       map(async (user: User | null) => {
         if (!user) {
@@ -24,29 +28,16 @@ export class AuthGuard implements CanActivate {
           return false;
         }
 
-        console.log('Usuário autenticado:', user);
-
         try {
-          await this.loginService.loadAndSetUser(user.uid);
+          await this.sessionService.loadAndSetUser(user.uid);
           return true;
         } catch (error) {
-          console.error('Erro ao carregar usuário:', error);
+          console.error('AuthGuard: Erro ao carregar usuário:', error);
           this.router.navigate(['/login']);
           return false;
         }
       }),
       switchMap(result => result)
     );
-  }
-
-
-  canActivateRegister(requiredStepForRoute: number): boolean {
-    const currentStep = this.registerService.currentStep;
-
-    if (currentStep < requiredStepForRoute) {
-      this.router.navigate(['/register']);
-      return false;
-    }
-    return true;
   }
 }

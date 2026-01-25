@@ -5,8 +5,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { TranslationService } from '../../../core/services/translate.service';
-import { RegisterData, RegisterService } from '../../../core/services/register.service';
+import { TranslationService } from '../../../core/services/i18n/translate.service';
+import { RegisterData, RegisterService } from '../../../core/services/auth/register.service';
 import { DefaultStepComponent } from '../../../shared/layout/default-step/default-step.component';
 
 // ------------------------------------------------------
@@ -62,7 +62,7 @@ export class RegisterStep3Component implements OnInit {
   // DADOS SALVOS
   // ------------------------------------------------------
   private loadSavedData(): void {
-    this.registrationData = this.registerService.getData();
+    this.registrationData = this.registerService.getData('users');
     this.textTyped = this.registrationData?.text ?? '';
   }
 
@@ -89,7 +89,7 @@ export class RegisterStep3Component implements OnInit {
   // SINCRONIZAÇÃO (SERVICE)
   // ------------------------------------------------------
   onFieldChange(field: keyof RegisterData, value: any): void {
-    this.registerService.updateData({
+    this.registerService.updateData('users', {
       [field]: value
     });
   }
@@ -98,10 +98,10 @@ export class RegisterStep3Component implements OnInit {
   // NAVEGAÇÃO
   // ------------------------------------------------------
   return(): void {
-    this.registerService.previousStep();
+    this.registerService.previousStep('users');
   }
 
   submit(): void {
-    this.registerService.nextStep();
+    this.registerService.nextStep('users');
   }
 }

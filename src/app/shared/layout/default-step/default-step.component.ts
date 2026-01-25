@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { TranslationService } from '../../../core/services/translate.service';
-import { RegisterService } from '../../../core/services/register.service';
+import { TranslationService } from '../../../core/services/i18n/translate.service';
+import { RegisterService } from '../../../core/services/auth/register.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -99,7 +99,7 @@ export class DefaultStepComponent {
   }
 
   async return() {
-    this.registerService.previousStep();
+    this.registerService.previousStep('users');
   }
 
   submit() {

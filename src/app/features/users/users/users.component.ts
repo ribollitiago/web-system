@@ -1,10 +1,10 @@
 import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { SearchInputComponent } from '../../../shared/components/search-input/search-input.component';
-import { TranslationService } from '../../../core/services/translate.service';
+import { TranslationService } from '../../../core/services/i18n/translate.service';
 import { filter, Subscription } from 'rxjs';
 import { ListUsersComponent, User } from '../list-users/list-users.component';
 import { CommonModule } from '@angular/common';
-import { PermissionsService } from '../../../core/services/permissions.service';
+import { PermissionsService } from '../../../core/services/permissions/permissions.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 

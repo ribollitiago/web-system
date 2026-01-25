@@ -6,10 +6,10 @@ import { FormControl } from '@angular/forms';
 import { map, Observable, startWith, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
-import { TranslationService } from '../../../core/services/translate.service';
-import { RegisterService } from '../../../core/services/register.service';
-import { PermissionsService } from '../../../core/services/permissions.service';
-import { GroupsService, Group } from '../../../core/services/group.service';
+import { TranslationService } from '../../../core/services/i18n/translate.service';
+import { RegisterService } from '../../../core/services/auth/register.service';
+import { PermissionsService } from '../../../core/services/permissions/permissions.service';
+import { GroupsService, Group } from '../../../core/services/permissions/group.service';
 
 import { SearchInputComponent } from '../../../shared/components/search-input/search-input.component';
 import { StepsFilterComponent } from '../steps-filter/steps-filter.component';
@@ -261,11 +261,11 @@ export class RegisterStep2Component implements OnDestroy {
         return acc;
       }, {});
 
-    this.registerService.updateData({
+    this.registerService.updateData('users', {
       permissions,
       groups
     });
 
-    this.registerService.nextStep();
+    this.registerService.nextStep('users');
   }
 }

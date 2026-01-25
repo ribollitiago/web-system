@@ -8,9 +8,9 @@ import { Router } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 
-import { TranslationService } from '../../../core/services/translate.service';
-import { RegisterService } from '../../../core/services/register.service';
-import { PermissionsService } from '../../../core/services/permissions.service';
+import { TranslationService } from '../../../core/services/i18n/translate.service';
+import { RegisterService } from '../../../core/services/auth/register.service';
+import { PermissionsService } from '../../../core/services/permissions/permissions.service';
 
 import { DefaultStepComponent } from '../../../shared/layout/default-step/default-step.component';
 
@@ -76,7 +76,7 @@ export class RegisterStep4Component {
   // LIFECYCLE
   // ------------------------------------------------------
   ngOnInit(): void {
-    this.registrationData = this.registerService.getData();
+    this.registrationData = this.registerService.getData('users');
     this.listenLanguageChanges();
 
     if (this.registrationData.permissions) {
@@ -201,11 +201,11 @@ export class RegisterStep4Component {
   // NAVEGAÇÃO
   // ------------------------------------------------------
   return(): void {
-    this.registerService.previousStep();
+    this.registerService.previousStep('users');
   }
 
   confirmRegistration(): void {
-    this.registerService.register()
+    this.registerService.register('users')
       .then(() => this.router.navigate(['/home']))
       .catch(() => {});
   }

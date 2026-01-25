@@ -1,5 +1,9 @@
 import { Injectable } from '@angular/core';
-import { FirebaseService } from './firebase.service';
+import { FirebaseService } from '../database/firebase.service';
+
+// ------------------------------------------------------
+// SEÇÃO: INTERFACES
+// ------------------------------------------------------
 
 export interface Group {
   id: string;
@@ -12,18 +16,27 @@ export interface Group {
   providedIn: 'root'
 })
 export class GroupsService {
+
+  // ------------------------------------------------------
+  // SEÇÃO: ESTADO
+  // ------------------------------------------------------
+
   private groups: Group[] = [];
   private selectedGroups = new Set<string>();
+
+  // ------------------------------------------------------
+  // SEÇÃO: CONSTRUTOR
+  // ------------------------------------------------------
 
   constructor(private firebaseService: FirebaseService) { }
 
   // ------------------------------------------------------
-  // CARREGAMENTO
+  // SEÇÃO: CARREGAMENTO
   // ------------------------------------------------------
 
   async subscribeGroups(): Promise<Group[]> {
     if (this.groups.length) {
-      return Promise.resolve(this.groups);
+      return this.groups;
     }
 
     return new Promise<Group[]>((resolve) => {
@@ -56,7 +69,7 @@ export class GroupsService {
   }
 
   // ------------------------------------------------------
-  // SELEÇÃO
+  // SEÇÃO: SELEÇÃO
   // ------------------------------------------------------
 
   selectGroup(groupId: string): void {
@@ -88,7 +101,7 @@ export class GroupsService {
   }
 
   // ------------------------------------------------------
-  // PERMISSÕES DERIVADAS
+  // SEÇÃO: PERMISSÕES
   // ------------------------------------------------------
 
   getPermissionsFromGroups(): string[] {
@@ -102,7 +115,7 @@ export class GroupsService {
   }
 
   // ------------------------------------------------------
-  // PAYLOAD
+  // SEÇÃO: PAYLOAD
   // ------------------------------------------------------
 
   buildPayload() {
@@ -113,7 +126,7 @@ export class GroupsService {
   }
 
   // ------------------------------------------------------
-  // FORMATAÇÃO DE GRUPOS
+  // SEÇÃO: FORMATAÇÃO
   // ------------------------------------------------------
 
   private formatGroups(groups: any[]): Group[] {
@@ -122,6 +135,6 @@ export class GroupsService {
       title: group.title,
       description: group.description,
       permissions: group.permissions ?? []
-    }))
+    }));
   }
 }
