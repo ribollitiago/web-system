@@ -79,10 +79,8 @@ export class RegisterStep4Component {
     this.registrationData = this.registerService.getData('users');
     this.listenLanguageChanges();
 
-    if (this.registrationData.permissions) {
-      const ids = Object.keys(this.registrationData.permissions)
-        .filter(id => this.registrationData.permissions[id]);
-      this.listPermissions(ids);
+    if (this.registrationData.permissions?.length) {
+      this.listPermissions(this.registrationData.permissions);
     }
   }
 

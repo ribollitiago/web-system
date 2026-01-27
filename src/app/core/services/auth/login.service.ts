@@ -48,16 +48,6 @@ export class LoginService {
     return { uid: user.uid };
   }
 
-  async loadAndSetUser(uid: string): Promise<void> {
-    const userData = await this.firebaseService.getEntityById('users', uid);
-
-    if (!userData) {
-      throw new Error('Usuário não encontrado no banco');
-    }
-
-    this.sessionService.setUserData(userData);
-  }
-
   // ------------------------------------------------------
   // SEÇÃO: RECUPERAÇÃO DE SENHA
   // ------------------------------------------------------

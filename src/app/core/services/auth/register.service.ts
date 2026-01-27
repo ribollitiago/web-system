@@ -2,23 +2,16 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import { serverTimestamp } from 'firebase/firestore';
 import firebaseApp from '../../../firebase.config';
 
 import { FirebaseService } from '../database/firebase.service';
+import { formatDateShortBR } from '../../utils/date.utils';
 
 // ------------------------------------------------------
 // SEÇÃO: INTERFACES
 // ------------------------------------------------------
 
 export interface RegisterData {
-  id?: string;
-  name?: string;
-  email?: string;
-  phone?: string;
-  enrollment?: string;
-  password?: string;
-  createdAt?: any;
   [key: string]: any;
 }
 
@@ -131,29 +124,27 @@ export class RegisterService {
   async register(entityType: string) {
     const data = this.getData(entityType);
 
-    data.id = await this.generateNextId(entityType);
+    data['createdAt'] = formatDateShortBR(new Date());
+    data['situation'] = 0;
 
     if (entityType === 'users') {
+      data['id'] = await this.generateNextId(entityType);
       const credential = await createUserWithEmailAndPassword(
         this.auth,
-        data.email!,
-        data.password!
+        data['email']!,
+        data['password']!
       );
 
-      const { password, ...entityMap } = data;
-      entityMap['createdAt'] = serverTimestamp();
+      const { password, confirmPassword, ...entityMap } = data;
 
       await this.firebaseService.addEntity(
         `${entityType}/${credential.user.uid}`,
         entityMap
       );
-    } else {
-      const { password, ...entityMap } = data;
-      entityMap['createdAt'] = serverTimestamp();
-
+    } else if (entityType === 'groups') {
       await this.firebaseService.addEntity(
-        `${entityType}/${data.id}`,
-        entityMap
+        `${entityType}/${data['key']}`,
+        data
       );
     }
 
@@ -171,5 +162,4 @@ export class RegisterService {
     const maxId = Math.max(...entities.map(e => Number(e['id'] ?? 0)));
     return String(maxId + 1).padStart(5, '0');
   }
-
 }

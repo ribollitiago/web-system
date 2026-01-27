@@ -41,16 +41,15 @@ export class LoginComponent implements OnInit {
     private loginService: LoginService,
     private toast: ToastrService,
     private translate: TranslationService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.createForms();
     this.translate.language$.subscribe(() => this.loadTranslations());
 
-    if (sessionStorage.getItem('refresh-token')) {
-      this.router.navigate(['home']);
-    }
+    this.checkLogoutReason();
   }
+
 
   // =========================
   // FORMULÁRIOS
@@ -174,6 +173,29 @@ export class LoginComponent implements OnInit {
         );
     }
   }
+
+  private checkLogoutReason(): void {
+    const reason = sessionStorage.getItem('logout-reason');
+
+    if (!reason) return;
+
+    if (reason === 'TIMEOUT') {
+      this.toast.warning(
+        this.messages.sessionTimeout ||
+        'Sua sessão expirou por inatividade.'
+      );
+    }
+
+    if (reason === 'MAX_SESSION') {
+      this.toast.warning(
+        this.messages.sessionMaxTime ||
+        'Sua sessão expirou por tempo máximo de uso.'
+      );
+    }
+
+    sessionStorage.removeItem('logout-reason');
+  }
+
 
   // =========================
   // TOGGLE FORM

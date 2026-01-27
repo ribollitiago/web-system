@@ -18,7 +18,8 @@ export class SessionService {
     private readonly LOGOUT_EVENT_KEY = 'app-logout-event';
     private readonly LAST_LOGIN_KEY = 'last-login-time';
     private readonly LAST_ACTIVITY_KEY = 'last-user-activity';
-
+    private readonly LOGOUT_REASON_KEY = 'logout-reason';
+    
     private readonly IDLE_TIMEOUT = 30 * 60 * 1000;
     private readonly MAX_SESSION_TIME = 8 * 60 * 60 * 1000;
     private readonly CHECK_INTERVAL = 10 * 1000;
@@ -92,19 +93,19 @@ export class SessionService {
     // SEÇÃO: CONTROLE DE EXPIRAÇÃO
     // ------------------------------------------------------
 
-    isSessionExpired(): boolean {
+    isSessionExpired(): 'TIMEOUT' | 'MAX_SESSION' | null {
         const lastActivity = localStorage.getItem(this.LAST_ACTIVITY_KEY);
         const lastLogin = localStorage.getItem(this.LAST_LOGIN_KEY);
 
         if (!lastLogin) {
-            return false;
+            return null;
         }
 
-        const now = new Date().getTime();
+        const now = Date.now();
         const sessionStartTime = new Date(lastLogin).getTime();
 
         if (now - sessionStartTime > this.MAX_SESSION_TIME) {
-            return true;
+            return 'MAX_SESSION';
         }
 
         const referenceTime = lastActivity
@@ -112,14 +113,18 @@ export class SessionService {
             : sessionStartTime;
 
         if (now - referenceTime > this.IDLE_TIMEOUT) {
-            return true;
+            return 'TIMEOUT';
         }
 
-        return false;
+        return null;
     }
 
+
     private checkTokenExpiration(): void {
-        if (this.isSessionExpired()) {
+        const reason = this.isSessionExpired();
+
+        if (reason) {
+            sessionStorage.setItem(this.LOGOUT_REASON_KEY, reason);
             this.logout();
         }
     }
@@ -165,17 +170,10 @@ export class SessionService {
     clearSessionStorage(): void {
         this.userSubject.next(null);
         localStorage.removeItem('userData');
-        localStorage.removeItem('userName');
-        localStorage.removeItem('userEmail');
         localStorage.removeItem(this.LOGOUT_EVENT_KEY);
         localStorage.removeItem(this.LAST_LOGIN_KEY);
         localStorage.removeItem(this.LAST_ACTIVITY_KEY);
         this.stopTokenExpirationWatcher();
-    }
-
-    setUserData(userData: any): void {
-        localStorage.setItem('userData', JSON.stringify(userData));
-        this.userSubject.next(userData);
     }
 
     setLastLoginTime(): void {
@@ -203,11 +201,49 @@ export class SessionService {
         });
     }
 
+    private async resolveGroupPermissions(groupIds: string[]): Promise<string[]> {
+
+        const permissions: string[] = [];
+
+        for (const groupId of groupIds) {
+            const group = await this.firebaseService.getEntityById('groups', groupId);
+
+            if (group?.['permissions']?.length) {
+                permissions.push(...group['permissions']);
+            }
+        }
+
+        return Array.from(new Set(permissions));
+    }
+
     async loadAndSetUser(uid: string): Promise<void> {
+
         const userData = await this.firebaseService.getEntityById('users', uid);
+
         if (!userData) {
             throw new Error('Usuário não encontrado no banco');
         }
-        this.setUserData(userData);
+
+        const groupIds: string[] = Array.isArray(userData['groups'])
+            ? userData['groups']
+            : userData['group']
+                ? [userData['group']]
+                : [];
+
+        const permissionsFromGroups = await this.resolveGroupPermissions(groupIds);
+
+        const mergedPermissions = Array.from(
+            new Set([
+                ...(permissionsFromGroups ?? []),
+                ...(userData['permissions'] ?? [])
+            ])
+        );
+
+        const resolvedUser = {
+            ...userData,
+            permissions: mergedPermissions
+        };
+
+        this.userSubject.next(resolvedUser);
     }
 }

@@ -90,11 +90,11 @@ export class RegisterStep1Component implements OnInit {
     const data = this.registerService.getData('users');
     if (!data) return;
 
-    this.name = data.name ?? '';
-    this.email = data.email ?? '';
-    this.phone = data.phone ?? '';
-    this.enrollment = data.enrollment ?? '';
-    this.password = data.password ?? '';
+    this.name = data['name'] ?? '';
+    this.email = data['email'] ?? '';
+    this.phone = data['phone'] ?? '';
+    this.enrollment = data['enrollment'] ?? '';
+    this.password = data['password'] ?? '';
     this.confirmPassword = data['confirmPassword'] ?? '';
   }
 
@@ -230,7 +230,13 @@ export class RegisterStep1Component implements OnInit {
   // SUBMIT
   // ------------------------------------------------------
   async submit(): Promise<void> {
-    if (!(await this.validateForm())) return;
+
+    //NÃO ESQUEÇA DE ATIVAR!!!
+    //NÃO ESQUEÇA DE ATIVAR!!!
+    //if (!(await this.validateForm())) return;
+    //NÃO ESQUEÇA DE ATIVAR!!!
+    //NÃO ESQUEÇA DE ATIVAR!!!
+
     this.registerService.nextStep('users');
   }
 }

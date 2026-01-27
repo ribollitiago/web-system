@@ -14,8 +14,10 @@ export class AuthGuard implements CanActivate {
   ) { }
 
   canActivate(): Observable<boolean> {
-    if (this.sessionService.isSessionExpired()) {
-      console.log('AuthGuard: Sessão expirada localmente. Redirecionando...');
+    const reason = this.sessionService.isSessionExpired();
+
+    if (reason) {
+      sessionStorage.setItem('logout-reason', reason);
       this.sessionService.logout();
       return of(false);
     }
@@ -28,14 +30,8 @@ export class AuthGuard implements CanActivate {
           return false;
         }
 
-        try {
-          await this.sessionService.loadAndSetUser(user.uid);
-          return true;
-        } catch (error) {
-          console.error('AuthGuard: Erro ao carregar usuário:', error);
-          this.router.navigate(['/login']);
-          return false;
-        }
+        await this.sessionService.loadAndSetUser(user.uid);
+        return true;
       }),
       switchMap(result => result)
     );

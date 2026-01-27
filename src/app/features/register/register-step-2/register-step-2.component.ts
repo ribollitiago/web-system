@@ -195,7 +195,6 @@ export class RegisterStep2Component implements OnDestroy {
 
     option.permissions?.forEach(permissionId => {
       this.permissionsService.setLockedPermission(permissionId, true);
-      this.permissionsService.setSelectedPermission(permissionId, true);
     });
 
     this.updateGroupOptions();
@@ -210,7 +209,6 @@ export class RegisterStep2Component implements OnDestroy {
 
     group.permissions.forEach(permissionId => {
       this.permissionsService.setLockedPermission(permissionId, false);
-      this.permissionsService.setSelectedPermission(permissionId, false);
     });
 
     this.groupsService.unselectGroup(groupId);
@@ -245,21 +243,21 @@ export class RegisterStep2Component implements OnDestroy {
   // SUBMIT
   // ------------------------------------------------------
   async submit(): Promise<void> {
-    const permissions = Object.entries(
-      this.permissionsService.getSelectedPermissions()
-    )
-      .filter(([_, checked]) => checked)
-      .reduce<Record<string, boolean>>((acc, [id]) => {
-        acc[id] = true;
-        return acc;
-      }, {});
+    const permissions: string[] = [];
 
-    const groups = this.groupsService
-      .getSelectedGroupIds()
-      .reduce<Record<string, boolean>>((acc, id) => {
-        acc[id] = true;
-        return acc;
-      }, {});
+    const selectedPermissions = this.permissionsService.getSelectedPermissions();
+    for (const [id, checked] of Object.entries(selectedPermissions)) {
+      if (checked) {
+        permissions.push(id);
+      }
+    }
+
+    const groups: string[] = [];
+
+    const selectedGroups = this.groupsService.getSelectedGroupIds();
+    for (const id of selectedGroups) {
+      groups.push(id);
+    }
 
     this.registerService.updateData('users', {
       permissions,

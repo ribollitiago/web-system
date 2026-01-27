@@ -82,9 +82,9 @@ export class ValidatorsService {
 
       case 'PASSWORD_MATCH':
         if (
-          data?.password &&
+          data?.['password'] &&
           data?.['confirmPassword'] &&
-          data.password !== data['confirmPassword']
+          data['password'] !== data['confirmPassword']
         ) {
           return { valid: false, error: 'PASSWORD_MISMATCH' };
         }

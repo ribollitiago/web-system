@@ -62,7 +62,7 @@ export class StepsFilterComponent implements OnChanges, OnDestroy {
   constructor(
     private permissionsService: PermissionsService,
     private translationService: TranslationService
-  ) {}
+  ) { }
 
   // ------------------------------------------------------
   // LIFECYCLE
@@ -115,28 +115,37 @@ export class StepsFilterComponent implements OnChanges, OnDestroy {
   // LISTAGEM E FILTROS
   // ------------------------------------------------------
   private updateCurrentList(): void {
+
+    const rawSelected = this.permissionsService.getSelectedPermissions();
+
+    const selectedSet = new Set<string>(
+      Array.isArray(rawSelected)
+        ? rawSelected
+        : Object.keys(rawSelected ?? {}).filter(id => rawSelected[id])
+    );
+
+    const lockedSet = this.lockedPermissions ?? new Set<string>();
+
+    let source: any[] = [];
+
     switch (this.selectedFilter) {
       case 'route':
-        this.resolvedList = Object.values(this.permissions.routes).map((item: any) => ({
-          ...item,
-          checked: this.permissionsService.getSelectedPermissions()[item.id] ?? false
-        }));
+        source = Object.values(this.permissions.routes);
         break;
 
       case 'admin':
-        this.resolvedList = Object.values(this.permissions.admin).map((item: any) => ({
-          ...item,
-          checked: this.permissionsService.getSelectedPermissions()[item.id] ?? false
-        }));
+        source = Object.values(this.permissions.admin);
         break;
 
       default:
-        this.resolvedList = Object.values(this.permissions.users).map((item: any) => ({
-          ...item,
-          checked: this.permissionsService.getSelectedPermissions()[item.id] ?? false
-        }));
+        source = Object.values(this.permissions.users);
         break;
     }
+
+    this.resolvedList = source.map((item: any) => ({
+      ...item,
+      checked: selectedSet.has(item.id) || lockedSet.has(item.id)
+    }));
 
     this.applySearchFilter();
     this.sortByCriticalLevel();
