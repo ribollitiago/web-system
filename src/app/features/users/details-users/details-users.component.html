@@ -37,17 +37,26 @@
       <img class="image-user" src="assets/user-photo.png" alt>
       <div class="user-line">
         <span class="name">{{ selectedUser.name }}</span>
-        <app-situation-chip [situation]="selectedUser.situation"></app-situation-chip>
+        <app-situation-chip
+          [situation]="selectedUser.situation"></app-situation-chip>
       </div>
       <div class="email">{{ selectedUser.email }}</div>
-      <div class="phone-and-document">
+      <div class="permissions-list">
+        <app-group-chip
+          [groups]="selectedUser.group"
+          [maxDisplay]="2"
+          [allowExpand]="true">
+          <!-- O padrão é false, então o clique não funcionará -->
+        </app-group-chip>
+      </div>
+      <div class="phone-and-enrollment">
         <div class="phone">
           <img src="assets/svg/icon/users/phone.svg">
           {{ selectedUser.phone }}
         </div>
-        <div class="document">
+        <div class="enrollment">
           <img src="assets/svg/icon/users/document.svg">
-          {{ selectedUser.document }}
+          {{ selectedUser.enrollment }}
         </div>
       </div>
       <div class="divider"></div>

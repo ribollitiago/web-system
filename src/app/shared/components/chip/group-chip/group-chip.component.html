@@ -1,5 +1,28 @@
+<div class="groups-container" [class.expanded]="isExpanded">
 
-<div class="group">
-  <img src="assets/svg/icon/default/group_permissions.svg" class="icon-group" alt="Group Icon">
-  <span class="group-name">{{ groupName }}</span>
+  @for (group of visibleGroups; track group.title) {
+    <div class="group">
+      <div>
+        <img src="assets/svg/icon/default/group_permissions.svg" class="icon-group" alt="Group Icon">
+        <span class="group-name">{{ group.title }}</span>
+      </div>
+    </div>
+  }
+
+  <!-- Indicador de "+mais" -->
+  @if (hiddenCount > 0 && !isExpanded) {
+    <div class="more-indicator"
+         [class.clickable]="allowExpand"
+         [title]="allowExpand ? 'Ver todos os grupos' : 'Mais ' + hiddenCount + ' grupos'"
+         (click)="toggleExpand($event)">
+      <span>+{{ hiddenCount }}</span>
+    </div>
+  }
+
+  <!-- Botão de fechar (aparece apenas quando expandido) -->
+  @if (isExpanded) {
+    <div class="close-indicator" (click)="toggleExpand($event)" title="Recolher lista">
+      <img src="assets/svg/icon/input/clear.svg" alt="Fechar">
+    </div>
+  }
 </div>

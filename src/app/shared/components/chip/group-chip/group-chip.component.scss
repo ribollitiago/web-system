@@ -1,0 +1,72 @@
+@import "../../../../../styles/variables.scss";
+
+.groups-container {
+  display: flex;
+  flex-wrap: wrap; // Permite que os chips quebrem a linha se o container for pequeno
+  gap: 8px;       // Espaçamento entre os chips
+  align-items: center;
+}
+
+.group {
+  font-size: 11px;
+  font-weight: 200;
+  display: flex;
+  align-items: center;
+  color: $text-color;
+
+  & > div {
+    display: flex;
+    align-items: center;
+    border: 0.5px solid $us-border-btn;
+    padding: 4px 9px 4px 8px;
+    border-radius: 10px;
+    white-space: nowrap; // Evita que o nome do grupo quebre linha dentro do chip
+
+    img {
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
+      position: relative;
+    }
+  }
+}
+
+.more-indicator {
+  font-size: 11px;
+  font-weight: bold;
+  color: $text-color;
+  background: $us-details-phone-document;
+  padding: 4px 8px;
+  border-radius: 10px;
+
+  transition: background 0.2s;
+
+  &.clickable {
+    cursor: pointer;
+    &:hover {
+      background: lighten($color: $us-details-phone-document, $amount: 10);
+    }
+  }
+}
+
+.close-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $us-details-phone-document;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: lighten($color: $us-details-phone-document, $amount: 10);
+  }
+
+  img {
+    width: 10px;
+    height: 10px;
+    opacity: 0.6;
+  }
+}

@@ -53,6 +53,29 @@
 
 }
 
+.resume-groups {
+  display: flex;
+  flex-direction: column; // Faz o título ficar em cima e os chips embaixo
+  align-items: flex-start; // Alinha todo o conteúdo à esquerda
+  width: 100%;
+  margin-bottom: 15px; // Aumentei um pouco para dar respiro ao próximo bloco
+
+  h2 {
+    font-size: 14px;
+    color: $rg-title;
+    font-weight: 400;
+    margin: 0 0 8px 0; // Espaço entre o título e os chips
+    text-align: left;
+  }
+
+  // Garante que o componente de chips também comece da esquerda
+  .groups-container {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+  }
+}
+
 .resume-permissions {
   display: flex;
   justify-content: space-between;
