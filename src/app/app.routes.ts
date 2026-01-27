@@ -3,7 +3,7 @@ import { LoginComponent } from './pages/login/login.component';
 import { AuthGuard } from './core/guard/auth.guard';
 import { HomeComponent } from './pages/main/home/home.component';
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
-import { UsersComponent } from './features/users/users/users.component';
+import { DetailsUsersComponent } from './features/users/details-users/details-users.component';
 import { RegisterComponent } from './features/register/register.component';
 
 export const routes: Routes = [
@@ -17,7 +17,7 @@ export const routes: Routes = [
     canActivate: [AuthGuard], // ← SÓ rotas privadas abaixo
     children: [
       { path: 'home', component: HomeComponent },
-      { path: 'users', component: UsersComponent },
+      { path: 'users', component: DetailsUsersComponent },
       { path: 'register', component: RegisterComponent },
       { path: '', redirectTo: '/home', pathMatch: 'full' },
     ],

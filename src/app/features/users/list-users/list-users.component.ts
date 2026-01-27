@@ -4,6 +4,8 @@ import { TranslationService } from '../../../core/services/i18n/translate.servic
 import { FirebaseService } from '../../../core/services/database/firebase.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { SituationChipComponent } from '../../../shared/components/chip/situation-chip/situation-chip.component';
+import { GroupChipComponent } from '../../../shared/components/chip/group-chip/group-chip.component';
 
 export interface User {
   id: number;
@@ -20,7 +22,7 @@ export interface User {
 @Component({
   selector: 'app-list-users',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SituationChipComponent, GroupChipComponent],
   templateUrl: './list-users.component.html',
   styleUrl: './list-users.component.scss'
 })
@@ -94,21 +96,6 @@ export class ListUsersComponent implements OnInit, OnDestroy {
     this.filterGroup = this.translationService.getTranslation('filterGroup', section);
     this.filterSituation = this.translationService.getTranslation('filterSituation', section);
     this.filterMore = this.translationService.getTranslation('filterMore', section);
-  }
-
-  translateField(fieldName: string, fieldValue: string): string {
-    const fieldMap: { [key: string]: { [key: string]: string } } = {
-      situation: {
-        '1': 'actived',
-        '0': 'inactived',
-        '-1': 'disabled'
-      },
-      status: {
-        '1': 'enabled',
-        '0': 'disabled'
-      },
-    };
-    return this.translationService.getTranslation(fieldMap[fieldName][fieldValue], 'Users_Page');
   }
 
   // ======================================================
@@ -333,16 +320,6 @@ export class ListUsersComponent implements OnInit, OnDestroy {
 
   trackByUserId(user: User): number {
     return user.id;
-  }
-
-  getSituationIcon(situation: string | null | undefined): string {
-    const situationValue = situation?.toString() || '0';
-    const iconMap: { [key: string]: string } = {
-      '1': 'situation-actived.svg',
-      '-1': 'situation-disabled.svg',
-      '0': 'situation-inactived.svg'
-    };
-    return `assets/svg/icon/users/${iconMap[situationValue] || 'situation-inactived.svg'}`;
   }
 
   // ======================================================

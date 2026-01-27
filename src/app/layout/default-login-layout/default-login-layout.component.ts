@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { TranslateDropdownComponent } from '../../shared/components/translate-dropdown/translate-dropdown.component';
+import { TranslateDropdownComponent } from '../../shared/components/dropdown/translate-dropdown/translate-dropdown.component';
 
 @Component({
   selector: 'app-default-login-layout',

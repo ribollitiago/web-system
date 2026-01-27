@@ -1,7 +1,7 @@
 .custom-dropdown, .dropdown-selected, .dropdown-option {
   user-select: none;
 }
-@import "../../../../styles/variables.scss";
+@import "../../../../../styles/variables.scss";
 
 :host {
   display: block; // Essencial para o componente aceitar largura

@@ -1,5 +1,5 @@
 import { Component, OnDestroy, ViewChild } from '@angular/core';
-import { SearchInputComponent } from '../../../shared/components/search-input/search-input.component';
+import { SearchInputComponent } from '../../../shared/components/input/search-input/search-input.component';
 import { TranslationService } from '../../../core/services/i18n/translate.service';
 import { filter, Subscription } from 'rxjs';
 import { ListUsersComponent, User } from '../list-users/list-users.component';
@@ -7,14 +7,15 @@ import { CommonModule } from '@angular/common';
 import { PermissionsService } from '../../../core/services/permissions/permissions.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
+import { SituationChipComponent } from '../../../shared/components/chip/situation-chip/situation-chip.component';
 
 @Component({
-  selector: 'app-users',
-  imports: [SearchInputComponent, ListUsersComponent, CommonModule, MatTooltipModule, MatMenuModule],
-  templateUrl: './users.component.html',
-  styleUrl: './users.component.scss'
+  selector: 'app-details-users',
+  imports: [SearchInputComponent, ListUsersComponent, CommonModule, MatTooltipModule, MatMenuModule, SituationChipComponent],
+  templateUrl: './details-users.component.html',
+  styleUrl: './details-users.component.scss'
 })
-export class UsersComponent implements OnDestroy {
+export class DetailsUsersComponent implements OnDestroy {
   @ViewChild(ListUsersComponent) listUsersComponent!: ListUsersComponent;
 
   title: string = '';
@@ -97,24 +98,6 @@ export class UsersComponent implements OnDestroy {
     this.isDetailsOpen = false;
     this.selectedUser = null;
     this.listUsersComponent?.resetSelections();
-  }
-
-  getSituationIcon(situation: string): string {
-    const iconMap: Record<string, string> = {
-      '1': 'situation-actived.svg',
-      '-1': 'situation-disabled.svg',
-      '0': 'situation-inactived.svg'
-    };
-    return `assets/svg/icon/users/${iconMap[situation] || 'situation-inactived.svg'}`;
-  }
-
-  translateSituation(situation: string): string {
-    const situationMap: Record<string, string> = {
-      '1': 'actived',
-      '0': 'inactived',
-      '-1': 'disabled'
-    };
-    return this.translationService.getTranslation(situationMap[situation], 'Users_Page');
   }
 
   async listPermissions(user: User) {
