@@ -72,11 +72,11 @@ export class TranslationService {
 
     try {
       if (lang !== 'en_us') {
-        const en_us = await import(`../../../../../public/assets/i18n/en_us.json`).then(m => m.default || m);
+        const en_us = await import(`../../i18n/en_us.json`).then(m => m.default || m);
         this.englishLanguage = en_us;
       }
 
-      const response = await import(`../../../../../public/assets/i18n/${lang}.json`);
+      const response = await import(`../../i18n/${lang}.json`);
       this.translations = response;
 
       this.languageSubject.next(lang);

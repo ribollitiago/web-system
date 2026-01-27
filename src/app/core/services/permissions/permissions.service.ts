@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { TranslationService } from '../i18n/translate.service';
+import { PERMISSIONS } from '../../../config/permissions.config';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 export type CriticalLevel = 'HIGH_LEVEL' | 'MEDIUM_LEVEL' | 'LOW_LEVEL' | 'ZERO_LEVEL';
 
-interface Permission {
+export interface Permission {
   id: string;
   critical: CriticalLevel;
   title?: string;
@@ -12,14 +13,14 @@ interface Permission {
   checked?: boolean;
 }
 
-function isCriticalLevel(value: string): value is CriticalLevel {
-  return ['HIGH_LEVEL', 'MEDIUM_LEVEL', 'LOW_LEVEL', 'ZERO_LEVEL'].includes(value);
-}
-
-interface Permissions {
+export interface Permissions {
   users: Record<string, Permission>;
   routes: Record<string, Permission>;
   admin: Record<string, Permission>;
+}
+
+function isCriticalLevel(value: string): value is CriticalLevel {
+  return ['HIGH_LEVEL', 'MEDIUM_LEVEL', 'LOW_LEVEL', 'ZERO_LEVEL'].includes(value);
 }
 
 @Injectable({
@@ -28,43 +29,28 @@ interface Permissions {
 export class PermissionsService {
   private selectedPermissions: Record<string, boolean> = {};
   private lockedPermissions$ = new BehaviorSubject<Set<string>>(new Set());
+
   constructor(private translationService: TranslationService) { }
 
   // ------------------------------------------------------
   // SEÇÃO: CARREGAMENTO DE PERMISSÕES
   // ------------------------------------------------------
 
-  async getPermissions(): Promise<Permissions> {
+  getPermissions(): Permissions {
     try {
-      const permissionsData = await this.loadPermissionsData();
-      const currentLanguage = this.translationService.getCurrentLanguage();
-      const translations = await this.loadTranslations(currentLanguage);
-
       const categorizedPermissions: Permissions = {
-        users: this.mapPermissions(permissionsData.users),
-        routes: this.mapPermissions(permissionsData.routes),
-        admin: this.mapPermissions(permissionsData.admin),
+        users: this.mapPermissions(PERMISSIONS.users),
+        routes: this.mapPermissions(PERMISSIONS.routes),
+        admin: this.mapPermissions(PERMISSIONS.admin),
       };
 
-      this.translatePermissions(categorizedPermissions, translations);
+      this.translatePermissions(categorizedPermissions);
 
       return categorizedPermissions;
     } catch (error) {
-      console.error('Erro ao carregar permissões:', error);
+      console.error('Erro ao processar permissões:', error);
       throw new Error('Falha ao carregar as permissões.');
     }
-  }
-
-  // ------------------------------------------------------
-  // SEÇÃO: CARREGAMENTO DE DADOS
-  // ------------------------------------------------------
-
-  private async loadPermissionsData() {
-    return import('../../../../../public/assets/permissions/perm.json');
-  }
-
-  private async loadTranslations(language: string) {
-    return import(`../../../../../public/assets/i18n/${language}.json`);
   }
 
   // ------------------------------------------------------
@@ -74,12 +60,14 @@ export class PermissionsService {
   private mapPermissions(permissions: Record<string, any>): Record<string, Permission> {
     return Object.keys(permissions).reduce((acc, key) => {
       const permission = permissions[key];
+      
       if (!isCriticalLevel(permission.critical)) {
         throw new Error(`Nível crítico inválido: ${permission.critical}`);
       }
+
       acc[key] = {
         ...permission,
-        critical: permission.critical,
+        critical: permission.critical as CriticalLevel,
       };
       return acc;
     }, {} as Record<string, Permission>);
@@ -90,21 +78,14 @@ export class PermissionsService {
   // ------------------------------------------------------
 
   filterPermissionsByIds(permissions: Permissions, permissionIds: string[]): Permissions {
-    const filteredPermissions: Permissions = {
-      users: {},
-      routes: {},
-      admin: {}
+    return {
+      users: this.filterCategoryPermissions(permissions.users, permissionIds),
+      routes: this.filterCategoryPermissions(permissions.routes, permissionIds),
+      admin: this.filterCategoryPermissions(permissions.admin, permissionIds)
     };
-
-    filteredPermissions.users = this.filterCategoryPermissions(permissions.users, permissionIds);
-    filteredPermissions.routes = this.filterCategoryPermissions(permissions.routes, permissionIds);
-    filteredPermissions.admin = this.filterCategoryPermissions(permissions.admin, permissionIds);
-
-    return filteredPermissions;
   }
 
-  filterCategoryPermissions = (categoryPermissions: Record<string, Permission>, permissionIds: string[]): Record<string, Permission> => {
-
+  private filterCategoryPermissions(categoryPermissions: Record<string, Permission>, permissionIds: string[]): Record<string, Permission> {
     const filteredCategory: Record<string, Permission> = {};
 
     Object.keys(categoryPermissions).forEach(key => {
@@ -115,29 +96,27 @@ export class PermissionsService {
     });
 
     return filteredCategory;
-  };
+  }
 
   // ------------------------------------------------------
   // SEÇÃO: TRADUÇÃO DE PERMISSÕES
   // ------------------------------------------------------
 
-  private translatePermissions(categorizedPermissions: Permissions, translate: any) {
-    for (const category of Object.keys(categorizedPermissions) as (keyof Permissions)[]) {
+  private translatePermissions(categorizedPermissions: Permissions) {
+    (Object.keys(categorizedPermissions) as (keyof Permissions)[]).forEach(category => {
       const categoryPermissions = categorizedPermissions[category];
-      const categoryTranslations = translate.Permissions;
 
-      for (const permissionKey of Object.keys(categoryPermissions) as string[]) {
+      Object.keys(categoryPermissions).forEach(permissionKey => {
         const permission = categoryPermissions[permissionKey];
-        const permissionId = permission.id;
+                
+        const translatedObj: any = this.translationService.getTranslation(permission.id, 'Permissions');
 
-        const translation = categoryTranslations?.[permissionId];
-
-        if (translation) {
-          permission.title = translation.title || '';
-          permission.description = translation.description || '';
+        if (translatedObj) {
+          permission.title = translatedObj.title || '';
+          permission.description = translatedObj.description || '';
         }
-      }
-    }
+      });
+    });
   }
 
   // ------------------------------------------------------
@@ -166,9 +145,7 @@ export class PermissionsService {
 
   setLockedPermission(id: string, locked: boolean) {
     const newSet = new Set(this.lockedPermissions$.value);
-
     locked ? newSet.add(id) : newSet.delete(id);
-
     this.lockedPermissions$.next(newSet);
   }
 }
