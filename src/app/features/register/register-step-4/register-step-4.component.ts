@@ -13,6 +13,8 @@ import { RegisterService } from '../../../core/services/auth/register.service';
 import { PermissionsService } from '../../../core/services/permissions/permissions.service';
 
 import { DefaultStepComponent } from '../../../shared/layout/default-step/default-step.component';
+import { GroupChipComponent } from "../../../shared/components/chip/group-chip/group-chip.component";
+import { GroupsService } from '../../../core/services/permissions/group.service';
 
 // ------------------------------------------------------
 // COMPONENT
@@ -24,8 +26,9 @@ import { DefaultStepComponent } from '../../../shared/layout/default-step/defaul
     DefaultStepComponent,
     CommonModule,
     MatTooltipModule,
-    MatMenuModule
-  ],
+    MatMenuModule,
+    GroupChipComponent
+],
   templateUrl: './register-step-4.component.html',
   styleUrl: './register-step-4.component.scss'
 })
@@ -37,6 +40,8 @@ export class RegisterStep4Component {
   isLoading = false;
   registrationData: any = {};
   permissionUserSelected: any;
+
+  selectedGroupsDetails: any[] = [];
 
   // ------------------------------------------------------
   // TEXTOS (TRADUÇÃO)
@@ -62,6 +67,8 @@ export class RegisterStep4Component {
   mediumTooltip = '';
   highTooltip = '';
 
+
+
   // ------------------------------------------------------
   // CONSTRUCTOR
   // ------------------------------------------------------
@@ -69,7 +76,8 @@ export class RegisterStep4Component {
     private translationService: TranslationService,
     private registerService: RegisterService,
     private router: Router,
-    private permissionsService: PermissionsService
+    private permissionsService: PermissionsService,
+    private groupsService: GroupsService
   ) {}
 
   // ------------------------------------------------------
@@ -78,6 +86,13 @@ export class RegisterStep4Component {
   ngOnInit(): void {
     this.registrationData = this.registerService.getData('users');
     this.listenLanguageChanges();
+
+    this.selectedGroupsDetails = this.groupsService.getSelectedGroups();
+
+    // Fallback caso não venha nada
+    if (this.selectedGroupsDetails.length === 0) {
+      this.selectedGroupsDetails = [{ title: 'Nenhum grupo selecionado' }];
+    }
 
     if (this.registrationData.permissions?.length) {
       this.listPermissions(this.registrationData.permissions);

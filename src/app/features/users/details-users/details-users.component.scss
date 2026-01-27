@@ -239,7 +239,10 @@
         margin-bottom: 15px;
       }
 
-      .phone-and-document {
+      .permissions-list{
+        margin-bottom: 15px;
+      }
+      .phone-and-enrollment {
         display: flex;
         align-items: center;
         justify-content: left;
@@ -250,7 +253,7 @@
         margin-bottom: 10px;
 
         .phone,
-        .document {
+        .enrollment {
           display: flex;
           align-items: center;
           gap: 4px;

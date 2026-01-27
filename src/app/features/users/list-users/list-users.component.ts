@@ -13,7 +13,7 @@ export interface User {
   email: string;
   date: string;
   phone: string;
-  document: string;
+  enrollment: string;
   permissions: [];
   group: any[];
   situation: string;

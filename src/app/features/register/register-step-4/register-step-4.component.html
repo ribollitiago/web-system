@@ -33,6 +33,17 @@
     </div>
   </div>
 
+  <div class="resume-groups">
+    <h2>Grupos</h2>
+    <div class="groups-container">
+      <app-group-chip
+          [groups]="selectedGroupsDetails"
+          [maxDisplay]="5"
+          [allowExpand]="true">
+        </app-group-chip>
+    </div>
+  </div>
+
   <div class="resume-permissions">
     <h2>{{ stepTwo }}</h2>
     <div class="permissions-container"></div>
@@ -73,9 +84,4 @@
       <p>{{ registrationData.text || '-' }}</p>
     </div>
   </div>
-
-  <div class="resume-attachments">
-    <h2>{{ attachment }}</h2>
-  </div>
-
 </app-default-step>

@@ -39,7 +39,15 @@
       <div class="list-item id">{{user.id}}</div>
       <div class="list-item name">{{user.name}}</div>
       <div class="list-item email">{{user.email}}</div>
-      <div class="list-item group"><app-group-chip [groupName]="user.group[0]['title']"></app-group-chip></div>
+      <div
+        class="list-item group">
+        <td>
+          <app-group-chip
+            [groups]="user.group"
+            [maxDisplay]="1"
+            [allowExpand]="false">
+          </app-group-chip>
+        </td></div>
       <div class="list-item situation">
         <app-situation-chip
           [situation]="user.situation"></app-situation-chip>
