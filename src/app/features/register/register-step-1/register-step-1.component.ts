@@ -5,7 +5,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { PrimaryInputComponent } from '../../../shared/components/primary-input/primary-input.component';
+import { PrimaryInputComponent } from '../../../shared/components/input/primary-input/primary-input.component';
 import { DefaultStepComponent } from '../../../shared/layout/default-step/default-step.component';
 
 import { TranslationService } from '../../../core/services/i18n/translate.service';

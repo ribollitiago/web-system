@@ -11,13 +11,13 @@ import { RegisterService } from '../../../core/services/auth/register.service';
 import { PermissionsService } from '../../../core/services/permissions/permissions.service';
 import { GroupsService, Group } from '../../../core/services/permissions/group.service';
 
-import { SearchInputComponent } from '../../../shared/components/search-input/search-input.component';
+import { SearchInputComponent } from '../../../shared/components/input/search-input/search-input.component';
 import { StepsFilterComponent } from '../steps-filter/steps-filter.component';
 import { DefaultStepComponent } from '../../../shared/layout/default-step/default-step.component';
 import {
   DefaultDropdownComponent,
   DropdownOption
-} from '../../../shared/components/default-dropdown/default-dropdown.component';
+} from '../../../shared/components/dropdown/default-dropdown/default-dropdown.component';
 
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';

@@ -29,20 +29,20 @@
     </div>
   </div>
   <div class="list-scroll-container">
-    <div class="list-container" [class.selected]="isSelected(user.id)" *ngFor="let user of visibleUsers"
+    <div class="list-container" [class.selected]="isSelected(user.id)"
+      *ngFor="let user of visibleUsers"
       (click)="selectSingleUser(user.id)">
       <div class="checkbox" (click)="toggleUserSelection(user.id, $event)">
-        <img [src]="'assets/svg/icon/register/step-2/' + (selectedUsers.has(user.id) ? 'check-on.svg' : 'check-off.svg')">
+        <img
+          [src]="'assets/svg/icon/register/step-2/' + (selectedUsers.has(user.id) ? 'check-on.svg' : 'check-off.svg')">
       </div>
       <div class="list-item id">{{user.id}}</div>
       <div class="list-item name">{{user.name}}</div>
       <div class="list-item email">{{user.email}}</div>
-      <div class="list-item group">{{user.group[0]['title']}}</div>
+      <div class="list-item group"><app-group-chip [groupName]="user.group[0]['title']"></app-group-chip></div>
       <div class="list-item situation">
-        <div>
-          <img [src]="getSituationIcon(user.situation)">
-          <span>{{translateField('situation', user.situation)}}</span>
-        </div>
+        <app-situation-chip
+          [situation]="user.situation"></app-situation-chip>
       </div>
       <div class="list-item more">
         <img src="assets/svg/icon/register/step-2/extra_info.svg">
@@ -51,7 +51,8 @@
   </div>
   <div class="pagination-controls">
     <div class="text-lines-page">Lines per page</div>
-    <select class="page-select" [(ngModel)]="itemsPerPage" (change)="onItemsPerPageChange()">
+    <select class="page-select" [(ngModel)]="itemsPerPage"
+      (change)="onItemsPerPageChange()">
       <option value="10">10</option>
       <option value="25">25</option>
       <option value="50">50</option>
@@ -59,22 +60,27 @@
       <option value="200">200</option>
     </select>
 
-    <button class="pagination-button" (click)="previousPage()" [disabled]="currentPage === 1">
-      <img src="assets/svg/icon/users/arrow-list.svg" alt="Previous page" class="arrow-icon rotate-180">
+    <button class="pagination-button" (click)="previousPage()"
+      [disabled]="currentPage === 1">
+      <img src="assets/svg/icon/users/arrow-list.svg" alt="Previous page"
+        class="arrow-icon rotate-180">
     </button>
 
     <div class="page-numbers">
       <ng-container *ngFor="let page of displayedPages">
         <span *ngIf="page === '...'" class="ellipsis">...</span>
-        <button *ngIf="page !== '...'" class="page-button" [class.active]="page === currentPage"
+        <button *ngIf="page !== '...'" class="page-button"
+          [class.active]="page === currentPage"
           (click)="goToPage(page)">
           {{page}}
         </button>
       </ng-container>
     </div>
 
-    <button class="pagination-button" (click)="nextPage()" [disabled]="currentPage === totalPages">
-      <img src="assets/svg/icon/users/arrow-list.svg" alt="Next page" class="arrow-icon">
+    <button class="pagination-button" (click)="nextPage()"
+      [disabled]="currentPage === totalPages">
+      <img src="assets/svg/icon/users/arrow-list.svg" alt="Next page"
+        class="arrow-icon">
     </button>
   </div>
 </div>

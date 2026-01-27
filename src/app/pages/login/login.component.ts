@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { LoginService } from '../../core/services/auth/login.service';
 import { ToastrService } from 'ngx-toastr';
-import { PrimaryInputComponent } from '../../shared/components/primary-input/primary-input.component';
+import { PrimaryInputComponent } from '../../shared/components/input/primary-input/primary-input.component';
 import { DefaultLoginLayoutComponent } from '../../layout/default-login-layout/default-login-layout.component';
 import { TranslationService } from '../../core/services/i18n/translate.service';
 
