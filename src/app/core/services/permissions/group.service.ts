@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FirebaseService } from '../database/firebase.service';
+import { BehaviorSubject } from 'rxjs';
 
 // ------------------------------------------------------
 // SEÇÃO: INTERFACES
@@ -34,10 +35,12 @@ export class GroupsService {
   // SEÇÃO: CARREGAMENTO
   // ------------------------------------------------------
 
+  async unSubscribeGroups() {
+    this.firebaseService.offSubscription('groups');
+  }
+
   async subscribeGroups(): Promise<Group[]> {
-    if (this.groups.length) {
-      return this.groups;
-    }
+    if (this.groups.length) return this.groups;
 
     return new Promise<Group[]>((resolve) => {
       this.firebaseService.subscribeToGroups((groups: any[]) => {
@@ -45,23 +48,6 @@ export class GroupsService {
         resolve(this.groups);
       });
     });
-  }
-
-  async loadGroups(): Promise<Group[]> {
-    if (this.groups.length) {
-      return this.groups;
-    }
-
-    const groups = await this.firebaseService.getAllEntity('groups');
-
-    this.groups = groups.map((group: any) => ({
-      id: group.id,
-      title: group.title,
-      description: group.description,
-      permissions: group.permissions ?? []
-    }));
-
-    return this.groups;
   }
 
   getGroups(): readonly Group[] {

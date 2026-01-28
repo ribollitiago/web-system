@@ -112,6 +112,7 @@ export class RegisterStep2Component implements OnDestroy {
 
   ngOnDestroy(): void {
     this.languageSubscription?.unsubscribe();
+    this.groupsService.unSubscribeGroups();
   }
 
   // ------------------------------------------------------
