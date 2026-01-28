@@ -19,7 +19,7 @@ export class SessionService {
     private readonly LAST_LOGIN_KEY = 'last-login-time';
     private readonly LAST_ACTIVITY_KEY = 'last-user-activity';
     private readonly LOGOUT_REASON_KEY = 'logout-reason';
-    
+
     private readonly IDLE_TIMEOUT = 30 * 60 * 1000;
     private readonly MAX_SESSION_TIME = 8 * 60 * 60 * 1000;
     private readonly CHECK_INTERVAL = 10 * 1000;
@@ -119,7 +119,6 @@ export class SessionService {
         return null;
     }
 
-
     private checkTokenExpiration(): void {
         const reason = this.isSessionExpired();
 
@@ -169,6 +168,7 @@ export class SessionService {
 
     clearSessionStorage(): void {
         this.userSubject.next(null);
+        this.firebaseService.offSubscription('user');
         localStorage.removeItem('userData');
         localStorage.removeItem(this.LOGOUT_EVENT_KEY);
         localStorage.removeItem(this.LAST_LOGIN_KEY);
@@ -201,49 +201,51 @@ export class SessionService {
         });
     }
 
+    // ------------------------------------------------------
+    // SEÇÃO: LoadUser
+    // ------------------------------------------------------
+
     private async resolveGroupPermissions(groupIds: string[]): Promise<string[]> {
+        const groups = await this.firebaseService.getAllEntity('groups');
 
-        const permissions: string[] = [];
-
-        for (const groupId of groupIds) {
-            const group = await this.firebaseService.getEntityById('groups', groupId);
-
-            if (group?.['permissions']?.length) {
-                permissions.push(...group['permissions']);
-            }
-        }
+        const permissions = groupIds
+            .map(groupId => groups.find(g => g['id'] === groupId))
+            .filter(group => group?.['permissions']?.length)
+            .flatMap(group => group!['permissions']);
 
         return Array.from(new Set(permissions));
     }
 
     async loadAndSetUser(uid: string): Promise<void> {
+        // this.firebaseService.updateEntity('users/' + uid, { situation: 2 });
+        this.firebaseService.subscribeToUser(uid, async (userData) => {
+            if (!userData) {
+                console.warn('Usuário não encontrado');
+                await this.logout();
+                return;
+            }
 
-        const userData = await this.firebaseService.getEntityById('users', uid);
+            const groupIds: string[] = Array.isArray(userData['groups'])
+                ? userData['groups']
+                : userData['group']
+                    ? [userData['group']]
+                    : [];
 
-        if (!userData) {
-            throw new Error('Usuário não encontrado no banco');
-        }
+            const permissionsFromGroups = await this.resolveGroupPermissions(groupIds);
 
-        const groupIds: string[] = Array.isArray(userData['groups'])
-            ? userData['groups']
-            : userData['group']
-                ? [userData['group']]
-                : [];
+            const mergedPermissions = Array.from(
+                new Set([
+                    ...(permissionsFromGroups ?? []),
+                    ...(userData['permissions'] ?? [])
+                ])
+            );
 
-        const permissionsFromGroups = await this.resolveGroupPermissions(groupIds);
+            const resolvedUser = {
+                ...userData,
+                permissions: mergedPermissions
+            };
 
-        const mergedPermissions = Array.from(
-            new Set([
-                ...(permissionsFromGroups ?? []),
-                ...(userData['permissions'] ?? [])
-            ])
-        );
-
-        const resolvedUser = {
-            ...userData,
-            permissions: mergedPermissions
-        };
-
-        this.userSubject.next(resolvedUser);
+            this.userSubject.next(resolvedUser);
+        });
     }
 }

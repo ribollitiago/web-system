@@ -27,6 +27,7 @@ export class FirebaseService {
 
     private readonly db = getDatabase(firebaseApp);
     private usersSubscription: (() => void) | null = null;
+    private userSubscription: (() => void) | null = null;
     private groupsSubscription: (() => void) | null = null;
 
     // ------------------------------------------------------
@@ -63,6 +64,11 @@ export class FirebaseService {
         return this.snapshotToUsers(snapshot);
     }
 
+    async getEntityField<T = any>(query: string, uid: string, field: string): Promise<T | null> {
+        const snapshot = await get(this.setQueryRef(`${query}/${uid}/${field}`));
+        return snapshot.exists() ? snapshot.val() as T : null;
+    }
+
     async getEntityByField<T extends keyof Entity>(
         query: string,
         field: T,
@@ -82,20 +88,28 @@ export class FirebaseService {
     // ------------------------------------------------------
 
     async updateEntity(query: string, data: Record<string, any>) {
-        await this.setEntity(query, data);
+        await this.addEntity(query, data);
     }
 
     async addEntity(query: string, data: Record<string, any>) {
-        await this.setEntity(query, data);
-    }
-
-    async deleteEntity(query: string, uid: string) {
-        await remove(this.setQueryRef(`${query}/${uid}`));
+        await this.addEntity(query, data);
     }
 
     // ------------------------------------------------------
     // SEÇÃO: INSCRIÇÃO EM EVENTOS
     // ------------------------------------------------------
+
+    subscribeToUser(uid: string, callback: (user: Entity | null) => void) {
+        console.log()
+        if (this.userSubscription) {
+            this.offSubscription('user');
+        }
+
+        this.userSubscription = onValue(
+            this.setQueryRef(`users/${uid}`),
+            snapshot => callback(snapshot.exists() ? snapshot.val() : null)
+        );
+    }
 
     subscribeToUsers(callback: (users: Entity[]) => void) {
         if (this.usersSubscription) {
@@ -126,6 +140,7 @@ export class FirebaseService {
     offSubscription(refPath: string) {
         off(this.setQueryRef(refPath));
         if (refPath === 'users') this.usersSubscription = null;
+        if (refPath === 'user') this.userSubscription = null;
         if (refPath === 'groups') this.groupsSubscription = null;
     }
 }

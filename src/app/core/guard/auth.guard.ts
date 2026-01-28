@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { User } from 'firebase/auth';
-import { map, Observable, take, switchMap, of } from 'rxjs';
+import { Observable, take, switchMap, of } from 'rxjs';
 import { SessionService } from '../services/auth/session.service';
 
 @Injectable({
@@ -13,27 +13,25 @@ export class AuthGuard implements CanActivate {
     private sessionService: SessionService
   ) { }
 
-  canActivate(): Observable<boolean> {
-    const reason = this.sessionService.isSessionExpired();
-
-    if (reason) {
-      sessionStorage.setItem('logout-reason', reason);
+  canActivate(_route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+    const expirationReason = this.sessionService.isSessionExpired();
+    if (expirationReason) {
+      sessionStorage.setItem('logout-reason', expirationReason);
       this.sessionService.logout();
       return of(false);
     }
 
     return this.sessionService.getAuthState().pipe(
       take(1),
-      map(async (user: User | null) => {
+      switchMap(async (user: User | null) => {
         if (!user) {
-          this.router.navigate(['/login']);
+          this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
           return false;
         }
 
         await this.sessionService.loadAndSetUser(user.uid);
         return true;
-      }),
-      switchMap(result => result)
+      })
     );
   }
 }

@@ -85,6 +85,7 @@ export class ListUsersComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.languageSubscription.unsubscribe();
+    this.firebaseService.offSubscription('users')
   }
 
   // ======================================================
