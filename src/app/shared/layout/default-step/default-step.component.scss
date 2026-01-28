@@ -283,23 +283,8 @@
       flex-direction: column;
       align-items: center;
 
-      button {
-
+      .button-next {
         width: 275px;
-        padding: 18px 0;
-        margin: 0 auto;
-        border-radius: 12px;
-        border: none;
-        font-size: 14px;
-        font-weight: 600;
-        color: $btn-text-color;
-        background-color: $btn-color;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-
-        &:hover {
-          background-color: darken($btn-color, 8%);
-        }
       }
     }
   }

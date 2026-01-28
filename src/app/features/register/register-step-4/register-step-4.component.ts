@@ -1,7 +1,7 @@
 // ------------------------------------------------------
 // IMPORTS
 // ------------------------------------------------------
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -15,6 +15,7 @@ import { PermissionsService } from '../../../core/services/permissions/permissio
 import { DefaultStepComponent } from '../../../shared/layout/default-step/default-step.component';
 import { GroupChipComponent } from "../../../shared/components/chip/group-chip/group-chip.component";
 import { GroupsService } from '../../../core/services/permissions/group.service';
+import { DefaultPopupComponent } from "../../../shared/components/popup/default-popup/default-popup.component";
 
 // ------------------------------------------------------
 // COMPONENT
@@ -27,12 +28,15 @@ import { GroupsService } from '../../../core/services/permissions/group.service'
     CommonModule,
     MatTooltipModule,
     MatMenuModule,
-    GroupChipComponent
+    GroupChipComponent,
+    DefaultPopupComponent
 ],
   templateUrl: './register-step-4.component.html',
   styleUrl: './register-step-4.component.scss'
 })
 export class RegisterStep4Component {
+
+  @ViewChild(DefaultPopupComponent) popup!: DefaultPopupComponent;
 
   // ------------------------------------------------------
   // STATE
@@ -221,5 +225,9 @@ export class RegisterStep4Component {
     this.registerService.register('users')
       .then(() => this.router.navigate(['/home']))
       .catch(() => {});
+  }
+
+  handleOpenDialog(){
+    this.popup.open();
   }
 }

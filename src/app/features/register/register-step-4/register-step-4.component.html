@@ -4,7 +4,7 @@
   [currentStepState]="4"
   [btnLast]="btnRegister"
   [returnStep]="3"
-  (submit)="confirmRegistration()">
+  (submit)="handleOpenDialog()">
 
   <div class="resume-data">
     <div class="name">
@@ -37,13 +37,14 @@
     <h2>Grupos</h2>
     <div class="groups-container">
       <app-group-chip
-          [groups]="selectedGroupsDetails"
-          [maxDisplay]="5"
-          [allowExpand]="true">
-        </app-group-chip>
+        [groups]="selectedGroupsDetails"
+        [maxDisplay]="5"
+        [allowExpand]="true">
+      </app-group-chip>
     </div>
   </div>
 
+  @if (permissionUserSelected?.length) {
   <div class="resume-permissions">
     <h2>{{ stepTwo }}</h2>
     <div class="permissions-container"></div>
@@ -77,11 +78,21 @@
 
     </div>
   </div>
-
+  }
   <div class="resume-extra-information">
     <div>
       <h2>{{ stepThree }}</h2>
-      <p>{{ registrationData.text || '-' }}</p>
+      <p>{{ registrationData.description || '-' }}</p>
     </div>
   </div>
 </app-default-step>
+
+<app-default-popup
+  title="Confirmar Cadastro"
+  description="Deseja finalizar?"
+  buttonLeftTitle="Registrar"
+  buttonRightTitle="Cancelar"
+  buttonLeftColor="#18AE6D"
+  buttonRightColor="#D35353"
+  (confirmAction)="confirmRegistration()">
+</app-default-popup>

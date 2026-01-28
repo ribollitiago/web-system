@@ -1,0 +1,57 @@
+@import "../../../../../styles/variables.scss";
+
+.dialog-overlay {
+  background-color: #00000093;
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 99;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .dialog-box {
+    background-color: $popup-bg;
+    padding: 40px;
+    max-width: 30%;
+    border-radius: 12px;
+    width: 100%;
+
+    .title {
+      font-size: 24px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+      color: $text-color;
+    }
+
+    .description {
+      font-size: 16px;
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      color: $subtitle-color;
+      margin-bottom: 40px;
+    }
+
+    .actions-wrapper {
+      display: flex;
+      gap: 20px;
+      width: 100%;
+
+      app-default-button {
+        flex: 1;
+      }
+    }
+  }
+
+
+}

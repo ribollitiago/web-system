@@ -2,10 +2,11 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { TranslationService } from '../../../core/services/i18n/translate.service';
 import { RegisterService } from '../../../core/services/auth/register.service';
 import { CommonModule } from '@angular/common';
+import { DefaultButtonComponent } from "../../components/button/default-button/default-button.component";
 
 @Component({
   selector: 'app-default-step',
-  imports: [CommonModule],
+  imports: [CommonModule, DefaultButtonComponent],
   templateUrl: './default-step.component.html',
   styleUrl: './default-step.component.scss'
 })

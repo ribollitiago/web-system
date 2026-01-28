@@ -1,0 +1,29 @@
+@if (isVisible()) {
+
+  <div class="dialog-overlay">
+
+    <div class="dialog-box">
+
+      <h1 class="title">{{ title }}</h1>
+      <p class="description">{{ description }}</p>
+
+      <div class="actions-wrapper">
+
+        <app-default-button
+          [label]="buttonLeftTitle"
+          [color]="buttonLeftColor"
+          (action)="handleConfirm()">
+        </app-default-button>
+
+        <app-default-button
+          [label]="buttonRightTitle"
+          [color]="buttonRightColor"
+          (action)="handleClose()">
+        </app-default-button>
+
+      </div>
+
+    </div>
+  </div>
+
+}
