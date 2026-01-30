@@ -79,25 +79,22 @@ export class RegisterStep1Component implements OnInit {
   // LIFECYCLE
   // ------------------------------------------------------
   ngOnInit(): void {
-    this.loadSavedData();
+    this.registerService.data$.subscribe(allData => {
+      const data = allData['users'] || {};
+      this.name = data['name'] ?? '';
+      this.email = data['email'] ?? '';
+      this.phone = data['phone'] ?? '';
+      this.enrollment = data['enrollment'] ?? '';
+      this.password = data['password'] ?? '';
+      this.confirmPassword = data['confirmPassword'] ?? '';
+    });
+
     this.listenLanguageChanges();
   }
 
   // ------------------------------------------------------
   // DATA
   // ------------------------------------------------------
-  private loadSavedData(): void {
-    const data = this.registerService.getData('users');
-    if (!data) return;
-
-    this.name = data['name'] ?? '';
-    this.email = data['email'] ?? '';
-    this.phone = data['phone'] ?? '';
-    this.enrollment = data['enrollment'] ?? '';
-    this.password = data['password'] ?? '';
-    this.confirmPassword = data['confirmPassword'] ?? '';
-  }
-
   onFieldChange(field: keyof RegisterData, value: any): void {
     this.registerService.updateData('users', {
       [field]: value

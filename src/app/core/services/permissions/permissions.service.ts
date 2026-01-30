@@ -53,6 +53,10 @@ export class PermissionsService {
     }
   }
 
+  clearSelectedPermissions(): void {
+    this.selectedPermissions = {};
+  }
+
   // ------------------------------------------------------
   // SEÇÃO: MAPEAMENTO DE PERMISSÕES
   // ------------------------------------------------------
@@ -60,7 +64,7 @@ export class PermissionsService {
   private mapPermissions(permissions: Record<string, any>): Record<string, Permission> {
     return Object.keys(permissions).reduce((acc, key) => {
       const permission = permissions[key];
-      
+
       if (!isCriticalLevel(permission.critical)) {
         throw new Error(`Nível crítico inválido: ${permission.critical}`);
       }
@@ -108,7 +112,7 @@ export class PermissionsService {
 
       Object.keys(categoryPermissions).forEach(permissionKey => {
         const permission = categoryPermissions[permissionKey];
-                
+
         const translatedObj: any = this.translationService.getTranslation(permission.id, 'Permissions');
 
         if (translatedObj) {

@@ -30,7 +30,7 @@ import { DefaultPopupComponent } from "../../../shared/components/popup/default-
     MatMenuModule,
     GroupChipComponent,
     DefaultPopupComponent
-],
+  ],
   templateUrl: './register-step-4.component.html',
   styleUrl: './register-step-4.component.scss'
 })
@@ -82,25 +82,24 @@ export class RegisterStep4Component {
     private router: Router,
     private permissionsService: PermissionsService,
     private groupsService: GroupsService
-  ) {}
+  ) { }
 
   // ------------------------------------------------------
   // LIFECYCLE
   // ------------------------------------------------------
   ngOnInit(): void {
-    this.registrationData = this.registerService.getData('users');
+    this.registerService.data$.subscribe(allData => {
+      this.registrationData = allData['users'] || {};
+      this.selectedGroupsDetails = this.groupsService.getSelectedGroups();
+
+      if (this.registrationData.permissions?.length) {
+        this.listPermissions(this.registrationData.permissions);
+      } else {
+        this.permissionUserSelected = [];
+      }
+    });
+
     this.listenLanguageChanges();
-
-    this.selectedGroupsDetails = this.groupsService.getSelectedGroups();
-
-    // Fallback caso não venha nada
-    if (this.selectedGroupsDetails.length === 0) {
-      this.selectedGroupsDetails = [{ title: 'Nenhum grupo selecionado' }];
-    }
-
-    if (this.registrationData.permissions?.length) {
-      this.listPermissions(this.registrationData.permissions);
-    }
   }
 
   // ------------------------------------------------------
@@ -224,10 +223,10 @@ export class RegisterStep4Component {
   confirmRegistration(): void {
     this.registerService.register('users')
       .then(() => this.router.navigate(['/home']))
-      .catch(() => {});
+      .catch(() => { });
   }
 
-  handleOpenDialog(){
+  handleOpenDialog() {
     this.popup.open();
   }
 }

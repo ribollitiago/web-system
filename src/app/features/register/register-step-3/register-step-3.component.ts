@@ -48,13 +48,18 @@ export class RegisterStep3Component implements OnInit {
   constructor(
     private translationService: TranslationService,
     private registerService: RegisterService
-  ) {}
+  ) { }
 
   // ------------------------------------------------------
   // LIFECYCLE
   // ------------------------------------------------------
   ngOnInit(): void {
-    this.loadSavedData();
+    this.registerService.data$.subscribe(allData => {
+      const data = allData['users'] || {};
+      this.registrationData = data;
+      this.textTyped = data['description'] ?? '';
+    });
+
     this.listenLanguageChanges();
   }
 

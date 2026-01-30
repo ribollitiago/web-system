@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import firebaseApp from '../../../firebase.config';
@@ -31,6 +31,36 @@ export class RegisterService {
   // SEÇÃO: CONTROLE DE STEPS POR ENTIDADE
   // ------------------------------------------------------
 
+  private openContinuePopupSubject = new Subject<void>();
+  openContinuePopup$ = this.openContinuePopupSubject.asObservable();
+
+  triggerContinuePopup(): void {
+    this.openContinuePopupSubject.next();
+  }
+  private isInternalNavigation = false;
+
+  resetNavigationFlag(): void {
+    this.isInternalNavigation = false;
+  }
+
+  setInternalNavigation(value: boolean): void {
+    this.isInternalNavigation = value;
+  }
+
+  getInternalNavigation(): boolean {
+    const val = this.isInternalNavigation;
+    this.isInternalNavigation = false;
+    return val;
+  }
+
+  isSameUser(entityType: string): boolean {
+    const data = this.getData(entityType);
+    const currentUser = this.auth.currentUser;
+    
+    if (!data['savedUid'] || !currentUser) return true;
+    return data['savedUid'] === currentUser.uid;
+  }
+
   private stepSubject = new BehaviorSubject<{ [entityType: string]: number }>({});
   step$ = this.stepSubject.asObservable();
 
@@ -39,6 +69,7 @@ export class RegisterService {
   }
 
   nextStep(entityType: string): void {
+    this.setInternalNavigation(true);
     const current = this.getStep(entityType);
     if (current < this.MAX_STEP) {
       this.stepSubject.next({
@@ -76,12 +107,10 @@ export class RegisterService {
 
   updateData(entityType: string, partial: Partial<RegisterData>): void {
     const current = this.dataSubject.value[entityType] || {};
+    const currentUser = getAuth().currentUser;
     this.dataSubject.next({
       ...this.dataSubject.value,
-      [entityType]: {
-        ...current,
-        ...partial
-      }
+      [entityType]: { ...current, ...partial, savedUid: currentUser?.uid }
     });
   }
 
@@ -93,20 +122,16 @@ export class RegisterService {
   // SEÇÃO: RESET
   // ------------------------------------------------------
 
-  reset(entityType?: string): void {
-    if (entityType) {
-      this.dataSubject.next({
-        ...this.dataSubject.value,
-        [entityType]: {}
-      });
-      this.stepSubject.next({
-        ...this.stepSubject.value,
-        [entityType]: 1
-      });
-    } else {
-      this.dataSubject.next({});
-      this.stepSubject.next({});
-    }
+  reset(entityType: string = 'users'): void {
+    const currentData = this.dataSubject.value;
+    currentData[entityType] = {};
+    this.dataSubject.next({ ...currentData });
+
+    const currentSteps = this.stepSubject.value;
+    currentSteps[entityType] = 1;
+    this.stepSubject.next({ ...currentSteps });
+
+    this.isInternalNavigation = false;
   }
 
   // ------------------------------------------------------
@@ -161,5 +186,20 @@ export class RegisterService {
 
     const maxId = Math.max(...entities.map(e => Number(e['id'] ?? 0)));
     return String(maxId + 1).padStart(5, '0');
+  }
+
+  hasUserProgress(entityType: string): boolean {
+    const data = this.getData(entityType);
+
+    if (!data) return false;
+
+    return Boolean(
+      data['name'] ||
+      data['email'] ||
+      data['phone'] ||
+      data['enrollment'] ||
+      data['password'] ||
+      data['confirmPassword']
+    );
   }
 }

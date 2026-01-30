@@ -103,8 +103,16 @@ export class RegisterStep2Component implements OnDestroy {
   // LIFECYCLE
   // ------------------------------------------------------
   ngOnInit(): void {
-    this.lockedPermissions$ =
-      this.permissionsService.getLockedPermissions$();
+    this.lockedPermissions$ = this.permissionsService.getLockedPermissions$();
+
+    this.registerService.data$.subscribe(allData => {
+      const data = allData['users'] || {};
+      if (Object.keys(data).length === 0) {
+        this.permissionsService.clearSelectedPermissions();
+        this.groupsService.clearSelectedGroups();
+        this.updateGroupOptions();
+      }
+    });
 
     this.loadTranslations();
     this.loadGroups();
