@@ -151,18 +151,23 @@ export class RegisterStep1Component implements OnInit {
   private async validateForm(): Promise<boolean> {
 
     const ERROR_FIELD_MAP: Record<string, string> = {
-      INVALID_NAME: this.placeholderName,
-      INVALID_EMAIL: this.placeholderEmail,
-      INVALID_PHONE: this.placeholderPhone,
-      ENROLLMENT_REQUIRED: this.placeholderEnrollment,
-      PASSWORD_TOO_SHORT: this.placeholderPassword,
-      PASSWORD_MISMATCH: this.placeholderConfirmPassword
+      INVALID_NAME: this.titleName,
+      INVALID_NAME_PART: this.titleName,
+      INVALID_EMAIL: this.titleEmail,
+      INVALID_PHONE: this.titlePhone,
+      ENROLLMENT_REQUIRED: this.titleEnrollment,
+      PASSWORD_TOO_SHORT: this.titlePassword,
+      PASSWORD_MISMATCH: this.titleConfirmPassword
     };
 
     const ERROR_MESSAGE_MAP: Record<string, string> = {
+      INVALID_NAME_CHARACTERS: 'Nome não pode ter caracteres especiais ou numeros',
       PASSWORD_MISMATCH: 'As senhas não conferem',
       EMAIL_ALREADY_EXISTS: 'Já existe esse Email',
-      ENROLLMENT_ALREADY_EXISTS: 'Já existe essa Matrícula'
+      ENROLLMENT_ALREADY_EXISTS: 'Já existe essa Matrícula',
+      PASSWORD_WEAK: 'A senha está muito fraca, precisa de uma caractere',
+      PASSWORD_CONTAINS_EMAIL: 'A senha está muito fraca, nao pode conter seu email',
+      PASSWORD_CONTAINS_NAME: 'A senha está muito fraca, não pode conter seu nome'
     };
 
     const validations = await Promise.all([
@@ -201,7 +206,6 @@ export class RegisterStep1Component implements OnInit {
         message = 'Existem vários campos inválidos. Revise o formulário.';
       }
 
-      // Limpa apenas uma vez para não acumular infinitos toasts
       this.toastService.clear();
       this.toastService.error(message);
     }
@@ -210,7 +214,6 @@ export class RegisterStep1Component implements OnInit {
     // MOSTRA ERROS ESPECIAIS (outro bloco de toast)
     // ======================================================
     if (specialErrors.length > 0) {
-      // Limpa novamente antes do segundo bloco
       for (const error of specialErrors) {
         const message = ERROR_MESSAGE_MAP[error.error!];
         if (message) this.toastService.error(message);
@@ -230,7 +233,7 @@ export class RegisterStep1Component implements OnInit {
 
     //NÃO ESQUEÇA DE ATIVAR!!!
     //NÃO ESQUEÇA DE ATIVAR!!!
-    //if (!(await this.validateForm())) return;
+    if (!(await this.validateForm())) return;
     //NÃO ESQUEÇA DE ATIVAR!!!
     //NÃO ESQUEÇA DE ATIVAR!!!
 

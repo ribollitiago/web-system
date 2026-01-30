@@ -26,23 +26,47 @@ export class ValidatorsService {
     data?: RegisterData
   ): Promise<ValidationResult> {
 
+    // --------------------------------------------------
+    // Normalização básica (remove espaços invisíveis)
+    // --------------------------------------------------
+    if (typeof value === 'string') {
+      value = value.trim();
+    }
+
     switch (type) {
 
+      // --------------------------------------------------
+      // NOME
+      // --------------------------------------------------
       case 'NAME':
-        if (!value || value.trim().split(' ').length < 2) {
+
+        if (!value || value.split(' ').length < 2) {
           return { valid: false, error: 'INVALID_NAME' };
         }
+
+        const nameParts = value.split(' ');
+        if (nameParts.some((part: string) => part.length < 2)) {
+          return { valid: false, error: 'INVALID_NAME_PART' };
+        }
+
         return { valid: true };
 
+      // --------------------------------------------------
+      // EMAIL
+      // --------------------------------------------------
       case 'EMAIL':
-        if (!value || !value.includes('@')) {
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!value || !emailRegex.test(value)) {
           return { valid: false, error: 'INVALID_EMAIL' };
         }
+
+        const normalizedEmail = value.toLowerCase();
 
         const emailExists = await this.firebaseService.getEntityByField(
           'users',
           'email',
-          value
+          normalizedEmail
         );
 
         if (emailExists.length) {
@@ -51,13 +75,23 @@ export class ValidatorsService {
 
         return { valid: true };
 
+      // --------------------------------------------------
+      // TELEFONE
+      // --------------------------------------------------
       case 'PHONE':
+
         if (!value) {
           return { valid: false, error: 'INVALID_PHONE' };
         }
-        return { valid: true };
 
+        return { valid: true};
+
+
+      // --------------------------------------------------
+      // MATRÍCULA
+      // --------------------------------------------------
       case 'ENROLLMENT':
+
         if (!value) {
           return { valid: false, error: 'ENROLLMENT_REQUIRED' };
         }
@@ -74,13 +108,39 @@ export class ValidatorsService {
 
         return { valid: true };
 
+      // --------------------------------------------------
+      // SENHA
+      // --------------------------------------------------
       case 'PASSWORD':
+
         if (!value || value.length < 6) {
           return { valid: false, error: 'PASSWORD_TOO_SHORT' };
         }
+
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).+$/;
+        if (!passwordRegex.test(value)) {
+          return { valid: false, error: 'PASSWORD_WEAK' };
+        }
+
+        if (data?.['email'] && value.toLowerCase().includes(data['email'].toLowerCase())) {
+          return { valid: false, error: 'PASSWORD_CONTAINS_EMAIL' };
+        }
+
+        if (data?.['name'] && value.toLowerCase().includes(data['name'].toLowerCase())) {
+          return { valid: false, error: 'PASSWORD_CONTAINS_NAME' };
+        }
+
         return { valid: true };
 
+      // --------------------------------------------------
+      // CONFIRMAÇÃO DE SENHA
+      // --------------------------------------------------
       case 'PASSWORD_MATCH':
+
+        if (!data?.['confirmPassword']) {
+          return { valid: false, error: 'CONFIRM_PASSWORD_REQUIRED' };
+        }
+
         if (
           data?.['password'] &&
           data?.['confirmPassword'] &&
@@ -88,8 +148,12 @@ export class ValidatorsService {
         ) {
           return { valid: false, error: 'PASSWORD_MISMATCH' };
         }
+
         return { valid: true };
 
+      // --------------------------------------------------
+      // DEFAULT
+      // --------------------------------------------------
       default:
         return { valid: true };
     }
