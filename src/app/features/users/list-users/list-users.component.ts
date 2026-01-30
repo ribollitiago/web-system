@@ -14,6 +14,7 @@ export interface User {
   date: string;
   phone: string;
   enrollment: string;
+  description: string;
   permissions: [];
   group: any[];
   situation: string;

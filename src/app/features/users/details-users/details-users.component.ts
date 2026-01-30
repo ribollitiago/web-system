@@ -9,10 +9,11 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { SituationChipComponent } from '../../../shared/components/chip/situation-chip/situation-chip.component';
 import { GroupChipComponent } from '../../../shared/components/chip/group-chip/group-chip.component';
+import { BorderButtonComponent } from "../../../shared/components/button/border-button/border-button.component";
 
 @Component({
   selector: 'app-details-users',
-  imports: [SearchInputComponent, ListUsersComponent, CommonModule, MatTooltipModule, MatMenuModule, SituationChipComponent, GroupChipComponent],
+  imports: [SearchInputComponent, ListUsersComponent, CommonModule, MatTooltipModule, MatMenuModule, SituationChipComponent, GroupChipComponent, BorderButtonComponent],
   templateUrl: './details-users.component.html',
   styleUrl: './details-users.component.scss'
 })
