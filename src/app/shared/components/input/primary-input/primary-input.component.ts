@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, forwardRef, Input, OnInit } from '@angular/core';
+import { Component, forwardRef, Input, OnInit, ViewChild } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
+import { MatTooltipModule, MatTooltip } from '@angular/material/tooltip';
 
 type InputTypes = "text" | "email" | "password";
 
@@ -9,7 +10,8 @@ type InputTypes = "text" | "email" | "password";
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatTooltipModule
   ],
   providers: [{
     provide: NG_VALUE_ACCESSOR,
@@ -26,34 +28,87 @@ export class PrimaryInputComponent implements ControlValueAccessor, OnInit {
   @Input() inputName: string = "";
   @Input() isPassword: boolean = false;
 
-  fieldTextType?: boolean;
+  // Novas propriedades de restrição
+  @Input() maxlength: number | string = "";
+  @Input() maskType: 'numbers' | 'alphabet' | 'all' = 'all';
 
+
+  // Variáveis de controle do Tooltip
+  tooltipMessage: string = "";
+  private tooltipTimeout: any;
+
+  fieldTextType?: boolean;
   value: string = '';
+
   onChange: any = () => { }
   onTouched: any = () => { }
 
   ngOnInit() {
-    // Inicializa o tipo do campo com base em isPassword
     this.fieldTextType = !this.isPassword;
   }
 
+  onKeyDown(event: KeyboardEvent, tooltip: MatTooltip) {
+    const input = event.target as HTMLInputElement;
+    const key = event.key;
+
+    const controlKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Control', 'Alt'];
+    if (controlKeys.includes(key) || event.ctrlKey || event.metaKey) return;
+
+    let error = "";
+
+    if (this.maxlength && input.value.length >= +this.maxlength) {
+      if (input.selectionStart === input.selectionEnd) {
+        error = `Limite máximo de ${this.maxlength} caracteres atingido.`;
+      }
+    }
+
+    if (!error) {
+      if (this.maskType === 'numbers' && !/^\d$/.test(key)) {
+        error = "Este campo aceita apenas números.";
+      } else if (this.maskType === 'alphabet' && !/^[a-zA-ZÀ-ÿ\s]$/.test(key)) {
+        error = "Este campo aceita apenas letras.";
+      }
+    }
+
+    if (error) {
+      event.preventDefault();
+      this.handleTooltip(tooltip, error);
+    }
+  }
+
   onInput(event: Event) {
-    const value = (event.target as HTMLInputElement).value;
-    this.onChange(value);
+    const input = event.target as HTMLInputElement;
+    let val = input.value;
+
+    if (this.maskType === 'numbers') val = val.replace(/\D/g, '');
+    if (this.maskType === 'alphabet') val = val.replace(/[^a-zA-ZÀ-ÿ\s]/g, '');
+
+    if (this.maxlength && val.length > +this.maxlength) {
+      val = val.substring(0, +this.maxlength);
+    }
+
+    input.value = val;
+    this.value = val;
+    this.onChange(val);
   }
 
-  writeValue(value: any): void {
-    this.value = value;
-  }
+  private handleTooltip(tooltip: MatTooltip, message: string) {
+  this.tooltipMessage = message;
+  tooltip.show();
 
-  registerOnChange(fn: any): void {
-    this.onChange = fn;
-  }
+  if (this.tooltipTimeout) clearTimeout(this.tooltipTimeout);
 
-  registerOnTouched(fn: any): void {
-    this.onTouched = fn;
-  }
+  this.tooltipTimeout = setTimeout(() => {
+    tooltip.hide();
+    setTimeout(() => {
+      this.tooltipMessage = "";
+    }, 200);
+  }, 2500);
+}
 
+  writeValue(value: any): void { this.value = value || ''; }
+  registerOnChange(fn: any): void { this.onChange = fn; }
+  registerOnTouched(fn: any): void { this.onTouched = fn; }
   setDisabledState(isDisabled: boolean): void { }
 
   toggleFieldTextType() {
