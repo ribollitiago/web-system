@@ -1,0 +1,49 @@
+button {
+  /* 1. Layout Flexbox */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  /* Espaço entre ícone e texto */
+
+  /* 2. Dimensões */
+  width: 100%;
+  /* Padding de 10px baseado no texto */
+  padding: 10px;
+  box-sizing: border-box;
+
+  /* 3. Estilo Visual */
+  border: 1px solid white;
+  border-radius: 12px;
+  background-color: transparent;
+  color: white;
+  cursor: pointer;
+
+  /* 4. Controle do Texto (CRUCIAL) */
+  font-size: 14px;
+  line-height: 1;
+  /* Força a altura da linha do texto ser exatamente 14px */
+
+  transition: background-color 0.5s ease;
+
+  &:hover {
+    background-color: darken($color: #00000044, $amount: 0);
+  }
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+
+  /* Centraliza o conteúdo (SVG/Img) dentro da div do ícone */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* 5. O TRUQUE (CRUCIAL) */
+  /* O ícone tem 24px e o texto 14px. A diferença é 10px. */
+  /* Tiramos 5px de cima e 5px de baixo com margem negativa. */
+  /* Assim, o navegador "pensa" que o ícone tem a mesma altura do texto (14px) */
+  margin-top: -5px;
+  margin-bottom: -5px;
+}
