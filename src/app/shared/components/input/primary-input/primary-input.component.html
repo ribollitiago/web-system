@@ -3,14 +3,24 @@
 
   <div class="input-content">
     <input
+      #inputElement
       [type]="fieldTextType ? 'text' : 'password'"
       [placeholder]="placeholder"
       [value]="value"
+      [attr.maxlength]="maxlength"
+      [matTooltip]="tooltipMessage"
+      [matTooltipPosition]="'above'"
+      [matTooltipDisabled]="tooltipMessage === ''"
+      #t="matTooltip"
       (input)="onInput($event)"
-    />
+      (keydown)="onKeyDown($event, t)"
+      />
+
     <div *ngIf="isPassword" class="toggle-icon" (click)="toggleFieldTextType()">
-      <img [src]="fieldTextType ? 'assets/svg/icon/input/eye-off.svg' : 'assets/svg/icon/input/eye-on.svg'" alt="Toggle Password Visibility">
+      <img
+        [src]="fieldTextType ? 'assets/svg/icon/input/eye-off.svg' : 'assets/svg/icon/input/eye-on.svg'">
     </div>
+
     <div class="icon">
       <ng-content></ng-content>
     </div>

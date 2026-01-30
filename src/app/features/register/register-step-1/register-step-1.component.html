@@ -7,7 +7,7 @@
       <div class="name">
         <h3>{{ titleName }}</h3>
         <app-primary-input [(ngModel)]="name" (ngModelChange)="onFieldChange('name', $event)" name="name"
-          [placeholder]="placeholderName">
+          [placeholder]="placeholderName" maskType="alphabet" maxlength="50">
           <img src="assets/svg/icon/input/user.svg" alt>
         </app-primary-input>
       </div>
@@ -15,7 +15,7 @@
       <div class="email">
         <h3>{{ titleEmail }}</h3>
         <app-primary-input [(ngModel)]="email" (ngModelChange)="onFieldChange('email', $event)" name="email"
-          type="email" [placeholder]="placeholderEmail">
+          type="email" [placeholder]="placeholderEmail" maxlength="60">
           <img src="assets/svg/icon/input/email.svg" alt>
         </app-primary-input>
       </div>
@@ -24,7 +24,7 @@
         <div class="phone">
           <h3>{{ titlePhone }}</h3>
           <app-primary-input [(ngModel)]="phone" (ngModelChange)="onFieldChange('phone', $event)" name="phone"
-            [placeholder]="placeholderPhone">
+            [placeholder]="placeholderPhone" maskType="numbers" maxlength="11">
             <img src="assets/svg/icon/input/phone.svg" alt>
           </app-primary-input>
         </div>
@@ -37,7 +37,7 @@
           </div>
 
           <app-primary-input [(ngModel)]="enrollment" (ngModelChange)="onFieldChange('enrollment', $event)"
-            name="enrollment" [placeholder]="placeholderEnrollment">
+            name="enrollment" [placeholder]="placeholderEnrollment" maxlength="25">
             <img src="assets/svg/icon/input/document.svg" alt>
           </app-primary-input>
         </div>
@@ -47,7 +47,7 @@
         <div class="password">
           <h3>{{ titlePassword }}</h3>
           <app-primary-input [(ngModel)]="password" (ngModelChange)="onFieldChange('password', $event)" name="password"
-            type="password" [placeholder]="placeholderPassword" [isPassword]="true">
+            type="password" [placeholder]="placeholderPassword" [isPassword]="true" maxlength="64">
             <img src="assets/svg/icon/input/password.svg" alt>
           </app-primary-input>
         </div>
@@ -55,7 +55,7 @@
         <div class="confirm-password">
           <h3>{{ titleConfirmPassword }}</h3>
           <app-primary-input [(ngModel)]="confirmPassword" (ngModelChange)="onFieldChange('confirmPassword', $event)"
-            name="confirmPassword" type="password" [placeholder]="placeholderConfirmPassword" [isPassword]="true">
+            name="confirmPassword" type="password" [placeholder]="placeholderConfirmPassword" [isPassword]="true" maxlength="25">
             <img src="assets/svg/icon/input/password.svg" alt>
           </app-primary-input>
         </div>
