@@ -101,6 +101,33 @@ export class RegisterStep1Component implements OnInit {
     });
   }
 
+  private formatPhone(value: string): string {
+    const numbers = value.replace(/\D/g, '');
+
+    if (!numbers) return '';
+
+    if (numbers.length <= 2) {
+      return `(${numbers}`;
+    }
+
+    if (numbers.length <= 6) {
+      return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+    }
+
+    if (numbers.length <= 11) {
+      return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7, 11)}`;
+    }
+
+    return numbers;
+  }
+
+  onPhoneChange(value: string): void {
+    const formatted = this.formatPhone(value);
+    this.phone = formatted;
+
+    this.onFieldChange('phone', formatted);
+  }
+
   // ------------------------------------------------------
   // TRANSLATIONS
   // ------------------------------------------------------
