@@ -196,10 +196,10 @@ export class RegisterStep1Component implements OnInit {
     };
 
     const ERROR_MESSAGE_MAP: Record<string, string> = {
-      INVALID_NAME_CHARACTERS: 'Nome não pode ter caracteres especiais ou numeros',
-      PASSWORD_MISMATCH: 'As senhas não conferem',
-      EMAIL_ALREADY_EXISTS: 'Já existe esse Email',
-      ENROLLMENT_ALREADY_EXISTS: 'Já existe essa Matrícula',
+      EMPTY_NAME: 'Campo NOME vazio.',
+      PASSWORD_MISMATCH: 'SENHAS não conferem.',
+      EMAIL_ALREADY_EXISTS: 'EMAIL já existente.',
+      ENROLLMENT_ALREADY_EXISTS: 'MATRICULA já cadastrada.',
       PASSWORD_WEAK: 'A senha está muito fraca, precisa de uma caractere',
       PASSWORD_CONTAINS_EMAIL: 'A senha está muito fraca, nao pode conter seu email',
       PASSWORD_CONTAINS_NAME: 'A senha está muito fraca, não pode conter seu nome'
@@ -229,31 +229,29 @@ export class RegisterStep1Component implements OnInit {
     // ======================================================
     // MOSTRA ERROS DE CAMPO (um bloco de toast)
     // ======================================================
-    if (fieldErrors.length > 0) {
-      let message = '';
+    let message = '';
 
-      if (fieldErrors.length === 1) {
-        message = `Erro no campo: ${ERROR_FIELD_MAP[fieldErrors[0].error!] ?? 'desconhecido'}`;
-      } else if (fieldErrors.length === 2) {
-        const fields = fieldErrors.map(e => ERROR_FIELD_MAP[e.error!]);
-        message = `Erro nos campos: ${fields.join(' e ')}. Corrija para continuar.`;
-      } else {
-        message = 'Existem vários campos inválidos. Revise o formulário.';
-      }
-
-      this.toastService.clear();
-      this.toastService.error(message);
-    }
-
-    // ======================================================
-    // MOSTRA ERROS ESPECIAIS (outro bloco de toast)
-    // ======================================================
-    if (specialErrors.length > 0) {
+    if (fieldErrors.length > 2) {
+      message = 'Existem vários campos inválidos. Revise o formulário.';
+    } else if (fieldErrors.length === 2) {
+      const fields = fieldErrors.map(e => ERROR_FIELD_MAP[e.error!]);
+      message = `Erro nos campos: ${fields.join(' e ')}. Corrija para continuar.`;
+    } else if (fieldErrors.length === 1) {
+      message = `Erro no campo: ${ERROR_FIELD_MAP[fieldErrors[0].error!] ?? 'desconhecido'}`;
+    } else if (specialErrors.length > 0) {
       for (const error of specialErrors) {
         const message = ERROR_MESSAGE_MAP[error.error!];
-        if (message) this.toastService.error(message);
+        if (message) {
+          this.toastService.clear();
+          this.toastService.error(message);
+          return false;
+        }
       }
+
     }
+
+    this.toastService.clear();
+    this.toastService.error(message);
 
     // ======================================================
     // RETORNA SE HOUVE ERROS
@@ -268,7 +266,7 @@ export class RegisterStep1Component implements OnInit {
 
     //NÃO ESQUEÇA DE ATIVAR!!!
     //NÃO ESQUEÇA DE ATIVAR!!!
-    // if (!(await this.validateForm())) return;
+    if (!(await this.validateForm())) return;
     //NÃO ESQUEÇA DE ATIVAR!!!
     //NÃO ESQUEÇA DE ATIVAR!!!
 

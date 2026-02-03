@@ -39,8 +39,11 @@ export class ValidatorsService {
       // NOME
       // --------------------------------------------------
       case 'NAME':
+        if (!value) {
+          return { valid: false, error: 'EMPTY_NAME' };
+        }
 
-        if (!value || value.split(' ').length < 2) {
+        if (value.split(' ').length < 2) {
           return { valid: false, error: 'INVALID_NAME' };
         }
 
