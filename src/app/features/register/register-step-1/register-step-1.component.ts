@@ -138,38 +138,46 @@ export class RegisterStep1Component implements OnInit {
   }
 
   private loadTranslations(): void {
-    const section = 'Register_Page';
+    const section = 'register_page';
+    const step1 = 'step_1.';
+    const default_ = 'default.'
 
-    this.title = this.translationService.getTranslation('title', section);
-    this.subtitle = this.translationService.getTranslation('subtitle', section);
+    // --- Cabeçalho (Step 1) ---
+    this.title = this.translationService.getTranslation(step1 + 'title', section);
+    this.subtitle = this.translationService.getTranslation(step1 + 'subtitle', section);
 
-    this.stepOne = this.translationService.getTranslation('stepOne', section);
-    this.stepTwo = this.translationService.getTranslation('stepTwo', section);
-    this.stepThree = this.translationService.getTranslation('stepThree', section);
+    // --- Navegação (Defaults) ---
+    this.stepOne = this.translationService.getTranslation(default_ + 'stepOne', section);
+    this.stepTwo = this.translationService.getTranslation(default_ + 'stepTwo', section);
+    this.stepThree = this.translationService.getTranslation(default_ + 'stepThree', section);
 
-    this.titleName = this.translationService.getTranslation('titleName', section);
-    this.placeholderName = this.translationService.getTranslation('inputName', section);
+    // --- Campos: Nome ---
+    this.titleName = this.translationService.getTranslation(step1 + 'titleName', section);
+    this.placeholderName = this.translationService.getTranslation(step1 + 'inputName', section);
 
-    this.titleEmail = this.translationService.getTranslation('titleEmail', section);
-    this.placeholderEmail = this.translationService.getTranslation('inputEmail', section);
+    // --- Campos: Email ---
+    this.titleEmail = this.translationService.getTranslation(step1 + 'titleEmail', section);
+    this.placeholderEmail = this.translationService.getTranslation(step1 + 'inputEmail', section);
 
-    this.titlePhone = this.translationService.getTranslation('titlePhone', section);
-    this.placeholderPhone = this.translationService.getTranslation('inputPhone', section);
+    // --- Campos: Telefone ---
+    this.titlePhone = this.translationService.getTranslation(step1 + 'titlePhone', section);
+    this.placeholderPhone = this.translationService.getTranslation(step1 + 'inputPhone', section);
 
-    this.titleEnrollment = this.translationService.getTranslation('titleEnrollment', section);
-    this.placeholderEnrollment = this.translationService.getTranslation('inputEnrollment', section);
+    // --- Campos: Matrícula ---
+    this.titleEnrollment = this.translationService.getTranslation(step1 + 'titleEnrollment', section);
+    this.placeholderEnrollment = this.translationService.getTranslation(step1 + 'inputEnrollment', section);
+    this.tooltipEnrollment = this.translationService.getTranslation(step1 + 'tooltipEnrollment', section);
 
-    this.titlePassword = this.translationService.getTranslation('titlePassword', section);
-    this.placeholderPassword = this.translationService.getTranslation('inputPassword', section);
+    // --- Campos: Senha ---
+    this.titlePassword = this.translationService.getTranslation(step1 + 'titlePassword', section);
+    this.placeholderPassword = this.translationService.getTranslation(step1 + 'inputPassword', section);
 
-    this.titleConfirmPassword =
-      this.translationService.getTranslation('titleConfirmPassword', section);
-    this.placeholderConfirmPassword =
-      this.translationService.getTranslation('inputPasswordConfirm', section);
+    // --- Campos: Confirmar Senha ---
+    this.titleConfirmPassword = this.translationService.getTranslation(step1 + 'titleConfirmPassword', section);
+    this.placeholderConfirmPassword = this.translationService.getTranslation(step1 + 'inputPasswordConfirm', section);
 
-    this.btnLast = this.translationService.getTranslation('btnRegister', section);
-    this.tooltipEnrollment =
-      this.translationService.getTranslation('tooltipEnrollment', section);
+    // --- Botão de Ação (Defaults) ---
+    this.btnLast = this.translationService.getTranslation(default_ + 'btnRegister', section);
   }
 
   // ------------------------------------------------------
@@ -260,7 +268,7 @@ export class RegisterStep1Component implements OnInit {
 
     //NÃO ESQUEÇA DE ATIVAR!!!
     //NÃO ESQUEÇA DE ATIVAR!!!
-    if (!(await this.validateForm())) return;
+    // if (!(await this.validateForm())) return;
     //NÃO ESQUEÇA DE ATIVAR!!!
     //NÃO ESQUEÇA DE ATIVAR!!!
 

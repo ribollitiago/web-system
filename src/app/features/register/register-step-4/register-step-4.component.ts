@@ -116,31 +116,34 @@ export class RegisterStep4Component {
   // ------------------------------------------------------
   private loadTranslations(): void {
     const resumeSection = 'Resume_Page';
-    const registerSection = 'Register_Page';
-    const extraSection = 'Extra_info_page';
-    const permissionsSection = 'Permissions_Page';
 
-    this.title = this.translationService.getTranslation('title', resumeSection);
-    this.subtitle = this.translationService.getTranslation('subtitle', resumeSection);
-    this.btnRegister = this.translationService.getTranslation('btnRegister', resumeSection);
+    const section = 'register_page';
+    const step1 = 'step_1.';
+    const step2 = 'step_2.';
+    const step3 = 'step_3.';
+    const step4 = 'step_4.';
+    const default_ = 'default.'
 
-    this.stepOne = this.translationService.getTranslation('stepOne', registerSection);
-    this.stepTwo = this.translationService.getTranslation('stepTwo', registerSection);
-    this.stepThree = this.translationService.getTranslation('stepThree', registerSection);
+    this.title = this.translationService.getTranslation(step4 + 'title', section);
+    this.subtitle = this.translationService.getTranslation(step4 + 'subtitle', section);
+    this.btnRegister = this.translationService.getTranslation(step4 + 'btnRegister', section);
 
-    this.titleName = this.translationService.getTranslation('titleName', registerSection);
-    this.titleEmail = this.translationService.getTranslation('titleEmail', registerSection);
-    this.titlePhone = this.translationService.getTranslation('titlePhone', registerSection);
-    this.titleEnrollment = this.translationService.getTranslation('titleEnrollment', registerSection);
+    this.stepTwo = this.translationService.getTranslation(default_ + 'stepTwo', section);
+    this.stepThree = this.translationService.getTranslation(default_ + 'stepThree', section);
 
-    this.attachment = this.translationService.getTranslation('attachments', extraSection);
-    this.btnAttachment = this.translationService.getTranslation('btnAttachment', extraSection);
+    this.titleName = this.translationService.getTranslation(step1 + 'titleName', section);
+    this.titleEmail = this.translationService.getTranslation(step1 + 'titleEmail', section);
+    this.titlePhone = this.translationService.getTranslation(step1 + 'titlePhone', section);
+    this.titleEnrollment = this.translationService.getTranslation(step1 + 'titleEnrollment', section);
 
-    this.menuTooltip = this.translationService.getTranslation('menuTooltip', permissionsSection);
-    this.zeroTooltip = this.translationService.getTranslation('criticalTooltipZeroLevel', permissionsSection);
-    this.lowTooltip = this.translationService.getTranslation('criticalTooltipLowLevel', permissionsSection);
-    this.mediumTooltip = this.translationService.getTranslation('criticalTooltipMediumLevel', permissionsSection);
-    this.highTooltip = this.translationService.getTranslation('criticalTooltipHighLevel', permissionsSection);
+    this.attachment = this.translationService.getTranslation(step3 + 'attachments', section);
+    this.btnAttachment = this.translationService.getTranslation(step3 +'btnAttachment', section);
+
+    this.menuTooltip = this.translationService.getTranslation(step2 + 'menuTooltip', section);
+    this.zeroTooltip = this.translationService.getTranslation(step2 + 'criticalTooltipZeroLevel', section);
+    this.lowTooltip = this.translationService.getTranslation(step2 + 'criticalTooltipLowLevel', section);
+    this.mediumTooltip = this.translationService.getTranslation(step2 + 'criticalTooltipMediumLevel', section);
+    this.highTooltip = this.translationService.getTranslation(step2 + 'criticalTooltipHighLevel', section);
   }
 
   // ------------------------------------------------------

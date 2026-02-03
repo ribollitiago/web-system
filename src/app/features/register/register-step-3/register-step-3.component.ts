@@ -81,13 +81,14 @@ export class RegisterStep3Component implements OnInit {
   }
 
   private loadTranslations(): void {
-    const section = 'Extra_info_page';
+    const section = 'register_page';
+    const step3 = 'step_3.'
 
-    this.title = this.translationService.getTranslation('title', section);
-    this.subtitle = this.translationService.getTranslation('subtitle', section);
-    this.textExplanation = this.translationService.getTranslation('textExplanation', section);
-    this.placeholderTextArea = this.translationService.getTranslation('placeholderTextArea', section);
-    this.btnLast = this.translationService.getTranslation('btnRegister', section);
+    this.title = this.translationService.getTranslation(step3 + 'title', section);
+    this.subtitle = this.translationService.getTranslation(step3 + 'subtitle', section);
+    this.textExplanation = this.translationService.getTranslation(step3 + 'textExplanation', section);
+    this.placeholderTextArea = this.translationService.getTranslation(step3 + 'placeholderTextArea', section);
+    this.btnLast = this.translationService.getTranslation(step3 + 'btnRegister', section);
   }
 
   // ------------------------------------------------------

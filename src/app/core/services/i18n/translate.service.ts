@@ -90,10 +90,24 @@ export class TranslationService {
   // SEÇÃO: TRADUÇÕES
   // ------------------------------------------------------
 
-  getTranslation(key: string, section: string): string {
-    return (
-      this.translations[section]?.[key] ||
-      this.englishLanguage[section]?.[key]
-    );
-  }
+
+  //new translate
+  getTranslation(path: string, section?: string): string {
+
+  const finalPath = section
+    ? `${section}.${path}`
+    : path;
+
+  const value =
+    this.getValueFromPath(this.translations, finalPath) ??
+    this.getValueFromPath(this.englishLanguage, finalPath);
+
+  return value ?? finalPath;
+}
+
+  private getValueFromPath(obj: any, path: string): string | null {
+  return path
+    .split('.')
+    .reduce((acc, part) => acc?.[part], obj) ?? null;
+}
 }

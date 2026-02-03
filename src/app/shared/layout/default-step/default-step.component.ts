@@ -47,11 +47,11 @@ export class DefaultStepComponent {
   }
 
   loadTranslations() {
-    const section = 'Register_Page';
-    this.tooltipBack = this.translationService.getTranslation('tooltipBack', section);
-    this.stepOne = this.translationService.getTranslation('stepOne', section);
-    this.stepTwo = this.translationService.getTranslation('stepTwo', section);
-    this.stepThree = this.translationService.getTranslation('stepThree', section);
+    const section = 'register_page';
+    this.tooltipBack = this.translationService.getTranslation('default.tooltipBack', section);
+    this.stepOne = this.translationService.getTranslation('default.stepOne', section);
+    this.stepTwo = this.translationService.getTranslation('default.stepTwo', section);
+    this.stepThree = this.translationService.getTranslation('default.stepThree', section);
   }
 
   private updateStepAppearance() {

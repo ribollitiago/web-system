@@ -71,7 +71,7 @@ export class LoginComponent implements OnInit {
   // =========================
 
   private loadTranslations(): void {
-    const section = 'Login_form';
+    const section = 'login_form';
     const errors = this.translate.getTranslation('LoginErrors', 'Exceptions');
 
     this.messages = errors;
@@ -203,6 +203,6 @@ export class LoginComponent implements OnInit {
 
   navigate(): void {
     this.showForgotPasswordForm = !this.showForgotPasswordForm;
-    this.updateTexts('Login_form');
+    this.updateTexts('login_form');
   }
 }

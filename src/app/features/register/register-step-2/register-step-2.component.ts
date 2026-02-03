@@ -156,24 +156,25 @@ export class RegisterStep2Component implements OnDestroy {
   // TRANSLATIONS
   // ------------------------------------------------------
   private loadTranslations(): void {
-    const section = 'Permissions_Page';
+    const section = 'register_page';
+    const step2 = 'step_2.';
 
-    this.title = this.translationService.getTranslation('title', section);
-    this.subtitle = this.translationService.getTranslation('subtitle', section);
-    this.filterOne = this.translationService.getTranslation('filterOne', section);
-    this.filterTwo = this.translationService.getTranslation('filterTwo', section);
-    this.filterThree = this.translationService.getTranslation('filterThree', section);
+    this.title = this.translationService.getTranslation(step2 + 'title', section);
+    this.subtitle = this.translationService.getTranslation(step2 + 'subtitle', section);
+    this.filterOne = this.translationService.getTranslation(step2 + 'filterOne', section);
+    this.filterTwo = this.translationService.getTranslation(step2 + 'filterTwo', section);
+    this.filterThree = this.translationService.getTranslation(step2 + 'filterThree', section);
     this.inputGroupPermissions =
-      this.translationService.getTranslation('inputGroupPermissions', section);
+      this.translationService.getTranslation(step2 + 'inputGroupPermissions', section);
     this.titleGroupPermissions =
-      this.translationService.getTranslation('titleGroupPermissions', section);
+      this.translationService.getTranslation(step2 + 'titleGroupPermissions', section);
     this.titleSelectPermissions =
-      this.translationService.getTranslation('titleSelectPermissions', section);
+      this.translationService.getTranslation(step2 + 'titleSelectPermissions', section);
 
     this.btnLast =
-      this.translationService.getTranslation('btnRegister', 'Register_Page');
+      this.translationService.getTranslation('default.btnRegister', section);
     this.inputSearch =
-      this.translationService.getTranslation('inputSearch', 'Global_Components');
+      this.translationService.getTranslation('inputSearch', 'global_components');
   }
 
   // ------------------------------------------------------
