@@ -104,7 +104,7 @@ export class DetailsUsersComponent implements OnDestroy {
 
   async listPermissions(user: User) {
     const filtered = this.permissionsService.filterPermissionsByIds(
-      await this.permissionsService.getPermissions(),
+      this.permissionsService.getPermissions(),
       user.permissions
     );
 

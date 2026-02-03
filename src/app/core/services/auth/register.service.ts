@@ -162,14 +162,16 @@ export class RegisterService {
 
       const { password, confirmPassword, ...entityMap } = data;
 
-      await this.firebaseService.addEntity(
+      await this.firebaseService.write(
         `${entityType}/${credential.user.uid}`,
-        entityMap
+        entityMap,
+        'create'
       );
     } else if (entityType === 'groups') {
-      await this.firebaseService.addEntity(
+      await this.firebaseService.write(
         `${entityType}/${data['key']}`,
-        data
+        data,
+        'create'
       );
     }
 
@@ -181,7 +183,7 @@ export class RegisterService {
   // ------------------------------------------------------
 
   private async generateNextId(entityType: string): Promise<string> {
-    const entities = await this.firebaseService.getAllEntity(entityType);
+    const entities = await this.firebaseService.getList(entityType);
     if (!entities.length) return '00001';
 
     const maxId = Math.max(...entities.map(e => Number(e['id'] ?? 0)));

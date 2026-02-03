@@ -63,7 +63,7 @@ export class ValidatorsService {
 
         const normalizedEmail = value.toLowerCase();
 
-        const emailExists = await this.firebaseService.getEntityByField(
+        const emailExists = await this.firebaseService.getByField(
           'users',
           'email',
           normalizedEmail
@@ -96,7 +96,7 @@ export class ValidatorsService {
           return { valid: false, error: 'ENROLLMENT_REQUIRED' };
         }
 
-        const enrollmentExists = await this.firebaseService.getEntityByField(
+        const enrollmentExists = await this.firebaseService.getByField(
           'users',
           'enrollment',
           value

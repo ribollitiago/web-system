@@ -4,143 +4,120 @@ import {
     ref,
     get,
     set,
+    update,
+    push,
     remove,
     onValue,
-    DataSnapshot,
-    off
+    off,
+    DataSnapshot
 } from 'firebase/database';
 import firebaseApp from '../../../firebase.config';
 
 type Entity = {
-    uid: string;
+    uid?: string;
     [key: string]: any;
 };
+
+type WriteMode = 'create' | 'update' | 'set';
 
 @Injectable({
     providedIn: 'root',
 })
 export class FirebaseService {
 
-    // ------------------------------------------------------
-    // SEÇÃO: CONFIGURAÇÕES
-    // ------------------------------------------------------
-
     private readonly db = getDatabase(firebaseApp);
-    private usersSubscription: (() => void) | null = null;
-    private userSubscription: (() => void) | null = null;
-    private groupsSubscription: (() => void) | null = null;
+    private subscriptions: Record<string, boolean> = {};
 
     // ------------------------------------------------------
-    // SEÇÃO: CONVERSÃO DE SNAPSHOT
+    // REF
     // ------------------------------------------------------
 
-    private snapshotToUsers(snapshot: DataSnapshot): Entity[] {
+    private ref(path: string) {
+        return ref(this.db, path);
+    }
+
+    // ------------------------------------------------------
+    // SNAPSHOT → ARRAY ENTITY
+    // ------------------------------------------------------
+
+    private snapshotToList(snapshot: DataSnapshot): Entity[] {
         if (!snapshot.exists()) return [];
+
         return Object.entries(snapshot.val()).map(([uid, value]) => ({
             uid,
             ...(value as object),
-        } as Entity));
+        }));
     }
 
     // ------------------------------------------------------
-    // SEÇÃO: REFERÊNCIAS DE BANCO
+    // ESCRITA GENÉRICA
     // ------------------------------------------------------
 
-    private setQueryRef(query: string) {
-        return ref(this.db, query);
-    }
+    async write(path: string, data: Entity, mode: WriteMode = 'update') {
+        const reference = this.ref(path);
 
-    private async setEntity(query: string, data: Partial<Entity>) {
-        const entityRef = this.setQueryRef(query);
-        await set(entityRef, data);
+        if (mode === 'create') return push(reference, data);
+        if (mode === 'set') return set(reference, data);
+
+        return update(reference, data);
     }
 
     // ------------------------------------------------------
-    // SEÇÃO: LEITURA DE DADOS
+    // DELETE
     // ------------------------------------------------------
 
-    async getAllEntity(query: string): Promise<Entity[]> {
-        const snapshot = await get(this.setQueryRef(query));
-        return this.snapshotToUsers(snapshot);
+    async delete(path: string) {
+        return remove(this.ref(path));
     }
 
-    async getEntityField<T = any>(query: string, uid: string, field: string): Promise<T | null> {
-        const snapshot = await get(this.setQueryRef(`${query}/${uid}/${field}`));
-        return snapshot.exists() ? snapshot.val() as T : null;
+    // ------------------------------------------------------
+    // READ
+    // ------------------------------------------------------
+
+    async getList(path: string): Promise<Entity[]> {
+        const snapshot = await get(this.ref(path));
+        return this.snapshotToList(snapshot);
     }
 
-    async getEntityByField<T extends keyof Entity>(
-        query: string,
-        field: T,
-        value: Entity[T]
+    async getById(path: string): Promise<Entity | null> {
+        const snapshot = await get(this.ref(path));
+        return snapshot.exists()
+            ? { uid: path.split('/').pop(), ...snapshot.val() }
+            : null;
+    }
+
+    async getByField(
+        path: string,
+        field: string,
+        value: any
     ): Promise<Entity[]> {
-        const allEntity = await this.getAllEntity(query);
-        return allEntity.filter(entity => entity[field] === value);
-    }
 
-    async getEntityById(query: string, uid: string): Promise<Entity | null> {
-        const snapshot = await get(this.setQueryRef(`${query}/${uid}`));
-        return snapshot.exists() ? { uid, ...snapshot.val() } : null;
+        const list = await this.getList(path);
+        return list.filter(item => item[field] === value);
     }
 
     // ------------------------------------------------------
-    // SEÇÃO: ESCRITA DE DADOS
+    // SUBSCRIBE GENÉRICO
     // ------------------------------------------------------
 
-    async updateEntity(query: string, data: Record<string, any>) {
-        await this.addEntity(query, data);
+    subscribe(path: string, callback: (data: any) => void) {
+
+        if (this.subscriptions[path]) this.unsubscribe(path);
+
+        onValue(this.ref(path), snapshot => {
+            if (!snapshot.exists()) return callback(null);
+
+            if (typeof snapshot.val() === 'object')
+                return callback(this.snapshotToList(snapshot));
+
+            return callback(snapshot.val());
+        });
+
+        this.subscriptions[path] = true;
     }
 
-    async addEntity(query: string, data: Record<string, any>) {
-        await this.addEntity(query, data);
-    }
-
-    // ------------------------------------------------------
-    // SEÇÃO: INSCRIÇÃO EM EVENTOS
-    // ------------------------------------------------------
-
-    subscribeToUser(uid: string, callback: (user: Entity | null) => void) {
-        console.log()
-        if (this.userSubscription) {
-            this.offSubscription('user');
-        }
-
-        this.userSubscription = onValue(
-            this.setQueryRef(`users/${uid}`),
-            snapshot => callback(snapshot.exists() ? snapshot.val() : null)
-        );
-    }
-
-    subscribeToUsers(callback: (users: Entity[]) => void) {
-        if (this.usersSubscription) {
-            this.offSubscription('users');
-        }
-
-        this.usersSubscription = onValue(
-            this.setQueryRef('users'),
-            snapshot => callback(this.snapshotToUsers(snapshot))
-        );
-    }
-
-    subscribeToGroups(callback: (groups: Entity[]) => void) {
-        if (this.groupsSubscription) {
-            this.offSubscription('groups');
-        }
-
-        this.groupsSubscription = onValue(
-            this.setQueryRef('groups'),
-            snapshot => callback(this.snapshotToUsers(snapshot))
-        );
-    }
-
-    // ------------------------------------------------------
-    // SEÇÃO: DESINSCRIÇÃO DE EVENTOS
-    // ------------------------------------------------------
-
-    offSubscription(refPath: string) {
-        off(this.setQueryRef(refPath));
-        if (refPath === 'users') this.usersSubscription = null;
-        if (refPath === 'user') this.userSubscription = null;
-        if (refPath === 'groups') this.groupsSubscription = null;
+    unsubscribe(path: string) {
+        off(this.ref(path));
+        delete this.subscriptions[path];
     }
 }

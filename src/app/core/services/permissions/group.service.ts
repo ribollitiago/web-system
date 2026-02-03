@@ -36,15 +36,15 @@ export class GroupsService {
   // ------------------------------------------------------
 
   async unSubscribeGroups() {
-    this.firebaseService.offSubscription('groups');
+    this.firebaseService.unsubscribe('groups');
   }
 
   async subscribeGroups(): Promise<Group[]> {
     if (this.groups.length) return this.groups;
 
     return new Promise<Group[]>((resolve) => {
-      this.firebaseService.subscribeToGroups((groups: any[]) => {
-        this.groups = this.formatGroups(groups);
+      this.firebaseService.subscribe('groups', (groups: any[]) => {
+        this.groups = this.formatGroups(groups || []);
         resolve(this.groups);
       });
     });

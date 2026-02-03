@@ -16,7 +16,7 @@ export interface User {
   enrollment: string;
   description: string;
   permissions: [];
-  group: any[];
+  groups: any[];
   situation: string;
 }
 
@@ -74,7 +74,7 @@ export class ListUsersComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.loadTranslations();
-    this.groups = await this.firebaseService.getAllEntity('groups');
+    this.groups = await this.firebaseService.getList('groups');
     this.loadUsers();
   }
 
@@ -86,7 +86,7 @@ export class ListUsersComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.languageSubscription.unsubscribe();
-    this.firebaseService.offSubscription('users')
+    this.firebaseService.unsubscribe('users')
   }
 
   // ======================================================
@@ -104,8 +104,8 @@ export class ListUsersComponent implements OnInit, OnDestroy {
   // CARREGAMENTO DE DADOS DO FIREBASE
   // ======================================================
   private loadUsers(): void {
-    this.firebaseService.subscribeToUsers((users: any[]) => {
-      this.users = users;
+    this.firebaseService.subscribe('users', (users: any[]) => {
+      this.users = users || [];
       this.addGroupDetailsToUsers();
       this.sortUsersById();
       this.filterUsers();
@@ -116,20 +116,20 @@ export class ListUsersComponent implements OnInit, OnDestroy {
     this.users = this.users.map(user => {
       const userWithGroupDetails = { ...user };
 
-      if (Array.isArray(user.group)) {
-        userWithGroupDetails.group = user.group.map((groupUid: string) => {
-          const group = this.groups.find(g => g.uid === groupUid);
-          if (group) {
-            const { users, ...groupWithoutUsers } = group;
+      if (Array.isArray(user.groups)) {
+        userWithGroupDetails.groups = user.groups.map((groupUid: string) => {
+          const groups = this.groups.find(g => g.uid === groupUid);
+          if (groups) {
+            const { users, ...groupWithoutUsers } = groups;
             return groupWithoutUsers;
           }
           return null;
-        }).filter(group => group !== null);
+        }).filter(groups => groups !== null);
       } else {
-        userWithGroupDetails.group = [];
+        userWithGroupDetails.groups = [];
       }
-      if (userWithGroupDetails.group.length === 0) {
-        userWithGroupDetails.group = [{ title: 'Sem grupo atribuído' }];
+      if (userWithGroupDetails.groups.length === 0) {
+        userWithGroupDetails.groups = [{ title: 'Sem grupo atribuído' }];
       }
 
       return userWithGroupDetails;

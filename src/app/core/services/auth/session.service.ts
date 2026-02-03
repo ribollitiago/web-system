@@ -168,7 +168,7 @@ export class SessionService {
 
     clearSessionStorage(): void {
         this.userSubject.next(null);
-        this.firebaseService.offSubscription('user');
+        this.firebaseService.unsubscribe('user');
         localStorage.removeItem('userData');
         localStorage.removeItem(this.LOGOUT_EVENT_KEY);
         localStorage.removeItem(this.LAST_LOGIN_KEY);
@@ -206,7 +206,7 @@ export class SessionService {
     // ------------------------------------------------------
 
     private async resolveGroupPermissions(groupIds: string[]): Promise<string[]> {
-        const groups = await this.firebaseService.getAllEntity('groups');
+        const groups = await this.firebaseService.getList('groups');
 
         const permissions = groupIds
             .map(groupId => groups.find(g => g['id'] === groupId))
@@ -218,7 +218,7 @@ export class SessionService {
 
     async loadAndSetUser(uid: string): Promise<void> {
         // this.firebaseService.updateEntity('users/' + uid, { situation: 2 });
-        this.firebaseService.subscribeToUser(uid, async (userData) => {
+        this.firebaseService.subscribe('users/'+ uid, async (userData) => {
             if (!userData) {
                 console.warn('Usuário não encontrado');
                 await this.logout();
