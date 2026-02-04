@@ -29,12 +29,12 @@ import { TranslationService } from '../../core/services/i18n/translate.service';
   ],
   template: `
     <app-default-popup 
-      title="Deseja continuar?" 
-      description="Encontramos um cadastro em andamento."
-      buttonLeftTitle="Continuar" 
-      buttonRightTitle="Cancelar" 
-      buttonLeftColor="#18AE6D"
-      buttonRightColor="#D35353"
+      title={{this.dialogTitle}}
+      description={{this.dialogDescription}}
+      buttonLeftTitle={{this.dialogBtnLeft}}
+      buttonRightTitle={{this.dialogBtnRight}}
+      buttonLeftColor={{this.popupBtnLeftColor}}
+      buttonRightColor={{this.popupBtnRightColor}}
       (closeDialog)="cancelRegistration()">
     </app-default-popup>
 
