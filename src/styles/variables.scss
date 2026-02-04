@@ -65,6 +65,11 @@ $dropdown-background: darken($text-color, 97%);
 
 //components
 //Popup Dialog
-$popup-bg: #121212;
+$dialog-bg: #121212;
+$dialog-btn-left: #18AE6D;
+$dialog-btn-right: #D35353;
 
-
+:root {
+  --dialog-btn-left: #{$dialog-btn-left};
+  --dialog-btn-right: #{$dialog-btn-right};
+}

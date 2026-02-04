@@ -65,6 +65,20 @@ export class RegisterStep1Component implements OnInit {
   btnLast = '';
   tooltipEnrollment = '';
 
+  //Validators
+  msgEmptyName = '';
+  msgPasswordMismatch = '';
+  msgEmailAlreadyExists = '';
+  msgEnrollmentAlreadyExists = '';
+  msgPasswordWeak = '';
+  msgPasswordContainsEmail = '';
+  msgPasswordContainsName = '';
+  msgMultiWrong = '';
+  msgDoubleWrongJoin = '';
+  msgDoubleWrong = '';
+  msgErrorField = '';
+  msgUnknown = '';
+
   // ------------------------------------------------------
   // CONSTRUCTOR
   // ------------------------------------------------------
@@ -141,6 +155,7 @@ export class RegisterStep1Component implements OnInit {
     const section = 'register_page';
     const step1 = 'step_1.';
     const default_ = 'default.'
+    const validators = 'step_1.validators.';
 
     // --- Cabeçalho (Step 1) ---
     this.title = this.translationService.getTranslation(step1 + 'title', section);
@@ -178,6 +193,20 @@ export class RegisterStep1Component implements OnInit {
 
     // --- Botão de Ação (Defaults) ---
     this.btnLast = this.translationService.getTranslation(default_ + 'btnRegister', section);
+
+    // --- Validators ---
+    this.msgEmptyName = this.translationService.getTranslation(validators + 'emptyName', section);
+    this.msgPasswordMismatch = this.translationService.getTranslation(validators + 'passwordMismatch', section);
+    this.msgEmailAlreadyExists = this.translationService.getTranslation(validators + 'emailAlreadyExists', section);
+    this.msgEnrollmentAlreadyExists = this.translationService.getTranslation(validators + 'enrollmentAlreadyExists', section);
+    this.msgPasswordWeak = this.translationService.getTranslation(validators + 'passwordWeak', section);
+    this.msgPasswordContainsEmail = this.translationService.getTranslation(validators + 'passwordContainsEmail', section);
+    this.msgPasswordContainsName = this.translationService.getTranslation(validators + 'passwordContainsName', section);
+    this.msgMultiWrong = this.translationService.getTranslation(validators + 'msgMultiWrong', section);
+    this.msgDoubleWrongJoin = this.translationService.getTranslation(validators + 'msgDoubleWrongJoin', section);
+    this.msgDoubleWrong = this.translationService.getTranslation(validators + 'msgDoubleWrong', section);
+    this.msgErrorField = this.translationService.getTranslation(validators + 'msgErrorField', section);
+    this.msgUnknown = this.translationService.getTranslation(validators + 'msgUnknown', section);
   }
 
   // ------------------------------------------------------
@@ -186,23 +215,38 @@ export class RegisterStep1Component implements OnInit {
   private async validateForm(): Promise<boolean> {
 
     const ERROR_FIELD_MAP: Record<string, string> = {
+      //NAME
+      EMPTY_NAME: this.titleName,
       INVALID_NAME: this.titleName,
       INVALID_NAME_PART: this.titleName,
+      //EMAIL
+      EMPTY_EMAIL: this.titleName,
       INVALID_EMAIL: this.titleEmail,
+      EMAIL_ALREADY_EXISTS: this.titleEmail,
+      //PHONE
+      EMPTY_PHONE: this.titlePhone,
       INVALID_PHONE: this.titlePhone,
-      ENROLLMENT_REQUIRED: this.titleEnrollment,
+      //ENROLLMENT
+      EMPTY_ENROLLMENT: this.titleEnrollment,
+      //PASSWORD
+      EMPTY_PASSWORD: this.titlePassword,
       PASSWORD_TOO_SHORT: this.titlePassword,
+      PASSWORD_WEAK: this.titlePassword,
+      PASSWORD_CONTAINS_EMAIL: this.titlePassword,
+      PASSWORD_CONTAINS_NAME: this.titlePassword,
+      //CONFIRMPASSWORD
+      EMPTY_CONFIRMPASSWORD: this.titleConfirmPassword,
       PASSWORD_MISMATCH: this.titleConfirmPassword
     };
 
     const ERROR_MESSAGE_MAP: Record<string, string> = {
-      EMPTY_NAME: 'Campo NOME vazio.',
-      PASSWORD_MISMATCH: 'SENHAS não conferem.',
-      EMAIL_ALREADY_EXISTS: 'EMAIL já existente.',
-      ENROLLMENT_ALREADY_EXISTS: 'MATRICULA já cadastrada.',
-      PASSWORD_WEAK: 'A senha está muito fraca, precisa de uma caractere',
-      PASSWORD_CONTAINS_EMAIL: 'A senha está muito fraca, nao pode conter seu email',
-      PASSWORD_CONTAINS_NAME: 'A senha está muito fraca, não pode conter seu nome'
+      EMPTY_NAME: this.msgEmptyName,
+      PASSWORD_MISMATCH: this.msgPasswordMismatch,
+      EMAIL_ALREADY_EXISTS: this.msgEmailAlreadyExists,
+      ENROLLMENT_ALREADY_EXISTS: this.msgEnrollmentAlreadyExists,
+      PASSWORD_WEAK: this.msgPasswordWeak,
+      PASSWORD_CONTAINS_EMAIL: this.msgPasswordContainsEmail,
+      PASSWORD_CONTAINS_NAME: this.msgPasswordContainsName
     };
 
     const validations = await Promise.all([
@@ -224,7 +268,7 @@ export class RegisterStep1Component implements OnInit {
     // ======================================================
 
     const specialErrors = errors.filter(e => ERROR_MESSAGE_MAP[e.error!]);
-    const fieldErrors = errors.filter(e => !ERROR_MESSAGE_MAP[e.error!]);
+    const fieldErrors = errors.filter(e => ERROR_FIELD_MAP[e.error!]);
 
     // ======================================================
     // MOSTRA ERROS DE CAMPO (um bloco de toast)
@@ -232,30 +276,32 @@ export class RegisterStep1Component implements OnInit {
     let message = '';
 
     if (fieldErrors.length > 2) {
-      message = 'Existem vários campos inválidos. Revise o formulário.';
+      message = this.msgMultiWrong;
     } else if (fieldErrors.length === 2) {
       const fields = fieldErrors.map(e => ERROR_FIELD_MAP[e.error!]);
-      message = `Erro nos campos: ${fields.join(' e ')}. Corrija para continuar.`;
-    } else if (fieldErrors.length === 1) {
-      message = `Erro no campo: ${ERROR_FIELD_MAP[fieldErrors[0].error!] ?? 'desconhecido'}`;
-    } else if (specialErrors.length > 0) {
-      for (const error of specialErrors) {
-        const message = ERROR_MESSAGE_MAP[error.error!];
-        if (message) {
-          this.toastService.clear();
-          this.toastService.error(message);
-          return false;
+      message = `${fields.join(this.msgDoubleWrongJoin)}${this.msgDoubleWrong}`;
+    } else if (fieldErrors.length === 1 || specialErrors.length > 0) {
+      if (specialErrors.length) {
+        for (const error of specialErrors) {
+          const message = ERROR_MESSAGE_MAP[error.error!];
+          if (message) {
+            this.toastService.clear();
+            this.toastService.error(message);
+            return false;
+          }
         }
       }
-
+      message = `${this.msgErrorField}${ERROR_FIELD_MAP[fieldErrors[0].error!] ?? this.msgUnknown}`;
     }
 
-    this.toastService.clear();
-    this.toastService.error(message);
-
+    if (errors.length > 0) {
+      this.toastService.clear();
+      this.toastService.error(message);
+    }
     // ======================================================
     // RETORNA SE HOUVE ERROS
     // ======================================================
+
     return errors.length === 0;
   }
 

@@ -17,6 +17,7 @@ import { GroupChipComponent } from "../../../shared/components/chip/group-chip/g
 import { GroupsService } from '../../../core/services/permissions/group.service';
 import { DefaultPopupComponent } from "../../../shared/components/popup/default-popup/default-popup.component";
 
+
 // ------------------------------------------------------
 // COMPONENT
 // ------------------------------------------------------
@@ -71,6 +72,14 @@ export class RegisterStep4Component {
   mediumTooltip = '';
   highTooltip = '';
 
+  //DialogBox
+  dialogTitle = '';
+  dialogDescription = '';
+  dialogBtnLeft = '';
+  dialogBtnRight = '';
+
+  popupBtnLeftColor = 'var(--dialog-btn-left)';
+  popupBtnRightColor = 'var(--dialog-btn-right)';
 
 
   // ------------------------------------------------------
@@ -115,14 +124,13 @@ export class RegisterStep4Component {
   // TRADUÇÕES
   // ------------------------------------------------------
   private loadTranslations(): void {
-    const resumeSection = 'Resume_Page';
-
     const section = 'register_page';
     const step1 = 'step_1.';
     const step2 = 'step_2.';
     const step3 = 'step_3.';
     const step4 = 'step_4.';
-    const default_ = 'default.'
+    const default_ = 'default.';
+    const dialogConfirmRegister = "dialog_confirm_register.";
 
     this.title = this.translationService.getTranslation(step4 + 'title', section);
     this.subtitle = this.translationService.getTranslation(step4 + 'subtitle', section);
@@ -137,13 +145,18 @@ export class RegisterStep4Component {
     this.titleEnrollment = this.translationService.getTranslation(step1 + 'titleEnrollment', section);
 
     this.attachment = this.translationService.getTranslation(step3 + 'attachments', section);
-    this.btnAttachment = this.translationService.getTranslation(step3 +'btnAttachment', section);
+    this.btnAttachment = this.translationService.getTranslation(step3 + 'btnAttachment', section);
 
     this.menuTooltip = this.translationService.getTranslation(step2 + 'menuTooltip', section);
     this.zeroTooltip = this.translationService.getTranslation(step2 + 'criticalTooltipZeroLevel', section);
     this.lowTooltip = this.translationService.getTranslation(step2 + 'criticalTooltipLowLevel', section);
     this.mediumTooltip = this.translationService.getTranslation(step2 + 'criticalTooltipMediumLevel', section);
     this.highTooltip = this.translationService.getTranslation(step2 + 'criticalTooltipHighLevel', section);
+
+    this.dialogTitle = this.translationService.getTranslation(dialogConfirmRegister + 'title', section);
+    this.dialogDescription = this.translationService.getTranslation(dialogConfirmRegister + 'description', section);
+    this.dialogBtnLeft = this.translationService.getTranslation(dialogConfirmRegister + 'buttonLeftTitle', section);
+    this.dialogBtnRight = this.translationService.getTranslation(dialogConfirmRegister + 'buttonRightTitle', section);
   }
 
   // ------------------------------------------------------

@@ -88,11 +88,11 @@
 </app-default-step>
 
 <app-default-popup
-  title="Confirmar Cadastro"
-  description="Deseja finalizar?"
-  buttonLeftTitle="Registrar"
-  buttonRightTitle="Cancelar"
-  buttonLeftColor="#18AE6D"
-  buttonRightColor="#D35353"
+  title={{dialogTitle}}
+  description={{dialogDescription}}
+  buttonLeftTitle={{dialogBtnLeft}}
+  buttonRightTitle={{dialogBtnRight}}
+  buttonLeftColor={{popupBtnLeftColor}}
+  buttonRightColor='{{popupBtnRightColor}}'
   (confirmAction)="confirmRegistration()">
 </app-default-popup>
