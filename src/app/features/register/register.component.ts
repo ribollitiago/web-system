@@ -11,6 +11,7 @@ import { RegisterStep2Component } from './register-step-2/register-step-2.compon
 import { RegisterStep3Component } from './register-step-3/register-step-3.component';
 import { RegisterStep4Component } from './register-step-4/register-step-4.component';
 import { DefaultPopupComponent } from '../../shared/components/popup/default-popup/default-popup.component';
+import { TranslationService } from '../../core/services/i18n/translate.service';
 
 // ------------------------------------------------------
 // COMPONENT
@@ -38,9 +39,9 @@ import { DefaultPopupComponent } from '../../shared/components/popup/default-pop
     </app-default-popup>
 
     <app-register-step-1 *ngIf="currentStep === 1" [attr.data-key]="renderKey"></app-register-step-1>
-    <app-register-step-2 *ngIf="currentStep === 2" [attr.data-key]="renderKey">></app-register-step-2>
-    <app-register-step-3 *ngIf="currentStep === 3" [attr.data-key]="renderKey">></app-register-step-3>
-    <app-register-step-4 *ngIf="currentStep === 4" [attr.data-key]="renderKey">></app-register-step-4>
+    <app-register-step-2 *ngIf="currentStep === 2" [attr.data-key]="renderKey"></app-register-step-2>
+    <app-register-step-3 *ngIf="currentStep === 3" [attr.data-key]="renderKey"></app-register-step-3>
+    <app-register-step-4 *ngIf="currentStep === 4" [attr.data-key]="renderKey"></app-register-step-4>
   `
 })
 export class RegisterComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -50,14 +51,26 @@ export class RegisterComponent implements OnInit, AfterViewInit, OnDestroy {
   renderKey = 0;
   private entityType = 'users';
 
+  //DialogBox
+  dialogTitle = '';
+  dialogDescription = '';
+  dialogBtnLeft = '';
+  dialogBtnRight = '';
+
+  popupBtnLeftColor = 'var(--dialog-btn-left)';
+  popupBtnRightColor = 'var(--dialog-btn-right)';
+
   constructor(
     private registerService: RegisterService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private translationService: TranslationService,
   ) { }
 
   ngOnInit(): void {
     this.registerService.resetNavigationFlag();
     this.listenSteps();
+
+    this.listenLanguageChanges();
   }
 
   ngOnDestroy(): void {
@@ -70,6 +83,22 @@ export class RegisterComponent implements OnInit, AfterViewInit, OnDestroy {
     }, 200);
   }
 
+  private listenLanguageChanges(): void {
+    this.translationService.language$.subscribe(() => {
+      this.loadTranslations();
+    });
+  }
+
+  private loadTranslations(): void {
+    const section = 'register_page';
+    const dialogConfirmRegister = "dialog_confirm_state.";
+
+    this.dialogTitle = this.translationService.getTranslation(dialogConfirmRegister + 'title', section);
+    this.dialogDescription = this.translationService.getTranslation(dialogConfirmRegister + 'description', section);
+    this.dialogBtnLeft = this.translationService.getTranslation(dialogConfirmRegister + 'buttonLeftTitle', section);
+    this.dialogBtnRight = this.translationService.getTranslation(dialogConfirmRegister + 'buttonRightTitle', section);
+
+  }
   private listenSteps(): void {
     this.registerService.step$.subscribe(stepsMap => {
       const step = stepsMap[this.entityType] || 1;

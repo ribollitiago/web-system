@@ -51,7 +51,21 @@
       "inputPassword": "Insira a Senha",
       "titleConfirmPassword": "Confirme a senha",
       "inputPasswordConfirm": "Confirme a senha",
-      "tooltipEnrollment": "A mátricula não será possível alterar depois do usuário ser cadastrado."
+      "tooltipEnrollment": "A mátricula não será possível alterar depois do usuário ser cadastrado.",
+      "validators": {
+        "emptyName": "O campo Nome é obrigatório.",
+        "passwordMismatch": "As senhas digitadas não coincidem.",
+        "emailAlreadyExists": "Este e-mail já está cadastrado.",
+        "enrollmentAlreadyExists": "Esta matrícula já está cadastrada.",
+        "passwordWeak": "A senha é fraca. Utilize letras, números e caracteres especiais.",
+        "passwordContainsEmail": "Por segurança, a senha não pode conter seu e-mail.",
+        "passwordContainsName": "Por segurança, a senha não pode conter seu nome.",
+        "msgMultiWrong": "Existem vários campos inválidos. Revise o formulário.",
+        "msgDoubleWrongJoin": " e ",
+        "msgDoubleWrong": ": Corrija para continuar.",
+        "msgErrorField": "Erro no campo: ",
+        "msgUnknown": "desconhecido"
+      }
     },
     "step_2": {
       "title": "Permissões",
@@ -89,13 +103,13 @@
       "tooltipBack": "Voltar",
       "btnRegister": "Próximo passo"
     },
-    "popupConfirmState": {
+    "dialog_confirm_state": {
       "title": "Deseja continuar?",
       "description": "Encontramos um cadastro em andamento.",
       "buttonLeftTitle": "Continuar",
       "buttonRightTitle": "Cancelar"
     },
-    "popupConfirmRegister": {
+    "dialog_confirm_register": {
       "title": "Confirmar Cadastro",
       "description": "Deseja finalizar?",
       "buttonLeftTitle": "Registrar",
