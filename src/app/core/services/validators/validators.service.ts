@@ -58,9 +58,12 @@ export class ValidatorsService {
       // EMAIL
       // --------------------------------------------------
       case 'EMAIL':
+        if (!value) {
+          return { valid: false, error: 'EMPTY_EMAIL' };
+        }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!value || !emailRegex.test(value)) {
+        if (!emailRegex.test(value)) {
           return { valid: false, error: 'INVALID_EMAIL' };
         }
 
@@ -84,10 +87,10 @@ export class ValidatorsService {
       case 'PHONE':
 
         if (!value) {
-          return { valid: false, error: 'INVALID_PHONE' };
+          return { valid: false, error: 'EMPTY_PHONE' };
         }
 
-        return { valid: true};
+        return { valid: true };
 
 
       // --------------------------------------------------
@@ -96,7 +99,7 @@ export class ValidatorsService {
       case 'ENROLLMENT':
 
         if (!value) {
-          return { valid: false, error: 'ENROLLMENT_REQUIRED' };
+          return { valid: false, error: 'EMPTY_ENROLLMENT' };
         }
 
         const enrollmentExists = await this.firebaseService.getByField(
@@ -116,7 +119,11 @@ export class ValidatorsService {
       // --------------------------------------------------
       case 'PASSWORD':
 
-        if (!value || value.length < 6) {
+        if (!value) {
+          return { valid: false, error: 'EMPTY_PASSWORD' };
+        }
+
+        if (value.length < 6) {
           return { valid: false, error: 'PASSWORD_TOO_SHORT' };
         }
 
@@ -141,7 +148,7 @@ export class ValidatorsService {
       case 'PASSWORD_MATCH':
 
         if (!data?.['confirmPassword']) {
-          return { valid: false, error: 'CONFIRM_PASSWORD_REQUIRED' };
+          return { valid: false, error: 'EMPTY_CONFIRMPASSWORD' };
         }
 
         if (

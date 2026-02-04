@@ -64,14 +64,6 @@ export class RegisterStep3Component implements OnInit {
   }
 
   // ------------------------------------------------------
-  // DADOS SALVOS
-  // ------------------------------------------------------
-  private loadSavedData(): void {
-    this.registrationData = this.registerService.getData('users');
-    this.textTyped = this.registrationData['description'] ?? '';
-  }
-
-  // ------------------------------------------------------
   // TRADUÇÕES
   // ------------------------------------------------------
   private listenLanguageChanges(): void {

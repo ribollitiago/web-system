@@ -11,7 +11,7 @@
   </div>
 
   @if (selectedGroups.length > 0) {
-  <mat-chip-set class="selected-groups-chips" aria-label="Grupos selecionados">
+  <mat-chip-set class="selected-groups-chips" aria-label="Grupos selecionad">
     @for (group of selectedGroups; track group.id) {
     <mat-chip (removed)="removeGroup(group.id)">
       {{ group.title }}

@@ -23,8 +23,8 @@
       <div class="phone-and-enrollment">
         <div class="phone">
           <h3>{{ titlePhone }}</h3>
-          <app-primary-input [(ngModel)]="phone" (ngModelChange)="onPhoneChange($event)" name="phone"
-            [placeholder]="placeholderPhone" maskType="numbers" maxlength="15">
+          <app-primary-input [(ngModel)]="phone" (ngModelChange)="onPhoneChange($event)" (paste)="onPhonePaste($event)"
+            name="phone" [placeholder]="placeholderPhone" maskType="numbers" maxlength="15">
             <img src="assets/svg/icon/input/phone.svg" alt>
           </app-primary-input>
         </div>

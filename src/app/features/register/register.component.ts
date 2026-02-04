@@ -34,7 +34,6 @@ import { DefaultPopupComponent } from '../../shared/components/popup/default-pop
       buttonRightTitle="Cancelar" 
       buttonLeftColor="#18AE6D"
       buttonRightColor="#D35353"
-      (confirmAction)="continueRegistration()" 
       (closeDialog)="cancelRegistration()">
     </app-default-popup>
 
@@ -85,7 +84,6 @@ export class RegisterComponent implements OnInit, AfterViewInit, OnDestroy {
     const isSameUser = this.registerService.isSameUser(entityType);
 
     if (hasData && !isSameUser) {
-      console.warn('Troca de conta detectada. Resetando dados por segurança.');
       this.registerService.reset(entityType);
       this.renderKey++;
       this.cdr.detectChanges();
@@ -101,12 +99,7 @@ export class RegisterComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  continueRegistration(): void {
-    console.log('Usuário optou por continuar o registro.');
-  }
-
   cancelRegistration(): void {
-    console.log('Usuário optou por apagar os dados.');
     this.registerService.reset(this.entityType);
     this.renderKey++;
     this.currentStep = 1;
