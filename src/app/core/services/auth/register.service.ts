@@ -150,10 +150,9 @@ export class RegisterService {
     const data = this.getData(entityType);
 
     data['createdAt'] = formatDateShortBR(new Date());
-    data['situation'] = 0;
-
+    data['situation'] = 1;
+    
     if (entityType === 'users') {
-      data['id'] = await this.generateNextId(entityType);
       const credential = await createUserWithEmailAndPassword(
         this.auth,
         data['email']!,
@@ -181,14 +180,6 @@ export class RegisterService {
   // ------------------------------------------------------
   // SEÇÃO: UTILIDADES
   // ------------------------------------------------------
-
-  private async generateNextId(entityType: string): Promise<string> {
-    const entities = await this.firebaseService.getList(entityType);
-    if (!entities.length) return '00001';
-
-    const maxId = Math.max(...entities.map(e => Number(e['id'] ?? 0)));
-    return String(maxId + 1).padStart(5, '0');
-  }
 
   hasUserProgress(entityType: string): boolean {
     const data = this.getData(entityType);
