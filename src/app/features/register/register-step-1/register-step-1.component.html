@@ -56,7 +56,7 @@
           <h3>{{ titleConfirmPassword }}</h3>
           <app-primary-input [(ngModel)]="confirmPassword" (ngModelChange)="onFieldChange('confirmPassword', $event)"
             name="confirmPassword" type="password" [placeholder]="placeholderConfirmPassword" [isPassword]="true"
-            maxlength="25">
+            maxlength="64">
             <img src="assets/svg/icon/input/password.svg" alt>
           </app-primary-input>
         </div>

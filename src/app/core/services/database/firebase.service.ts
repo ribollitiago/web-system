@@ -9,7 +9,10 @@ import {
     remove,
     onValue,
     off,
-    DataSnapshot
+    DataSnapshot,
+    onChildRemoved,
+    onChildAdded,
+    onChildChanged
 } from 'firebase/database';
 import firebaseApp from '../../../firebase.config';
 
@@ -18,7 +21,9 @@ type Entity = {
     [key: string]: any;
 };
 
-type WriteMode = 'create' | 'update' | 'set';
+type WriteMode = 'create' | 'update' | 'push';
+
+type ChildListenMode = 'added' | 'changed' | 'removed';
 
 @Injectable({
     providedIn: 'root',
@@ -53,13 +58,14 @@ export class FirebaseService {
     // ESCRITA GENÉRICA
     // ------------------------------------------------------
 
-    async write(path: string, data: Entity, mode: WriteMode = 'update') {
+    async write(path: string, data: Entity, mode: WriteMode) {
         const reference = this.ref(path);
 
-        if (mode === 'create') return push(reference, data);
-        if (mode === 'set') return set(reference, data);
+        if (mode === 'create') return set(reference, data);
+        else if (mode === 'push') return push(reference, data);
+        else if (mode === 'update') return update(reference, data);
 
-        return update(reference, data);
+        return console.error('');
     }
 
     // ------------------------------------------------------
@@ -102,22 +108,78 @@ export class FirebaseService {
 
     subscribe(path: string, callback: (data: any) => void) {
 
-        if (this.subscriptions[path]) this.unsubscribe(path);
+        if (this.subscriptions[path]) {
+            this.unsubscribe(path);
+        }
 
         onValue(this.ref(path), snapshot => {
             if (!snapshot.exists()) return callback(null);
 
-            if (typeof snapshot.val() === 'object')
-                return callback(this.snapshotToList(snapshot));
+            const value = snapshot.val();
 
-            return callback(snapshot.val());
+            if (value && typeof value === 'object' && !Array.isArray(value)) {
+
+                const firstKey = Object.keys(value)[0];
+
+                if (value[firstKey] && typeof value[firstKey] === 'object') {
+                    return callback(this.snapshotToList(snapshot));
+                }
+            }
+
+            return callback(value);
         });
 
         this.subscriptions[path] = true;
     }
 
-    unsubscribe(path: string) {
+
+    subscribeChild(
+        path: string,
+        mode: ChildListenMode,
+        callback: (data: any) => void
+    ) {
+
+        const reference = this.ref(path);
+
+        const key = `${path}_${mode}`;
+
+        if (this.subscriptions[key]) this.unsubscribe(path, mode);
+
+        if (mode === 'added') {
+            onChildAdded(reference, snapshot => {
+                callback({
+                    uid: snapshot.key,
+                    ...snapshot.val()
+                });
+            });
+        }
+
+        if (mode === 'changed') {
+            onChildChanged(reference, snapshot => {
+                callback({
+                    uid: snapshot.key,
+                    ...snapshot.val()
+                });
+            });
+        }
+
+        if (mode === 'removed') {
+            onChildRemoved(reference, snapshot => {
+                callback(snapshot.key);
+            });
+        }
+
+        this.subscriptions[key] = true;
+    }
+
+    unsubscribe(path: string, mode?: ChildListenMode) {
+
+        const key = mode ? `${path}_${mode}` : path;
+
+        if (!this.subscriptions[key]) return;
+
+        console.log('apagous')
         off(this.ref(path));
-        delete this.subscriptions[path];
+        delete this.subscriptions[key];
     }
 }

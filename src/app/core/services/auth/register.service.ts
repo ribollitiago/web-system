@@ -56,7 +56,7 @@ export class RegisterService {
   isSameUser(entityType: string): boolean {
     const data = this.getData(entityType);
     const currentUser = this.auth.currentUser;
-    
+
     if (!data['savedUid'] || !currentUser) return true;
     return data['savedUid'] === currentUser.uid;
   }
@@ -150,8 +150,7 @@ export class RegisterService {
     const data = this.getData(entityType);
 
     data['createdAt'] = formatDateShortBR(new Date());
-    data['situation'] = 1;
-    
+
     if (entityType === 'users') {
       const credential = await createUserWithEmailAndPassword(
         this.auth,
@@ -159,7 +158,11 @@ export class RegisterService {
         data['password']!
       );
 
-      const { password, confirmPassword, ...entityMap } = data;
+      data['situation'] = 1;
+      data['uid'] = credential.user.uid;
+
+      const { password, confirmPassword, savedUid, ...entityMap } = data;
+      console.log(entityMap)
 
       await this.firebaseService.write(
         `${entityType}/${credential.user.uid}`,

@@ -218,7 +218,7 @@ export class SessionService {
 
     async loadAndSetUser(uid: string): Promise<void> {
         // this.firebaseService.updateEntity('users/' + uid, { situation: 2 });
-        this.firebaseService.subscribe('users/'+ uid, async (userData) => {
+        this.firebaseService.subscribe('users/' + uid, async (userData) => {
             if (!userData) {
                 console.warn('Usuário não encontrado');
                 await this.logout();
@@ -244,7 +244,6 @@ export class SessionService {
                 ...userData,
                 permissions: mergedPermissions
             };
-
             this.userSubject.next(resolvedUser);
         });
     }
