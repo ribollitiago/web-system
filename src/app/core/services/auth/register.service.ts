@@ -21,6 +21,14 @@ export interface RegisterData {
 export class RegisterService {
 
   // ------------------------------------------------------
+  // SEÇÃO: CONSTRUTOR
+  // ------------------------------------------------------
+
+  constructor(
+    private firebaseService: FirebaseService,
+  ) { }
+
+  // ------------------------------------------------------
   // SEÇÃO: CONFIGURAÇÕES
   // ------------------------------------------------------
 
@@ -133,14 +141,6 @@ export class RegisterService {
 
     this.isInternalNavigation = false;
   }
-
-  // ------------------------------------------------------
-  // SEÇÃO: CONSTRUTOR
-  // ------------------------------------------------------
-
-  constructor(
-    private firebaseService: FirebaseService
-  ) { }
 
   // ------------------------------------------------------
   // SEÇÃO: REGISTRO

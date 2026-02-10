@@ -41,6 +41,7 @@ export class SessionService {
     ) {
         this.auth = getAuth(firebaseApp);
         this.initializeSession();
+        this.setupMultiTabSync();
     }
 
     // ------------------------------------------------------
@@ -246,5 +247,27 @@ export class SessionService {
             };
             this.userSubject.next(resolvedUser);
         });
+    }
+
+    private setupMultiTabSync(): void {
+        window.addEventListener('storage', (event: StorageEvent) => {
+            if (event.key === this.LOGOUT_EVENT_KEY && event.newValue === 'true') {
+                this.performLocalLogout();
+            }
+
+            // if (event.key === 'userData' && event.newValue) {
+            //     const user = JSON.parse(event.newValue);
+            //     this.userSubject.next(user);
+            //     if (this.router.url === '/login') {
+            //         this.router.navigate(['/home']);
+            //     }
+            // }
+        });
+    }
+
+    private performLocalLogout(): void {
+        this.userSubject.next(null);
+        this.clearSessionStorage();
+        this.router.navigate(['/login']);
     }
 }

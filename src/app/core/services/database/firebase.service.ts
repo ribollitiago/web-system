@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import {
     getDatabase,
     ref,
@@ -9,12 +9,11 @@ import {
     remove,
     onValue,
     off,
-    DataSnapshot,
-    onChildRemoved,
-    onChildAdded,
-    onChildChanged
+    DataSnapshot
 } from 'firebase/database';
 import firebaseApp from '../../../firebase.config';
+import { TabManagerService } from '../auth/TabManager.service';
+import { Subscription } from 'rxjs';
 
 type Entity = {
     uid?: string;
@@ -22,23 +21,50 @@ type Entity = {
 };
 
 type WriteMode = 'create' | 'update' | 'push';
-
 type ChildListenMode = 'added' | 'changed' | 'removed';
 
 @Injectable({
     providedIn: 'root',
 })
-export class FirebaseService {
+export class FirebaseService implements OnDestroy {
 
     private readonly db = getDatabase(firebaseApp);
     private subscriptions: Record<string, boolean> = {};
+    private activeSubscriptions: Map<string, { path: string, callback: Function }> = new Map();
+    private tabSubscription: Subscription;
 
-    // ------------------------------------------------------
-    // REF
-    // ------------------------------------------------------
+    constructor(private tabManager: TabManagerService) {
+        this.tabSubscription = this.tabManager.isVisible$.subscribe(visible => {
+            if (!visible) {
+                this.pauseAllSubscriptions();
+            } else {
+                this.resumeAllSubscriptions();
+            }
+        });
+    }
+
+    ngOnDestroy() {
+        this.pauseAllSubscriptions();
+        if (this.tabSubscription) this.tabSubscription.unsubscribe();
+    }
 
     private ref(path: string) {
         return ref(this.db, path);
+    }
+
+    private processSnapshot(snapshot: DataSnapshot): any {
+        if (!snapshot.exists()) return [];
+
+        const value = snapshot.val();
+
+        if (value && typeof value === 'object' && !Array.isArray(value)) {
+            const keys = Object.keys(value);
+            if (keys.length > 0 && typeof value[keys[0]] === 'object') {
+                return this.snapshotToList(snapshot);
+            }
+        }
+
+        return value !== undefined ? value : [];
     }
 
     // ------------------------------------------------------
@@ -107,79 +133,43 @@ export class FirebaseService {
     // ------------------------------------------------------
 
     subscribe(path: string, callback: (data: any) => void) {
-
         if (this.subscriptions[path]) {
             this.unsubscribe(path);
         }
 
-        onValue(this.ref(path), snapshot => {
-            if (!snapshot.exists()) return callback(null);
+        this.activeSubscriptions.set(path, { path, callback });
 
-            const value = snapshot.val();
-
-            if (value && typeof value === 'object' && !Array.isArray(value)) {
-
-                const firstKey = Object.keys(value)[0];
-
-                if (value[firstKey] && typeof value[firstKey] === 'object') {
-                    return callback(this.snapshotToList(snapshot));
-                }
-            }
-
-            return callback(value);
-        });
-
-        this.subscriptions[path] = true;
+        if (this.tabManager.isVisible) {
+            this.activateListener(path, callback);
+            this.subscriptions[path] = true;
+        }
     }
 
+    private activateListener(path: string, callback: Function) {
+        onValue(this.ref(path), snapshot => {
+            callback(this.processSnapshot(snapshot));
+        });
+    }
 
-    subscribeChild(
-        path: string,
-        mode: ChildListenMode,
-        callback: (data: any) => void
-    ) {
+    private pauseAllSubscriptions() {
+        this.activeSubscriptions.forEach((value, path) => {
+            off(this.ref(path));
+        });
+        console.log('Firebase: Listeners desativados (Aba em background).');
+    }
 
-        const reference = this.ref(path);
-
-        const key = `${path}_${mode}`;
-
-        if (this.subscriptions[key]) this.unsubscribe(path, mode);
-
-        if (mode === 'added') {
-            onChildAdded(reference, snapshot => {
-                callback({
-                    uid: snapshot.key,
-                    ...snapshot.val()
-                });
-            });
-        }
-
-        if (mode === 'changed') {
-            onChildChanged(reference, snapshot => {
-                callback({
-                    uid: snapshot.key,
-                    ...snapshot.val()
-                });
-            });
-        }
-
-        if (mode === 'removed') {
-            onChildRemoved(reference, snapshot => {
-                callback(snapshot.key);
-            });
-        }
-
-        this.subscriptions[key] = true;
+    private resumeAllSubscriptions() {
+        this.activeSubscriptions.forEach((sub, path) => {
+            this.activateListener(sub.path, sub.callback);
+        });
+        console.log('Firebase: Listeners reativados (Aba ativa).');
     }
 
     unsubscribe(path: string, mode?: ChildListenMode) {
-
         const key = mode ? `${path}_${mode}` : path;
-
         if (!this.subscriptions[key]) return;
-
-        console.log('apagous')
         off(this.ref(path));
         delete this.subscriptions[key];
+        if (!mode) this.activeSubscriptions.delete(path);
     }
 }
