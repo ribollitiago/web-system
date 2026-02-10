@@ -99,7 +99,7 @@ export class DetailsUsersComponent implements OnDestroy {
   closeDetailsPanel(): void {
     this.isDetailsOpen = false;
     this.selectedUser = null;
-    this.listUsersComponent?.resetSelections();
+    // this.listUsersComponent?.resetSelections();
   }
 
   async listPermissions(user: User) {
