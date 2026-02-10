@@ -1,0 +1,76 @@
+<div class="list-wrapper">
+  <!-- Header / Filters Row -->
+  <div class="filters-list">
+    <div *ngIf="selectable" class="checkbox" (click)="toggleSelectAll($event)">
+      <img
+        [src]="allSelected ? 'assets/svg/icon/register/step-2/check-on.svg' : 'assets/svg/icon/register/step-2/check-off.svg'">
+    </div>
+    <div *ngFor="let col of columns"
+         class="filter-item"
+         [ngClass]="col.key"
+         [style.flex]="col.flex">
+      {{ col.label }}
+      <img *ngIf="col.sortable !== false" src="assets/svg/icon/users/arrow-filter.svg">
+    </div>
+  </div>
+
+  <!-- List Content -->
+  <div class="list-scroll-container">
+    <ng-container *ngFor="let item of visibleData">
+      <div class="list-container"
+           [class.selected]="isSelected(item)"
+           (click)="onRowClick(item)">
+
+        <div *ngIf="selectable" class="checkbox" (click)="toggleItemSelection(item, $event)">
+          <img
+            [src]="'assets/svg/icon/register/step-2/' + (isSelected(item) ? 'check-on.svg' : 'check-off.svg')">
+        </div>
+
+        <!-- Renderiza o template customizado se fornecido, senão renderiza colunas padrão -->
+        <ng-container *ngIf="rowTemplate; else defaultRow">
+          <ng-container *ngTemplateOutlet="rowTemplate; context: { $implicit: item }"></ng-container>
+        </ng-container>
+
+        <ng-template #defaultRow>
+          <div *ngFor="let col of columns"
+               class="list-item"
+               [ngClass]="col.key"
+               [style.flex]="col.flex">
+            {{ item[col.key] }}
+          </div>
+        </ng-template>
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- Pagination Controls -->
+  <div class="pagination-controls">
+    <div class="text-lines-page">Lines per page</div>
+    <select class="page-select" [(ngModel)]="itemsPerPage" (change)="onItemsPerPageChange()">
+      <option [value]="10">10</option>
+      <option [value]="25">25</option>
+      <option [value]="50">50</option>
+      <option [value]="100">100</option>
+      <option [value]="200">200</option>
+    </select>
+
+    <button class="pagination-button" (click)="previousPage()" [disabled]="currentPage === 1">
+      <img src="assets/svg/icon/users/arrow-list.svg" alt="Previous page" class="arrow-icon rotate-180">
+    </button>
+
+    <div class="page-numbers">
+      <ng-container *ngFor="let page of displayedPages">
+        <span *ngIf="page === '...'" class="ellipsis">...</span>
+        <button *ngIf="page !== '...'" class="page-button"
+          [class.active]="page === currentPage"
+          (click)="goToPage(page)">
+          {{page}}
+        </button>
+      </ng-container>
+    </div>
+
+    <button class="pagination-button" (click)="nextPage()" [disabled]="currentPage === totalPages">
+      <img src="assets/svg/icon/users/arrow-list.svg" alt="Next page" class="arrow-icon">
+    </button>
+  </div>
+</div>

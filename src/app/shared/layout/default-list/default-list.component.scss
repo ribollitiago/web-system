@@ -1,0 +1,352 @@
+@import "../../../../styles/variables.scss";
+
+.list-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  --row-height: 45px;
+  --visible-rows: 10;
+  position: relative; // Para posicionar a paginação se necessário
+
+  .filters-list {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 10px;
+    padding: 0px 15px;
+    border-radius: 8px;
+    background-color: $us-bg-filters;
+    flex-shrink: 0;
+
+    .filter-item {
+      display: flex;
+      align-items: center;
+      color: $rg-text;
+      font-size: 12px;
+      font-weight: 300;
+      padding: 8px 0;
+      position: relative;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      user-select: none;
+
+      img {
+        width: 12px;
+        height: 12px;
+        margin-left: 5px;
+        cursor: pointer;
+      }
+    }
+
+    .checkbox {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 30px;
+      cursor: pointer;
+      user-select: none;
+    }
+  }
+
+  .list-container {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid $us-bg-filters;
+    height: auto;
+    min-height: 45px;
+    transition: background-color 0.1s ease;
+    cursor: default;
+    padding: 0 15px 0 4px;
+
+    &:hover,
+    &.selected {
+      background-color: $rg-bg-hover-extra;
+      cursor: pointer;
+    }
+
+    &.selected {
+      background-color: darken($rg-bg-hover-extra, 5%);
+    }
+
+    .list-item {
+      color: $rg-text;
+      font-size: 14px;
+      font-weight: 200;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .checkbox {
+      position: relative;
+      flex: 0 0 40px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+
+      &::after {
+        content: "";
+        position: absolute;
+        width: 45px;
+        height: 45px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+      }
+
+      img {
+        width: 18px;
+        height: 18px;
+        position: relative;
+        z-index: 1;
+        pointer-events: none;
+      }
+    }
+  }
+
+  .list-scroll-container {
+    flex: 1;
+    min-height: 300px;
+    overflow-y: auto;
+    --row-height: 45px;
+    max-height: calc(var(--visible-rows, 6) * var(--row-height));
+
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: $us-bg-filters;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $us-page-btn;
+      border-radius: 4px;
+    }
+
+    @media (min-height: 690px) {
+      --visible-rows: 6;
+    }
+
+    @media (min-height: 735px) {
+      --visible-rows: 7;
+    }
+
+    @media (min-height: 780px) {
+      --visible-rows: 8;
+    }
+
+    @media (min-height: 825px) {
+      --visible-rows: 9;
+    }
+
+    @media (min-height: 870px) {
+      --visible-rows: 11;
+    }
+
+    @media (min-height: 915px) {
+      --visible-rows: 11;
+    }
+
+    @media (min-height: 960px) {
+      --visible-rows: 12;
+    }
+
+    @media (min-height: 1005px) {
+      --visible-rows: 13;
+    }
+
+    @media (min-height: 1050px) {
+      --visible-rows: 14;
+    }
+
+    @media (min-height: 1095px) {
+      --visible-rows: 15;
+    }
+
+    @media (min-height: 1140px) {
+      --visible-rows: 16;
+    }
+
+    @media (min-height: 1185px) {
+      --visible-rows: 17;
+    }
+
+    @media (min-height: 1230px) {
+      --visible-rows: 18;
+    }
+
+    @media (min-height: 1275px) {
+      --visible-rows: 19;
+    }
+
+    @media (min-height: 1320px) {
+      --visible-rows: 20;
+    }
+
+    @media (min-height: 1365px) {
+      --visible-rows: 21;
+    }
+
+    @media (min-height: 1410px) {
+      --visible-rows: 22;
+    }
+
+    @media (min-height: 1455px) {
+      --visible-rows: 23;
+    }
+
+    @media (min-height: 1500px) {
+      --visible-rows: 24;
+    }
+
+    @media (min-height: 1545px) {
+      --visible-rows: 25;
+    }
+
+    @media (min-height: 1590px) {
+      --visible-rows: 26;
+    }
+
+    @media (min-height: 1635px) {
+      --visible-rows: 27;
+    }
+
+    @media (min-height: 1680px) {
+      --visible-rows: 28;
+    }
+
+    @media (min-height: 1725px) {
+      --visible-rows: 29;
+    }
+
+    @media (min-height: 1770px) {
+      --visible-rows: 30;
+    }
+
+    @media (min-height: 1815px) {
+      --visible-rows: 31;
+    }
+
+    @media (min-height: 1860px) {
+      --visible-rows: 32;
+    }
+
+    @media (min-height: 1905px) {
+      --visible-rows: 33;
+    }
+
+    @media (min-height: 1950px) {
+      --visible-rows: 34;
+    }
+
+    @media (min-height: 1995px) {
+      --visible-rows: 35;
+    }
+  }
+
+  .pagination-controls {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    margin-top: 20px;
+    padding-right: 30px;
+    user-select: none;
+
+    .pagination-button {
+      background: none;
+      border: none;
+      border-radius: 50%;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      order: 2;
+
+      &:hover:not(:disabled) {
+        background-color: $rg-bg-hover-extra;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+
+    .text-lines-page {
+      font-size: 11px;
+      font-weight: 400;
+      color: $us-border-btn;
+    }
+
+    .page-select {
+      padding: 5px 10px;
+      border: 1px solid $us-border-btn;
+      border-radius: 8px;
+      appearance: none;
+      background: transparent;
+      cursor: pointer;
+      width: auto;
+      color: $text-color;
+      order: 1;
+
+      &:focus {
+        outline: none;
+        border-color: $btn-color;
+        background-color: $rg-bg-hover-extra;
+      }
+    }
+
+    .arrow-icon.rotate-180 {
+      transform: rotate(180deg);
+    }
+
+    .page-numbers {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      margin: 0 10px;
+      order: 3;
+
+      .ellipsis {
+        color: $us-page-btn;
+        padding: 0 5px;
+      }
+
+      .page-button {
+        background: none;
+        border: none;
+        color: $us-page-btn;
+        padding: 8px 10px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        min-width: 32px;
+
+        &:hover:not(.active) {
+          background-color: $rg-bg-hover-extra;
+        }
+
+        &.active {
+          border-color: $us-border-btn;
+          background-color: $btn-color;
+          color: $us-bg-filters;
+          cursor: default;
+          font-weight: bold;
+        }
+      }
+    }
+
+    .pagination-button:last-child {
+      order: 4;
+    }
+  }
+}
