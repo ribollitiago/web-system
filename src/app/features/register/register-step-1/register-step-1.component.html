@@ -1,20 +1,42 @@
-<app-default-step [title]="title" [subtitle]="subtitle" [currentStepState]="1" [btnLast]="btnLast"
+<app-default-step [title]="title" [subtitle]="subtitle" [currentStepState]="1"
+  [btnLast]="btnLast"
   [showBackIcon]="false" (submit)="submit()">
 
   <form>
     <div class="register-form">
 
       <div class="name">
-        <h3>{{ titleName }}</h3>
-        <app-primary-input [(ngModel)]="name" (ngModelChange)="onFieldChange('name', $event)" name="name"
+        <div class="title name-title">
+          <h3>{{ titleName }}</h3>
+          <img
+            *ngIf="hasError('name')"
+            #errorTooltip="matTooltip"
+            src="assets/svg/icon/default/attention.svg"
+            class="attention-icon"
+            [matTooltip]="getErrorMessage('name')"
+            matTooltipClass="error-tooltip"
+            matTooltipPosition="above">
+        </div>
+        <app-primary-input [(ngModel)]="name"
+          (ngModelChange)="onFieldChange('name', $event)" name="name"
           [placeholder]="placeholderName" maskType="alphabet" maxlength="50">
           <img src="assets/svg/icon/input/user.svg" alt>
         </app-primary-input>
       </div>
 
       <div class="email">
-        <h3>{{ titleEmail }}</h3>
-        <app-primary-input [(ngModel)]="email" (ngModelChange)="onFieldChange('email', $event)" name="email"
+        <div class="title email-title">
+          <h3>{{ titleEmail }}</h3>
+          <img
+            *ngIf="hasError('email')"
+            #errorTooltip="matTooltip"
+            src="assets/svg/icon/default/attention.svg"
+            class="attention-icon"
+            [matTooltip]="getErrorMessage('email')"
+            matTooltipPosition="above">
+        </div>
+        <app-primary-input [(ngModel)]="email"
+          (ngModelChange)="onFieldChange('email', $event)" name="email"
           type="email" [placeholder]="placeholderEmail" maxlength="60">
           <img src="assets/svg/icon/input/email.svg" alt>
         </app-primary-input>
@@ -22,22 +44,50 @@
 
       <div class="phone-and-enrollment">
         <div class="phone">
-          <h3>{{ titlePhone }}</h3>
-          <app-primary-input [(ngModel)]="phone" (ngModelChange)="onPhoneChange($event)" (paste)="onPhonePaste($event)"
-            name="phone" [placeholder]="placeholderPhone" maskType="numbers" maxlength="15">
+          <div class="title phone-title">
+            <h3>{{ titlePhone }}</h3>
+            <img
+              *ngIf="hasError('phone')"
+              #errorTooltip="matTooltip"
+              src="assets/svg/icon/default/attention.svg"
+              class="attention-icon"
+              [matTooltip]="getErrorMessage('phone')"
+              matTooltipPosition="above">
+          </div>
+          <app-primary-input [(ngModel)]="phone"
+            (ngModelChange)="onPhoneChange($event)"
+            (paste)="onPhonePaste($event)"
+            name="phone" [placeholder]="placeholderPhone" maskType="numbers"
+            maxlength="15">
             <img src="assets/svg/icon/input/phone.svg" alt>
           </app-primary-input>
         </div>
 
         <div class="enrollment">
-          <div class="title">
+          <div class="title enrollment-title">
             <h3>{{ titleEnrollment }}</h3>
-            <img src="assets/svg/icon/default/attention.svg" alt="attention" class="attention-icon"
-              [matTooltip]="tooltipEnrollment" matTooltipPosition="above">
+
+            <!-- WARNING (sempre visível) -->
+            <img
+              src="assets/svg/icon/default/warning.svg"
+              class="attention-icon"
+              [matTooltip]="tooltipEnrollment"
+              matTooltipPosition="above">
+
+            <!-- ATTENTION (só se houver erro) -->
+            <img
+              *ngIf="hasError('enrollment')"
+              #errorTooltip="matTooltip"
+              src="assets/svg/icon/default/attention.svg"
+              class="attention-icon"
+              [matTooltip]="getErrorMessage('enrollment')"
+              matTooltipPosition="above">
           </div>
 
-          <app-primary-input [(ngModel)]="enrollment" (ngModelChange)="onFieldChange('enrollment', $event)"
-            name="enrollment" [placeholder]="placeholderEnrollment" maxlength="25">
+          <app-primary-input [(ngModel)]="enrollment"
+            (ngModelChange)="onFieldChange('enrollment', $event)"
+            name="enrollment" [placeholder]="placeholderEnrollment"
+            maxlength="25">
             <img src="assets/svg/icon/input/document.svg" alt>
           </app-primary-input>
         </div>
@@ -45,17 +95,40 @@
 
       <div class="password-and-confirm">
         <div class="password">
-          <h3>{{ titlePassword }}</h3>
-          <app-primary-input [(ngModel)]="password" (ngModelChange)="onFieldChange('password', $event)" name="password"
-            type="password" [placeholder]="placeholderPassword" [isPassword]="true" maxlength="64">
+          <div class="title password-title">
+            <h3>{{ titlePassword }}</h3>
+            <img
+              *ngIf="hasError('password')"
+              #errorTooltip="matTooltip"
+              src="assets/svg/icon/default/attention.svg"
+              class="attention-icon"
+              [matTooltip]="getErrorMessage('password')"
+              matTooltipPosition="above">
+          </div>
+          <app-primary-input [(ngModel)]="password"
+            (ngModelChange)="onFieldChange('password', $event)"
+            name="password"
+            type="password" [placeholder]="placeholderPassword"
+            [isPassword]="true" maxlength="64">
             <img src="assets/svg/icon/input/password.svg" alt>
           </app-primary-input>
         </div>
 
         <div class="confirm-password">
-          <h3>{{ titleConfirmPassword }}</h3>
-          <app-primary-input [(ngModel)]="confirmPassword" (ngModelChange)="onFieldChange('confirmPassword', $event)"
-            name="confirmPassword" type="password" [placeholder]="placeholderConfirmPassword" [isPassword]="true"
+          <div class="title confirm-password-title">
+            <h3>{{ titleConfirmPassword }}</h3>
+            <img
+              *ngIf="hasError('confirmPassword')"
+              #errorTooltip="matTooltip"
+              src="assets/svg/icon/default/attention.svg"
+              class="attention-icon"
+              [matTooltip]="getErrorMessage('confirmPassword')"
+              matTooltipPosition="above">
+          </div>
+          <app-primary-input [(ngModel)]="confirmPassword"
+            (ngModelChange)="onFieldChange('confirmPassword', $event)"
+            name="confirmPassword" type="password"
+            [placeholder]="placeholderConfirmPassword" [isPassword]="true"
             maxlength="64">
             <img src="assets/svg/icon/input/password.svg" alt>
           </app-primary-input>
