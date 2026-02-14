@@ -1,8 +1,8 @@
 {
-  "Global_Components": {
+  "global_components": {
     "inputSearch": "Pesquisar..."
   },
-  "Login_form": {
+  "login_form": {
     "titleLgn": "Entrar",
     "subtitleLgn": "Faça login na sua conta",
     "inputEmailLgn": "Insira seu e-mail",
@@ -35,56 +35,91 @@
     "feedback": "Enviar Feedback",
     "titleLanguage": "Selecione seu idioma"
   },
-  "Register_Page": {
-    "title": "Registrar Novo Usuário",
-    "subtitle": "Registre um novo usuário para usar o sistema",
-    "stepOne": "Informações pessoais",
-    "stepTwo": "Permissões",
-    "stepThree": "Informações Extras",
-    "tooltipBack": "Voltar",
-    "titleName": "Nome",
-    "inputName": "Insira o Nome",
-    "titleEmail": "E-mail",
-    "inputEmail": "Insira o E-mail",
-    "titlePhone": "Telefone",
-    "inputPhone": "Insira o Telefone",
-    "titleEnrollment": "Matrícula",
-    "inputEnrollment": "Insira o a Matrícula",
-    "titlePassword": "Senha",
-    "inputPassword": "Insira a Senha",
-    "titleConfirmPassword": "Confirme a Senha",
-    "inputPasswordConfirm": "Confirme a senha",
-    "btnRegister": "Próximo passo",
-    "tooltipEnrollment": "A mátricula não será possível alterar depois do usuário ser cadastrado."
-  },
-  "Permissions_Page": {
-    "title": "Permissões",
-    "subtitle": "Registre as permissões para este usuário",
-    "filterOne": "Usuários",
-    "filterTwo": "Rotas",
-    "filterThree": "Admin",
-    "criticalTooltipZeroLevel": "Risco Zero",
-    "criticalTooltipLowLevel": "Risco Baixo",
-    "criticalTooltipMediumLevel": "Risco Médio",
-    "criticalTooltipHighLevel": "Risco Alto",
-    "menuTooltip": "Descrição",
-    "titleGroupPermissions": "Selecione os grupos de permissões para o usuário",
-    "inputGroupPermissions": "Selecione um ou mais grupos",
-    "titleSelectPermissions": "Selecione as permissões individuais para o usuário"
-  },
-  "Extra_info_page": {
-    "title": "Informações extras",
-    "subtitle": "Adicione informações extras sobre este usuário",
-    "textExplanation": "Adicione informações extras sobre este usuário, caso necessário:",
-    "placeholderTextArea": "Escreva aqui...",
-    "btnRegister": "Resumo",
-    "attachments": "Anexos",
-    "btnAttachment": "Anexar"
-  },
-  "Resume_Page": {
-    "title": "Resumo",
-    "subtitle": "Resumo das informações do usuário",
-    "btnRegister": "Completar Registro"
+  "register_page": {
+    "step_1": {
+      "title": "Registrar Novo Usuário",
+      "subtitle": "Registre um novo usuário para usar o sistema",
+      "titleName": "Nome",
+      "inputName": "Insira o Nome Completo",
+      "titleEmail": "E-mail",
+      "inputEmail": "Insira o E-mail",
+      "titlePhone": "Telefone",
+      "inputPhone": "Insira o Telefone",
+      "titleEnrollment": "Matrícula",
+      "inputEnrollment": "Insira a Matrícula",
+      "titlePassword": "Senha",
+      "inputPassword": "Insira a Senha",
+      "titleConfirmPassword": "Confirme a senha",
+      "inputPasswordConfirm": "Confirme a senha",
+      "tooltipEnrollment": "A mátricula não será possível alterar depois do usuário ser cadastrado.",
+      "validators": {
+        "emptyName": "O campo nome é obrigatório.",
+        "emptyEmail": "O campo e-mail é obrigatório.",
+        "emptyPhone": "O campo telefone é obrigatório.",
+        "emptyEnrollment": "O campo matrícula é obrigatório.",
+        "emptyPassword": "O campo senha é obrigatório.",
+        "emptyConfirmPassword": "O campo confirmar senha é obrigatório.",
+        "passwordMismatch": "As senhas digitadas não coincidem.",
+        "emailAlreadyExists": "Este e-mail já está cadastrado.",
+        "enrollmentAlreadyExists": "Esta matrícula já está cadastrada.",
+        "passwordWeak": "A senha é fraca. Utilize letras, números e caracteres especiais.",
+        "passwordContainsEmail": "Por segurança, a senha não pode conter seu e-mail.",
+        "passwordContainsName": "Por segurança, a senha não pode conter seu nome.",
+        "msgMultiWrong": "Existem vários campos inválidos. Revise o formulário.",
+        "msgDoubleWrongJoin": " e ",
+        "msgDoubleWrong": ": Corrija para continuar.",
+        "msgErrorField": "Erro no campo: ",
+        "msgUnknown": "desconhecido"
+      }
+    },
+    "step_2": {
+      "title": "Permissões",
+      "subtitle": "Registre as permissões para este usuário",
+      "filterOne": "Usuários",
+      "filterTwo": "Rotas",
+      "filterThree": "Admin",
+      "criticalTooltipZeroLevel": "Risco Zero",
+      "criticalTooltipLowLevel": "Risco Baixo",
+      "criticalTooltipMediumLevel": "Risco Médio",
+      "criticalTooltipHighLevel": "Risco Alto",
+      "menuTooltip": "Descrição",
+      "titleGroupPermissions": "Selecione os grupos de permissões para o usuário",
+      "inputGroupPermissions": "Selecione um ou mais grupos",
+      "titleSelectPermissions": "Selecione as permissões individuais para o usuário"
+    },
+    "step_3": {
+      "title": "Informações extras",
+      "subtitle": "Adicione informações extras sobre este usuário",
+      "textExplanation": "Adicione informações extras sobre este usuário, caso necessário:",
+      "placeholderTextArea": "Escreva aqui...",
+      "btnRegister": "Resumo",
+      "attachments": "Anexos",
+      "btnAttachment": "Anexar"
+    },
+    "step_4": {
+      "title": "Resumo",
+      "subtitle": "Resumo das informações do usuário",
+      "btnRegister": "Completar Registro"
+    },
+    "default": {
+      "stepOne": "Informações pessoais",
+      "stepTwo": "Permissões",
+      "stepThree": "Informações Extras",
+      "tooltipBack": "Voltar",
+      "btnRegister": "Próximo passo"
+    },
+    "dialog_confirm_state": {
+      "title": "Deseja continuar?",
+      "description": "Encontramos um cadastro em andamento.",
+      "buttonLeftTitle": "Continuar",
+      "buttonRightTitle": "Cancelar"
+    },
+    "dialog_confirm_register": {
+      "title": "Confirmar Cadastro",
+      "description": "Deseja finalizar?",
+      "buttonLeftTitle": "Registrar",
+      "buttonRightTitle": "Cancelar"
+    }
   },
   "Users_Page": {
     "title": "Lista de usuários",
@@ -245,15 +280,15 @@
       "description": "Descrição da permissão de admin 12."
     }
   },
-  "Exceptions": {
-    "Validators": {
+  "exceptions": {
+    "validators": {
       "required": "Este campo é obrigatório.",
       "email": "Por favor, insira um endereço de e-mail válido.",
       "minlength": "O valor inserido é muito curto.",
       "maxlength": "O valor inserido é muito longo.",
       "pattern": "O valor inserido não corresponde ao formato esperado."
     },
-    "LoginErrors": {
+    "login_errors": {
       "loginSucess": "Login realizado com sucesso!",
       "loginError": "Erro ao fazer login. Verifique suas credenciais.",
       "loginInvalid": "Por favor, insira um e-mail e senha válidos.",

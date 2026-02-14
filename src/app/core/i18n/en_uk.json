@@ -1,108 +1,143 @@
 {
-  "Global_Components": {
+  "global_components": {
     "inputSearch": "Search..."
   },
-  "Login_form": {
+  "login_form": {
     "titleLgn": "Sign In",
-    "subtitleLgn": "Log in to your account",
+    "subtitleLgn": "Sign in to your account",
     "inputEmailLgn": "Enter your email",
     "inputPasswordLgn": "Enter your password",
-    "linkForgotPasswordLgn": "Forgot Password?",
-    "btnLoginLgn": "Login account",
+    "linkForgotPasswordLgn": "Forgot password?",
+    "btnLoginLgn": "Sign In",
     "titleFgt": "Forgot Password",
-    "subtitleFgt": "Enter your email to recover password",
+    "subtitleFgt": "Enter your email to recover your password",
     "inputEmailFgt": "Enter your email",
-    "linkForgotPasswordFgt": "Login here",
+    "linkForgotPasswordFgt": "Back to Login",
     "btnLoginFgt": "Send Recovery Email"
   },
   "Sidebar": {
-    "tooltipMenuClose": "Close Sidebar",
-    "tooltipMenuOpen": "Open Sidebar",
-    "linkHome": "Home",
+    "tooltipMenuClose": "Close Menu",
+    "tooltipMenuOpen": "Open Menu",
+    "linkHome": "Home Page",
     "linkRegister": "Register",
     "linkUsers": "Users",
-    "linkListUsers": "List Users",
-    "linkAnalytics": "Analytics"
+    "linkListUsers": "Registered users",
+    "linkAnalytics": "Monitoring"
   },
   "Header_user": {
     "tooltipNotifications": "Notifications",
     "account": "My Account",
     "signout": "Sign Out",
-    "language": "Language: English",
-    "apparence": "Apparence: Dark",
+    "language": "Language: Portuguese",
+    "apparence": "Appearance: Dark Theme",
     "settings": "Settings",
     "help": "Help",
     "feedback": "Send Feedback",
-    "titleLanguage": "Choose your language"
+    "titleLanguage": "Select your language"
   },
-  "Register_Page": {
-    "title": "Register New User",
-    "subtitle": "Register a new user to use the system",
-    "stepOne": "Personal Information",
-    "stepTwo": "Permissions",
-    "stepThree": "Extra Information",
-    "tooltipBack": "Back Page",
-    "titleName": "Name",
-    "inputName": "Enter Name",
-    "titleEmail": "Email",
-    "inputEmail": "Enter Email",
-    "titlePhone": "Phone",
-    "inputPhone": "Enter Phone Number",
-    "titleEnrollment": "Enrollment",
-    "inputEnrollment": "Enter Enrollment",
-    "titlePassword": "Password",
-    "inputPassword": "Enter Password",
-    "titleConfirmPassword": "Confirm Password",
-    "inputPasswordConfirm": "Confirm Password",
-    "btnRegister": "Next Step",
-    "tooltipEnrollment": "Enrollment cannot be changed after registration."
-  },
-  "Permissions_Page": {
-    "title": "Permissions",
-    "subtitle": "Register the permissions for this account",
-    "filterOne": "Users",
-    "filterTwo": "Routes",
-    "filterThree": "Admin",
-    "criticalTooltipZeroLevel": "Zero Risk",
-    "criticalTooltipLowLevel": "Low Risk",
-    "criticalTooltipMediumLevel": "Medium Risk",
-    "criticalTooltipHighLevel": "High Risk",
-    "menuTooltip": "Description",
-    "titleGroupPermissions": "Select the permission groups for the user",
-    "inputGroupPermissions": "Select one or more groups",
-    "titleSelectPermissions": "Select the individual permissions for the user"
-  },
-  "Extra_info_page": {
-    "title": "Extra Information",
-    "subtitle": "Add additional infomation for this user",
-    "textExplanation": "Write extra information about the user:",
-    "placeholderTextArea": "Write here...",
-    "btnRegister": "Resume",
-    "attachments": "Attachments",
-    "btnAttachment": "Attachment"
-  },
-  "Resume_Page": {
-    "title": "Resume",
-    "subtitle": "User registration summary",
-    "btnRegister": "Complete Sign Up"
+  "register_page": {
+    "step_1": {
+      "title": "Register New User",
+      "subtitle": "Register a new user to use the system",
+      "titleName": "Name",
+      "inputName": "Enter Full Name",
+      "titleEmail": "Email",
+      "inputEmail": "Enter Email",
+      "titlePhone": "Phone",
+      "inputPhone": "Enter Phone",
+      "titleEnrollment": "Enrollment",
+      "inputEnrollment": "Enter Enrollment",
+      "titlePassword": "Password",
+      "inputPassword": "Enter Password",
+      "titleConfirmPassword": "Confirm Password",
+      "inputPasswordConfirm": "Confirm Password",
+      "tooltipEnrollment": "The enrollment will not be possible to change after the user is registered.",
+      "validators": {
+        "emptyName": "Name field is required.",
+        "emptyEmail": "Email field is required.",
+        "emptyPhone": "Phone field is required.",
+        "emptyEnrollment": "Enrollment field is required.",
+        "emptyPassword": "Password field is required.",
+        "emptyConfirmPassword": "Confirm password field is required.",
+        "passwordMismatch": "The entered passwords do not match.",
+        "emailAlreadyExists": "This email is already registered.",
+        "enrollmentAlreadyExists": "This enrollment is already registered.",
+        "passwordWeak": "Password is weak. Use letters, numbers and special characters.",
+        "passwordContainsEmail": "For security, the password cannot contain your email.",
+        "passwordContainsName": "For security, the password cannot contain your name.",
+        "msgMultiWrong": "There are multiple invalid fields. Review the form.",
+        "msgDoubleWrongJoin": " and ",
+        "msgDoubleWrong": ": Fix to continue.",
+        "msgErrorField": "Error in field: ",
+        "msgUnknown": "unknown"
+      }
+    },
+    "step_2": {
+      "title": "Permissions",
+      "subtitle": "Register permissions for this user",
+      "filterOne": "Users",
+      "filterTwo": "Routes",
+      "filterThree": "Admin",
+      "criticalTooltipZeroLevel": "Zero Risk",
+      "criticalTooltipLowLevel": "Low Risk",
+      "criticalTooltipMediumLevel": "Medium Risk",
+      "criticalTooltipHighLevel": "High Risk",
+      "menuTooltip": "Description",
+      "titleGroupPermissions": "Select permission groups for the user",
+      "inputGroupPermissions": "Select one or more groups",
+      "titleSelectPermissions": "Select individual permissions for the user"
+    },
+    "step_3": {
+      "title": "Extra Information",
+      "subtitle": "Add extra information about this user",
+      "textExplanation": "Add extra information about this user, if necessary:",
+      "placeholderTextArea": "Write here...",
+      "btnRegister": "Summary",
+      "attachments": "Attachments",
+      "btnAttachment": "Attach"
+    },
+    "step_4": {
+      "title": "Summary",
+      "subtitle": "Summary of user information",
+      "btnRegister": "Complete Registration"
+    },
+    "default": {
+      "stepOne": "Personal Information",
+      "stepTwo": "Permissions",
+      "stepThree": "Extra Information",
+      "tooltipBack": "Back",
+      "btnRegister": "Next Step"
+    },
+    "dialog_confirm_state": {
+      "title": "Do you want to continue?",
+      "description": "We found a registration in progress.",
+      "buttonLeftTitle": "Continue",
+      "buttonRightTitle": "Cancel"
+    },
+    "dialog_confirm_register": {
+      "title": "Confirm Registration",
+      "description": "Do you want to finish?",
+      "buttonLeftTitle": "Register",
+      "buttonRightTitle": "Cancel"
+    }
   },
   "Users_Page": {
-    "title": "List of Users",
-    "subtitle": "List of users registered in the system",
+    "title": "User List",
+    "subtitle": "Users registered in the system",
     "btnFilters": "Filters",
     "btnExport": "Export",
     "filterName": "Name",
     "filterGroup": "Group",
-    "filterSituation": "Situation",
+    "filterSituation": "Status",
     "filterMore": "More",
-    "inactived": "Inactived",
-    "actived": "Actived",
+    "inactived": "Inactive",
+    "actived": "Active",
     "disabled": "Disabled"
   },
   "Permissions": {
     "010001": {
       "title": "Register new user",
-      "description": "Allow the registration of a new user in a basic way, it is not possible to add or remove permissions, will not have immediate access to the system, after registration request access from a superior."
+      "description": "Allow registering a new user in a basic way, it is not possible to add or remove permissions, will not have immediate access to the system, after registration request access from a superior."
     },
     "010002": {
       "title": "test2",
@@ -118,35 +153,35 @@
     },
     "010005": {
       "title": "User permission 5",
-      "description": "Description of user permission 5."
+      "description": "User permission 5 description."
     },
     "010006": {
       "title": "User permission 6",
-      "description": "Description of user permission 6."
+      "description": "User permission 6 description."
     },
     "010007": {
       "title": "User permission 7",
-      "description": "Description of user permission 7."
+      "description": "User permission 7 description."
     },
     "010008": {
       "title": "User permission 8",
-      "description": "Description of user permission 8."
+      "description": "User permission 8 description."
     },
     "010009": {
       "title": "User permission 9",
-      "description": "Description of user permission 9."
+      "description": "User permission 9 description."
     },
     "010010": {
       "title": "User permission 10",
-      "description": "Description of user permission 10."
+      "description": "User permission 10 description."
     },
     "010011": {
       "title": "User permission 11",
-      "description": "Description of user permission 11."
+      "description": "User permission 11 description."
     },
     "010012": {
       "title": "User permission 12",
-      "description": "Description of user permission 12."
+      "description": "User permission 12 description."
     },
     "020001": {
       "title": "test1",
@@ -166,35 +201,35 @@
     },
     "020005": {
       "title": "Route permission 5",
-      "description": "Description of route permission 5."
+      "description": "Route permission 5 description."
     },
     "020006": {
       "title": "Route permission 6",
-      "description": "Description of route permission 6."
+      "description": "Route permission 6 description."
     },
     "020007": {
       "title": "Route permission 7",
-      "description": "Description of route permission 7."
+      "description": "Route permission 7 description."
     },
     "020008": {
       "title": "Route permission 8",
-      "description": "Description of route permission 8."
+      "description": "Route permission 8 description."
     },
     "020009": {
       "title": "Route permission 9",
-      "description": "Description of route permission 9."
+      "description": "Route permission 9 description."
     },
     "020010": {
       "title": "Route permission 10",
-      "description": "Description of route permission 10."
+      "description": "Route permission 10 description."
     },
     "020011": {
       "title": "Route permission 11",
-      "description": "Description of route permission 11."
+      "description": "Route permission 11 description."
     },
     "020012": {
       "title": "Route permission 12",
-      "description": "Description of route permission 12."
+      "description": "Route permission 12 description."
     },
     "030001": {
       "title": "test1",
@@ -214,54 +249,53 @@
     },
     "030005": {
       "title": "Admin permission 5",
-      "description": "Description of admin permission 5."
+      "description": "Admin permission 5 description."
     },
     "030006": {
       "title": "Admin permission 6",
-      "description": "Description of admin permission 6."
+      "description": "Admin permission 6 description."
     },
     "030007": {
       "title": "Admin permission 7",
-      "description": "Description of admin permission 7."
+      "description": "Admin permission 7 description."
     },
     "030008": {
       "title": "Admin permission 8",
-      "description": "Description of admin permission 8."
+      "description": "Admin permission 8 description."
     },
     "030009": {
       "title": "Admin permission 9",
-      "description": "Description of admin permission 9."
+      "description": "Admin permission 9 description."
     },
     "030010": {
       "title": "Admin permission 10",
-      "description": "Description of admin permission 10."
+      "description": "Admin permission 10 description."
     },
     "030011": {
       "title": "Admin permission 11",
-      "description": "Description of admin permission 11."
+      "description": "Admin permission 11 description."
     },
     "030012": {
       "title": "Admin permission 12",
-      "description": "Description of admin permission 12."
+      "description": "Admin permission 12 description."
     }
   },
-  "Exceptions": {
-    "Validators": {
+  "exceptions": {
+    "validators": {
       "required": "This field is required.",
       "email": "Please enter a valid email address.",
       "minlength": "The entered value is too short.",
       "maxlength": "The entered value is too long.",
       "pattern": "The entered value does not match the expected format."
     },
-    "LoginErrors": {
+    "login_errors": {
       "loginSucess": "Login successful!",
-      "loginError": "Error logging in. Please check your credentials.",
+      "loginError": "Error logging in. Check your credentials.",
       "loginInvalid": "Please enter a valid email and password.",
       "loginEmailRecovery": "Recovery email sent successfully!",
-      "loginEmailRecoveryError": "Error sending recovery email. Please try again later.",
-      "loginEmailRecoveryInvalid": "Please enter a valid email for recovery.",
+      "loginEmailRecoveryError": "Error sending recovery email. Try again later.",
+      "loginEmailRecoveryInvalid": "Please enter a valid recovery email.",
       "loginBlockedUser": "Your account is blocked. Please contact support."
     }
-}
-
+  }
 }
