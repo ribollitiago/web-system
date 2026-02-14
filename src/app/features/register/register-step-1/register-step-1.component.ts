@@ -1,7 +1,7 @@
 // ------------------------------------------------------
 // IMPORTS
 // ------------------------------------------------------
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -11,9 +11,25 @@ import { DefaultStepComponent } from '../../../shared/layout/default-step/defaul
 import { TranslationService } from '../../../core/services/i18n/translate.service';
 import { RegisterData, RegisterService } from '../../../core/services/auth/register.service';
 import { ToastrService } from 'ngx-toastr';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTooltip, MatTooltipModule } from '@angular/material/tooltip';
 import { ValidatorsService } from '../../../core/services/validators/validators.service';
+import { EMPTY } from 'rxjs';
 
+// ------------------------------------------------------
+// TYPES / INTERFACES
+// ------------------------------------------------------
+type FieldKey =
+  | 'name'
+  | 'email'
+  | 'phone'
+  | 'enrollment'
+  | 'password'
+  | 'confirmPassword';
+
+interface FieldErrorState {
+  errorCode: string;
+  message: string;
+}
 
 // ------------------------------------------------------
 // COMPONENT
@@ -32,6 +48,10 @@ import { ValidatorsService } from '../../../core/services/validators/validators.
   styleUrl: './register-step-1.component.scss'
 })
 export class RegisterStep1Component implements OnInit {
+  //Tooltip
+  @ViewChildren('errorTooltip', { read: MatTooltip })
+  errorTooltips!: QueryList<MatTooltip>;
+
 
   // ------------------------------------------------------
   // STATE
@@ -67,6 +87,11 @@ export class RegisterStep1Component implements OnInit {
 
   //Validators
   msgEmptyName = '';
+  msgEmptyEmail = '';
+  msgEmptyPhone = '';
+  msgEmptyEnrollment = '';
+  msgEmptyPassword = '';
+  msgEmptyConfirmPassword = '';
   msgPasswordMismatch = '';
   msgEmailAlreadyExists = '';
   msgEnrollmentAlreadyExists = '';
@@ -78,6 +103,11 @@ export class RegisterStep1Component implements OnInit {
   msgDoubleWrong = '';
   msgErrorField = '';
   msgUnknown = '';
+
+  // ------------------------------------------------------
+  // FIELD ERRORS (VALIDATION STATE)
+  // ------------------------------------------------------
+  fieldErrors: Partial<Record<FieldKey, FieldErrorState>> = {};
 
   // ------------------------------------------------------
   // CONSTRUCTOR
@@ -117,7 +147,7 @@ export class RegisterStep1Component implements OnInit {
 
   onPhoneChange(value: string): void {
     const formatted = this.formatPhone(value);
-    
+
     this.phone = formatted;
 
     setTimeout(() => {
@@ -206,6 +236,11 @@ export class RegisterStep1Component implements OnInit {
 
     // --- Validators ---
     this.msgEmptyName = this.translationService.getTranslation(validators + 'emptyName', section);
+    this.msgEmptyEmail = this.translationService.getTranslation(validators + 'emptyEmail', section);
+    this.msgEmptyPhone = this.translationService.getTranslation(validators + 'emptyPhone', section);
+    this.msgEmptyEnrollment = this.translationService.getTranslation(validators + 'emptyEnrollment', section);
+    this.msgEmptyPassword = this.translationService.getTranslation(validators + 'emptyPassword', section);
+    this.msgEmptyConfirmPassword = this.translationService.getTranslation(validators + 'emptyConfirmPassword', section);
     this.msgPasswordMismatch = this.translationService.getTranslation(validators + 'passwordMismatch', section);
     this.msgEmailAlreadyExists = this.translationService.getTranslation(validators + 'emailAlreadyExists', section);
     this.msgEnrollmentAlreadyExists = this.translationService.getTranslation(validators + 'enrollmentAlreadyExists', section);
@@ -224,47 +259,84 @@ export class RegisterStep1Component implements OnInit {
   // ------------------------------------------------------
   private async validateForm(): Promise<boolean> {
 
-    const ERROR_FIELD_MAP: Record<string, string> = {
-      //NAME
-      EMPTY_NAME: this.titleName,
-      INVALID_NAME: this.titleName,
-      INVALID_NAME_PART: this.titleName,
-      //EMAIL
-      EMPTY_EMAIL: this.titleName,
-      INVALID_EMAIL: this.titleEmail,
-      EMAIL_ALREADY_EXISTS: this.titleEmail,
-      //PHONE
-      EMPTY_PHONE: this.titlePhone,
-      INVALID_PHONE: this.titlePhone,
-      //ENROLLMENT
-      EMPTY_ENROLLMENT: this.titleEnrollment,
-      //PASSWORD
-      EMPTY_PASSWORD: this.titlePassword,
-      PASSWORD_TOO_SHORT: this.titlePassword,
-      PASSWORD_WEAK: this.titlePassword,
-      PASSWORD_CONTAINS_EMAIL: this.titlePassword,
-      PASSWORD_CONTAINS_NAME: this.titlePassword,
-      //CONFIRMPASSWORD
-      EMPTY_CONFIRMPASSWORD: this.titleConfirmPassword,
-      PASSWORD_MISMATCH: this.titleConfirmPassword
+    // ------------------------------------------------------
+    // MAPAS DE ERRO
+    // ------------------------------------------------------
+    const ERROR_FIELD_KEY_MAP: Record<string, FieldKey> = {
+      // NAME
+      EMPTY_NAME: 'name',
+      INVALID_NAME: 'name',
+      INVALID_NAME_PART: 'name',
+
+      // EMAIL
+      EMPTY_EMAIL: 'email',
+      INVALID_EMAIL: 'email',
+      EMAIL_ALREADY_EXISTS: 'email',
+
+      // PHONE
+      EMPTY_PHONE: 'phone',
+      INVALID_PHONE: 'phone',
+
+      // ENROLLMENT
+      EMPTY_ENROLLMENT: 'enrollment',
+      ENROLLMENT_ALREADY_EXISTS: 'enrollment',
+
+      // PASSWORD
+      EMPTY_PASSWORD: 'password',
+      PASSWORD_TOO_SHORT: 'password',
+      PASSWORD_WEAK: 'password',
+      PASSWORD_CONTAINS_EMAIL: 'password',
+      PASSWORD_CONTAINS_NAME: 'password',
+
+      // CONFIRM PASSWORD
+      EMPTY_CONFIRMPASSWORD: 'confirmPassword',
+      PASSWORD_MISMATCH: 'confirmPassword'
     };
 
     const ERROR_MESSAGE_MAP: Record<string, string> = {
       EMPTY_NAME: this.msgEmptyName,
+      EMPTY_EMAIL: this.msgEmptyEmail,
+      EMPTY_PHONE: this.msgEmptyPhone,
+      EMPTY_ENROLLMENT: this.msgEmptyEnrollment,
+      EMPTY_PASSWORD: this.msgEmptyPassword,
+      EMPTY_CONFIRMPASSWORD: this.msgEmptyConfirmPassword,
+      EMPTY_Inva: this.msgEmptyConfirmPassword,
       PASSWORD_MISMATCH: this.msgPasswordMismatch,
       EMAIL_ALREADY_EXISTS: this.msgEmailAlreadyExists,
       ENROLLMENT_ALREADY_EXISTS: this.msgEnrollmentAlreadyExists,
       PASSWORD_WEAK: this.msgPasswordWeak,
       PASSWORD_CONTAINS_EMAIL: this.msgPasswordContainsEmail,
-      PASSWORD_CONTAINS_NAME: this.msgPasswordContainsName
+      PASSWORD_CONTAINS_NAME: this.msgPasswordContainsName,
+
+
+      INVALID_NAME: 'name',
+      INVALID_NAME_PART: 'name',
+
+      // EMAIL
+      INVALID_EMAIL: 'email',
+
+      // PHONE
+      INVALID_PHONE: 'phone',
+
+      // ENROLLMENT
+
+      // PASSWORD
+      PASSWORD_TOO_SHORT: 'password',
+
     };
 
+    // ------------------------------------------------------
+    // EXECUTA VALIDAÇÕES
+    // ------------------------------------------------------
     const validations = await Promise.all([
       this.validatorsService.validate('NAME', this.name),
       this.validatorsService.validate('EMAIL', this.email),
       this.validatorsService.validate('PHONE', this.phone),
       this.validatorsService.validate('ENROLLMENT', this.enrollment),
-      this.validatorsService.validate('PASSWORD', this.password),
+      this.validatorsService.validate('PASSWORD', this.password, {
+        email: this.email,
+        name: this.name
+      }),
       this.validatorsService.validate('PASSWORD_MATCH', null, {
         password: this.password,
         confirmPassword: this.confirmPassword
@@ -273,46 +345,59 @@ export class RegisterStep1Component implements OnInit {
 
     const errors = validations.filter(v => !v.valid);
 
-    // ======================================================
-    // SEPARA ERROS ESPECIAIS E ERROS DE CAMPO
-    // ======================================================
+    // ------------------------------------------------------
+    // LIMPA ERROS ANTIGOS
+    // ------------------------------------------------------
+    this.fieldErrors = {};
 
-    const specialErrors = errors.filter(e => ERROR_MESSAGE_MAP[e.error!]);
-    const fieldErrors = errors.filter(e => ERROR_FIELD_MAP[e.error!]);
+    // ------------------------------------------------------
+    // PREENCHE ERROS POR CAMPO
+    // ------------------------------------------------------
+    for (const error of errors) {
+      const fieldKey = ERROR_FIELD_KEY_MAP[error.error!];
+      const message =
+        ERROR_MESSAGE_MAP[error.error!] ||
+        `${this.msgErrorField}${this.msgUnknown}`;
 
-    // ======================================================
-    // MOSTRA ERROS DE CAMPO (um bloco de toast)
-    // ======================================================
-    let message = '';
-
-    if (fieldErrors.length > 2) {
-      message = this.msgMultiWrong;
-    } else if (fieldErrors.length === 2) {
-      const fields = fieldErrors.map(e => ERROR_FIELD_MAP[e.error!]);
-      message = `${fields.join(this.msgDoubleWrongJoin)}${this.msgDoubleWrong}`;
-    } else if (fieldErrors.length === 1 || specialErrors.length > 0) {
-      if (specialErrors.length) {
-        for (const error of specialErrors) {
-          const message = ERROR_MESSAGE_MAP[error.error!];
-          if (message) {
-            this.toastService.clear();
-            this.toastService.error(message);
-            return false;
-          }
-        }
+      if (fieldKey) {
+        this.fieldErrors[fieldKey] = {
+          errorCode: error.error!,
+          message
+        };
       }
-      message = `${this.msgErrorField}${ERROR_FIELD_MAP[fieldErrors[0].error!] ?? this.msgUnknown}`;
     }
 
+    // ------------------------------------------------------
+    // MOSTRA TOOLTIPS + BLOQUEIA SUBMIT
+    // ------------------------------------------------------
     if (errors.length > 0) {
-      this.toastService.clear();
-      this.toastService.error(message);
-    }
-    // ======================================================
-    // RETORNA SE HOUVE ERROS
-    // ======================================================
+      setTimeout(() => {
+        this.errorTooltips.forEach(t => {
+          t.show();
 
-    return errors.length === 0;
+          setTimeout(() => {
+            t.hide();
+          }, 5000);
+        });
+      });
+
+      return false;
+    }
+
+
+    // ------------------------------------------------------
+    // FORM OK
+    // ------------------------------------------------------
+    return true;
+  }
+
+
+  hasError(field: FieldKey): boolean {
+    return !!this.fieldErrors[field];
+  }
+
+  getErrorMessage(field: FieldKey): string {
+    return this.fieldErrors[field]?.message ?? '';
   }
 
   // ------------------------------------------------------
