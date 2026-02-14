@@ -6,7 +6,7 @@ import { LoginService } from '../../core/services/auth/login.service';
 import { ToastrService } from 'ngx-toastr';
 import { PrimaryInputComponent } from '../../shared/components/input/primary-input/primary-input.component';
 import { DefaultLoginLayoutComponent } from '../../layout/default-login-layout/default-login-layout.component';
-import { TranslationService } from '../../core/services/i18n/translate.service';
+import { TranslationService } from '../../core/services/shared/translate.service';
 
 @Component({
   selector: 'app-login',

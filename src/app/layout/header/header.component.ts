@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { TranslationService } from '../../core/services/i18n/translate.service';
+import { TranslationService } from '../../core/services/shared/translate.service';
 import { SessionService } from '../../core/services/auth/session.service';
 import { LoginService } from '../../core/services/auth/login.service';
 

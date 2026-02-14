@@ -11,7 +11,7 @@ import { RegisterStep2Component } from './register-step-2/register-step-2.compon
 import { RegisterStep3Component } from './register-step-3/register-step-3.component';
 import { RegisterStep4Component } from './register-step-4/register-step-4.component';
 import { DefaultPopupComponent } from '../../shared/components/popup/default-popup/default-popup.component';
-import { TranslationService } from '../../core/services/i18n/translate.service';
+import { TranslationService } from '../../core/services/shared/translate.service';
 
 // ------------------------------------------------------
 // COMPONENT

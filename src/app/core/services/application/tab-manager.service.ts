@@ -2,72 +2,76 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, fromEvent, Subscription } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 
+type BroadcastMessage =
+  | { type: 'HELLO' }
+  | { type: 'MASTER_PRESENT' }
+  | { type: 'MASTER_ALIVE' }
+  | { type: 'MASTER_CLAIM' }
+  | { type: 'MASTER_RELEASED' };
+
 @Injectable({
   providedIn: 'root'
 })
 export class TabManagerService implements OnDestroy {
 
   // ------------------------------------------------------
-  // SESSÃO: STATE - VISIBILITY
+  // CONSTANTS
   // ------------------------------------------------------
 
-  private isVisibleSubject = new BehaviorSubject<boolean>(!document.hidden);
-  public isVisible$ = this.isVisibleSubject.asObservable().pipe(shareReplay(1));
+  private readonly CHANNEL_NAME = 'tab-sync-channel';
+  private readonly MASTER_CHECK_DELAY = 1000;
+  private readonly HEARTBEAT_INTERVAL = 2000;
 
   // ------------------------------------------------------
-  // SESSÃO: STATE - MASTER CONTROL
+  // STATE
   // ------------------------------------------------------
 
   private isMaster = false;
+
   private masterAliveTimeout?: ReturnType<typeof setTimeout>;
   private masterHeartbeat?: ReturnType<typeof setInterval>;
 
-  // ------------------------------------------------------
-  // SESSÃO: BROADCAST
-  // ------------------------------------------------------
-
   private broadcastChannel?: BroadcastChannel;
-  private isMasterSubject = new BehaviorSubject<boolean>(false);
-  public isMaster$ = this.isMasterSubject.asObservable().pipe(shareReplay(1));
 
   // ------------------------------------------------------
-  // SESSÃO: SUBSCRIPTIONS
+  // STREAM STATE
+  // ------------------------------------------------------
+
+  private isVisibleSubject = new BehaviorSubject<boolean>(!document.hidden);
+  public readonly isVisible$ = this.isVisibleSubject.asObservable().pipe(shareReplay(1));
+
+  private isMasterSubject = new BehaviorSubject<boolean>(false);
+  public readonly isMaster$ = this.isMasterSubject.asObservable().pipe(shareReplay(1));
+
+  // ------------------------------------------------------
+  // SUBSCRIPTIONS
   // ------------------------------------------------------
 
   private visibilitySubscription: Subscription;
 
   // ------------------------------------------------------
-  // SESSÃO: LIFECYCLE HANDLERS
+  // LIFECYCLE HANDLERS
   // ------------------------------------------------------
 
-  private unloadHandler = () => this.loseMaster();
+  private readonly unloadHandler = () => this.loseMaster();
 
   // ------------------------------------------------------
-  // SESSÃO: CONSTRUCTOR
+  // CONSTRUCTOR
   // ------------------------------------------------------
 
   constructor() {
 
-    // -----------------------------
-    // Browser lifecycle
-    // -----------------------------
     window.addEventListener('beforeunload', this.unloadHandler);
 
-    // -----------------------------
-    // Broadcast setup
-    // -----------------------------
     this.initializeBroadcast();
 
-    // -----------------------------
-    // Visibility observer
-    // -----------------------------
     this.visibilitySubscription = fromEvent(document, 'visibilitychange')
       .pipe(map(() => !document.hidden))
       .subscribe(visible => this.handleVisibilityChange(visible));
   }
 
   // ------------------------------------------------------
-  // SESSÃO: GETTERS
+  // PUBLIC API
   // ------------------------------------------------------
 
   get isVisible(): boolean {
@@ -79,52 +83,77 @@ export class TabManagerService implements OnDestroy {
   }
 
   // ------------------------------------------------------
-  // SESSÃO: BROADCAST INIT
+  // VISIBILITY CONTROL
   // ------------------------------------------------------
 
-  private initializeBroadcast() {
+  private handleVisibilityChange(visible: boolean): void {
+
+    this.isVisibleSubject.next(visible);
+
+    if (visible) {
+      this.sendHello();
+      this.startMasterCheck();
+      return;
+    }
+
+    this.loseMaster();
+  }
+
+  // ------------------------------------------------------
+  // MASTER CONTROL
+  // ------------------------------------------------------
+
+  private becomeMaster(): void {
+
+    if (this.isMaster || !this.isVisible) return;
+
+    this.isMaster = true;
+    this.isMasterSubject.next(true);
+
+    this.broadcast({ type: 'MASTER_CLAIM' });
+
+    this.startHeartbeat();
+  }
+
+  private loseMaster(): void {
+
+    if (!this.isMaster) return;
+
+    this.broadcast({ type: 'MASTER_RELEASED' });
+
+    this.isMaster = false;
+    this.isMasterSubject.next(false);
+
+    this.clearHeartbeat();
+    this.resetMasterTimeout();
+  }
+
+  // ------------------------------------------------------
+  // BROADCAST SETUP
+  // ------------------------------------------------------
+
+  private initializeBroadcast(): void {
+
     if (!('BroadcastChannel' in window)) return;
 
-    this.broadcastChannel = new BroadcastChannel('tab-sync-channel');
+    this.broadcastChannel = new BroadcastChannel(this.CHANNEL_NAME);
 
     this.broadcastChannel.onmessage = (event) => {
-      this.handleBroadcastMessage(event.data);
+      this.handleBroadcastMessage(event.data as BroadcastMessage);
     };
 
     this.sendHello();
     this.startMasterCheck();
   }
 
-  // ------------------------------------------------------
-  // SESSÃO: VISIBILITY CONTROL
-  // ------------------------------------------------------
-
-  private handleVisibilityChange(visible: boolean) {
-    this.isVisibleSubject.next(visible);
-
-    if (visible) {
-      console.log('Aba ativada');
-      this.sendHello();
-      this.startMasterCheck();
-      return;
-    }
-
-    console.log('Aba hidden');
-    this.loseMaster();
-  }
-
-  // ------------------------------------------------------
-  // SESSÃO: BROADCAST MESSAGE HANDLER
-  // ------------------------------------------------------
-
-  private handleBroadcastMessage(message: any) {
+  private handleBroadcastMessage(message: BroadcastMessage): void {
 
     switch (message.type) {
 
       case 'HELLO':
         if (this.isMaster) {
           this.sendMasterAlive();
-          this.broadcastChannel?.postMessage({ type: 'MASTER_PRESENT' });
+          this.broadcast({ type: 'MASTER_PRESENT' });
         }
         break;
 
@@ -138,77 +167,51 @@ export class TabManagerService implements OnDestroy {
 
       case 'MASTER_CLAIM':
         this.resetMasterTimeout();
-
-        if (this.isMaster) {
-          this.loseMaster();
-        }
+        if (this.isMaster) this.loseMaster();
         break;
     }
   }
 
   // ------------------------------------------------------
-  // SESSÃO: MASTER CONTROL
+  // MASTER HEARTBEAT
   // ------------------------------------------------------
 
-  private becomeMaster() {
-    if (this.isMaster || !this.isVisible) return;
+  private startHeartbeat(): void {
 
-    this.isMaster = true;
-    this.isMasterSubject.next(true);
+    this.clearHeartbeat();
 
-    console.log('🔥 ESTA ABA VIROU MASTER');
-
-    this.broadcastChannel?.postMessage({ type: 'MASTER_CLAIM' });
-    this.startHeartbeat();
-  }
-
-  private loseMaster() {
-    if (!this.isMaster) return;
-
-    console.log('❌ ESTA ABA PERDEU MASTER');
-
-    this.broadcastChannel?.postMessage({ type: 'MASTER_RELEASED' });
-
-    this.isMaster = false;
-    this.isMasterSubject.next(false);
-
-    if (this.masterHeartbeat) {
-      clearInterval(this.masterHeartbeat);
-      this.masterHeartbeat = undefined;
-    }
-
-    this.resetMasterTimeout();
-  }
-
-
-  // ------------------------------------------------------
-  // SESSÃO: MASTER HEARTBEAT
-  // ------------------------------------------------------
-
-  private startHeartbeat() {
     this.masterHeartbeat = setInterval(() => {
 
       if (!this.isVisible) return;
 
       this.sendMasterAlive();
 
-    }, 2000);
+    }, this.HEARTBEAT_INTERVAL);
+  }
+
+  private clearHeartbeat(): void {
+
+    if (!this.masterHeartbeat) return;
+
+    clearInterval(this.masterHeartbeat);
+    this.masterHeartbeat = undefined;
   }
 
   // ------------------------------------------------------
-  // SESSÃO: MASTER ELECTION
+  // MASTER ELECTION
   // ------------------------------------------------------
 
-  private startMasterCheck() {
+  private startMasterCheck(): void {
 
     this.resetMasterTimeout();
 
     this.masterAliveTimeout = setTimeout(() => {
       this.becomeMaster();
-    }, 1000);
+    }, this.MASTER_CHECK_DELAY);
   }
 
-  private resetMasterTimeout() {
+  private resetMasterTimeout(): void {
+
     if (!this.masterAliveTimeout) return;
 
     clearTimeout(this.masterAliveTimeout);
@@ -216,36 +219,33 @@ export class TabManagerService implements OnDestroy {
   }
 
   // ------------------------------------------------------
-  // SESSÃO: BROADCAST SEND HELPERS
+  // BROADCAST HELPERS
   // ------------------------------------------------------
 
-  private sendHello() {
-    this.broadcastChannel?.postMessage({ type: 'HELLO' });
+  private broadcast(message: BroadcastMessage): void {
+    this.broadcastChannel?.postMessage(message);
   }
 
-  private sendMasterAlive() {
-    this.broadcastChannel?.postMessage({ type: 'MASTER_ALIVE' });
+  private sendHello(): void {
+    this.broadcast({ type: 'HELLO' });
+  }
+
+  private sendMasterAlive(): void {
+    this.broadcast({ type: 'MASTER_ALIVE' });
   }
 
   // ------------------------------------------------------
-  // SESSÃO: DESTROY
+  // LIFECYCLE
   // ------------------------------------------------------
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
 
     this.visibilitySubscription?.unsubscribe();
 
-    if (this.broadcastChannel) {
-      this.broadcastChannel.close();
-    }
+    this.broadcastChannel?.close();
 
-    if (this.masterHeartbeat) {
-      clearInterval(this.masterHeartbeat);
-    }
-
-    if (this.masterAliveTimeout) {
-      clearTimeout(this.masterAliveTimeout);
-    }
+    this.clearHeartbeat();
+    this.resetMasterTimeout();
 
     window.removeEventListener('beforeunload', this.unloadHandler);
   }

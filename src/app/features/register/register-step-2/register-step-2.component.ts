@@ -6,7 +6,7 @@ import { FormControl } from '@angular/forms';
 import { map, Observable, startWith, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
-import { TranslationService } from '../../../core/services/i18n/translate.service';
+import { TranslationService } from '../../../core/services/shared/translate.service';
 import { RegisterService } from '../../../core/services/auth/register.service';
 import { PermissionsService } from '../../../core/services/permissions/permissions.service';
 import { GroupsService, Group } from '../../../core/services/permissions/group.service';

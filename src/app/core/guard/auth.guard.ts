@@ -24,13 +24,18 @@ export class AuthGuard implements CanActivate {
     return this.sessionService.getAuthState().pipe(
       take(1),
       switchMap(async (user: User | null) => {
+
         if (!user) {
           this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
           return false;
         }
 
-        await this.sessionService.loadAndSetUser(user.uid);
-        return true;
+        try {
+          await this.sessionService.loadAndSetUserOnce(user.uid);
+          return true;
+        } catch {
+          return false;
+        }
       })
     );
   }

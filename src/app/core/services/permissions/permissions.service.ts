@@ -1,9 +1,13 @@
 import { Injectable } from '@angular/core';
-import { TranslationService } from '../i18n/translate.service';
+import { TranslationService } from '../shared/translate.service';
 import { PERMISSIONS } from '../../../config/permissions.config';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-export type CriticalLevel = 'HIGH_LEVEL' | 'MEDIUM_LEVEL' | 'LOW_LEVEL' | 'ZERO_LEVEL';
+export type CriticalLevel =
+  | 'HIGH_LEVEL'
+  | 'MEDIUM_LEVEL'
+  | 'LOW_LEVEL'
+  | 'ZERO_LEVEL';
 
 export interface Permission {
   id: string;
@@ -27,17 +31,24 @@ function isCriticalLevel(value: string): value is CriticalLevel {
   providedIn: 'root'
 })
 export class PermissionsService {
+
+  // ------------------------------------------------------
+  // START STATE
+  // ------------------------------------------------------
+
   private selectedPermissions: Record<string, boolean> = {};
   private lockedPermissions$ = new BehaviorSubject<Set<string>>(new Set());
 
   constructor(private translationService: TranslationService) { }
 
   // ------------------------------------------------------
-  // SEÇÃO: CARREGAMENTO DE PERMISSÕES
+  // START LOAD PERMISSIONS
   // ------------------------------------------------------
 
   getPermissions(): Permissions {
+
     try {
+
       const categorizedPermissions: Permissions = {
         users: this.mapPermissions(PERMISSIONS.users),
         routes: this.mapPermissions(PERMISSIONS.routes),
@@ -47,6 +58,7 @@ export class PermissionsService {
       this.translatePermissions(categorizedPermissions);
 
       return categorizedPermissions;
+
     } catch (error) {
       console.error('Erro ao processar permissões:', error);
       throw new Error('Falha ao carregar as permissões.');
@@ -58,11 +70,15 @@ export class PermissionsService {
   }
 
   // ------------------------------------------------------
-  // SEÇÃO: MAPEAMENTO DE PERMISSÕES
+  // START PERMISSION MAPPERS
   // ------------------------------------------------------
 
-  private mapPermissions(permissions: Record<string, any>): Record<string, Permission> {
+  private mapPermissions(
+    permissions: Record<string, any>
+  ): Record<string, Permission> {
+
     return Object.keys(permissions).reduce((acc, key) => {
+
       const permission = permissions[key];
 
       if (!isCriticalLevel(permission.critical)) {
@@ -73,15 +89,21 @@ export class PermissionsService {
         ...permission,
         critical: permission.critical as CriticalLevel,
       };
+
       return acc;
+
     }, {} as Record<string, Permission>);
   }
 
   // ------------------------------------------------------
-  // SEÇÃO: FILTRAGEM DE PERMISSÕES
+  // START PERMISSION FILTERS
   // ------------------------------------------------------
 
-  filterPermissionsByIds(permissions: Permissions, permissionIds: string[]): Permissions {
+  filterPermissionsByIds(
+    permissions: Permissions,
+    permissionIds: string[]
+  ): Permissions {
+
     return {
       users: this.filterCategoryPermissions(permissions.users, permissionIds),
       routes: this.filterCategoryPermissions(permissions.routes, permissionIds),
@@ -89,42 +111,56 @@ export class PermissionsService {
     };
   }
 
-  private filterCategoryPermissions(categoryPermissions: Record<string, Permission>, permissionIds: string[]): Record<string, Permission> {
+  private filterCategoryPermissions(
+    categoryPermissions: Record<string, Permission>,
+    permissionIds: string[]
+  ): Record<string, Permission> {
+
     const filteredCategory: Record<string, Permission> = {};
 
     Object.keys(categoryPermissions).forEach(key => {
+
       const permission = categoryPermissions[key];
+
       if (permissionIds.includes(permission.id)) {
         filteredCategory[key] = permission;
       }
+
     });
 
     return filteredCategory;
   }
 
   // ------------------------------------------------------
-  // SEÇÃO: TRADUÇÃO DE PERMISSÕES
+  // START PERMISSION TRANSLATION
   // ------------------------------------------------------
 
   private translatePermissions(categorizedPermissions: Permissions) {
-    (Object.keys(categorizedPermissions) as (keyof Permissions)[]).forEach(category => {
-      const categoryPermissions = categorizedPermissions[category];
 
-      Object.keys(categoryPermissions).forEach(permissionKey => {
-        const permission = categoryPermissions[permissionKey];
+    (Object.keys(categorizedPermissions) as (keyof Permissions)[])
+      .forEach(category => {
 
-        const translatedObj: any = this.translationService.getTranslation(permission.id, 'Permissions');
+        const categoryPermissions = categorizedPermissions[category];
 
-        if (translatedObj) {
-          permission.title = translatedObj.title || '';
-          permission.description = translatedObj.description || '';
-        }
+        Object.keys(categoryPermissions).forEach(permissionKey => {
+
+          const permission = categoryPermissions[permissionKey];
+
+          const translatedObj: any =
+            this.translationService.getTranslation(permission.id, 'Permissions');
+
+          if (translatedObj) {
+            permission.title = translatedObj.title || '';
+            permission.description = translatedObj.description || '';
+          }
+
+        });
+
       });
-    });
   }
 
   // ------------------------------------------------------
-  // SEÇÃO: GESTÃO DE PERMISSÕES SELECIONADAS
+  // START SELECTED PERMISSIONS
   // ------------------------------------------------------
 
   getSelectedPermissions(): Record<string, boolean> {
@@ -136,7 +172,7 @@ export class PermissionsService {
   }
 
   // ------------------------------------------------------
-  // SEÇÃO: GESTÃO DE PERMISSÕES TRAVADAS
+  // START LOCKED PERMISSIONS
   // ------------------------------------------------------
 
   getLockedPermissions$(): Observable<Set<string>> {
@@ -147,9 +183,14 @@ export class PermissionsService {
     return this.lockedPermissions$.value;
   }
 
-  setLockedPermission(id: string, locked: boolean) {
+  setLockedPermission(id: string, locked: boolean): void {
+
     const newSet = new Set(this.lockedPermissions$.value);
-    locked ? newSet.add(id) : newSet.delete(id);
+
+    locked
+      ? newSet.add(id)
+      : newSet.delete(id);
+
     this.lockedPermissions$.next(newSet);
   }
 }

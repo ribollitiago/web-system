@@ -7,10 +7,6 @@ import firebaseApp from '../../../firebase.config';
 import { FirebaseService } from '../database/firebase.service';
 import { formatDateShortBR } from '../../utils/date.utils';
 
-// ------------------------------------------------------
-// SEÇÃO: INTERFACES
-// ------------------------------------------------------
-
 export interface RegisterData {
   [key: string]: any;
 }
@@ -21,38 +17,53 @@ export interface RegisterData {
 export class RegisterService {
 
   // ------------------------------------------------------
-  // SEÇÃO: CONSTRUTOR
-  // ------------------------------------------------------
-
-  constructor(
-    private firebaseService: FirebaseService,
-  ) { }
-
-  // ------------------------------------------------------
-  // SEÇÃO: CONFIGURAÇÕES
+  // CONSTANTS
   // ------------------------------------------------------
 
   private readonly MAX_STEP = 4;
-  private auth = getAuth(firebaseApp);
+  private readonly auth = getAuth(firebaseApp);
 
   // ------------------------------------------------------
-  // SEÇÃO: CONTROLE DE STEPS POR ENTIDADE
+  // STREAMS
   // ------------------------------------------------------
 
   private openContinuePopupSubject = new Subject<void>();
-  openContinuePopup$ = this.openContinuePopupSubject.asObservable();
+  public readonly openContinuePopup$ = this.openContinuePopupSubject.asObservable();
+
+  private stepSubject = new BehaviorSubject<Record<string, number>>({});
+  public readonly step$ = this.stepSubject.asObservable();
+
+  private dataSubject = new BehaviorSubject<Record<string, RegisterData>>({});
+  public readonly data$ = this.dataSubject.asObservable();
+
+  // ------------------------------------------------------
+  // STATE
+  // ------------------------------------------------------
+
+  private isInternalNavigation = false;
+
+  // ------------------------------------------------------
+  // CONSTRUCTOR
+  // ------------------------------------------------------
+
+  constructor(
+    private firebaseService: FirebaseService
+  ) {}
+
+  // ------------------------------------------------------
+  // PUBLIC API
+  // ------------------------------------------------------
 
   triggerContinuePopup(): void {
     this.openContinuePopupSubject.next();
   }
-  private isInternalNavigation = false;
-
-  resetNavigationFlag(): void {
-    this.isInternalNavigation = false;
-  }
 
   setInternalNavigation(value: boolean): void {
     this.isInternalNavigation = value;
+  }
+
+  resetNavigationFlag(): void {
+    this.isInternalNavigation = false;
   }
 
   getInternalNavigation(): boolean {
@@ -62,63 +73,66 @@ export class RegisterService {
   }
 
   isSameUser(entityType: string): boolean {
+
     const data = this.getData(entityType);
     const currentUser = this.auth.currentUser;
 
     if (!data['savedUid'] || !currentUser) return true;
+
     return data['savedUid'] === currentUser.uid;
   }
 
-  private stepSubject = new BehaviorSubject<{ [entityType: string]: number }>({});
-  step$ = this.stepSubject.asObservable();
+  // ------------------------------------------------------
+  // STEP CONTROL
+  // ------------------------------------------------------
 
   getStep(entityType: string): number {
     return this.stepSubject.value[entityType] || 1;
   }
 
   nextStep(entityType: string): void {
+
     this.setInternalNavigation(true);
+
     const current = this.getStep(entityType);
-    if (current < this.MAX_STEP) {
-      this.stepSubject.next({
-        ...this.stepSubject.value,
-        [entityType]: current + 1
-      });
-    }
+
+    if (current >= this.MAX_STEP) return;
+
+    this.updateStep(entityType, current + 1);
   }
 
   previousStep(entityType: string): void {
+
     const current = this.getStep(entityType);
-    if (current > 1) {
-      this.stepSubject.next({
-        ...this.stepSubject.value,
-        [entityType]: current - 1
-      });
-    }
+
+    if (current <= 1) return;
+
+    this.updateStep(entityType, current - 1);
   }
 
   setStep(entityType: string, step: number): void {
-    if (step >= 1 && step <= this.MAX_STEP) {
-      this.stepSubject.next({
-        ...this.stepSubject.value,
-        [entityType]: step
-      });
-    }
+
+    if (step < 1 || step > this.MAX_STEP) return;
+
+    this.updateStep(entityType, step);
   }
 
   // ------------------------------------------------------
-  // SEÇÃO: CONTROLE DE DADOS POR ENTIDADE
+  // DATA CONTROL
   // ------------------------------------------------------
 
-  private dataSubject = new BehaviorSubject<{ [entityType: string]: RegisterData }>({});
-  data$ = this.dataSubject.asObservable();
-
   updateData(entityType: string, partial: Partial<RegisterData>): void {
-    const current = this.dataSubject.value[entityType] || {};
-    const currentUser = getAuth().currentUser;
+
+    const current = this.getData(entityType);
+    const currentUser = this.auth.currentUser;
+
     this.dataSubject.next({
       ...this.dataSubject.value,
-      [entityType]: { ...current, ...partial, savedUid: currentUser?.uid }
+      [entityType]: {
+        ...current,
+        ...partial,
+        savedUid: currentUser?.uid
+      }
     });
   }
 
@@ -127,49 +141,55 @@ export class RegisterService {
   }
 
   // ------------------------------------------------------
-  // SEÇÃO: RESET
+  // RESET
   // ------------------------------------------------------
 
   reset(entityType: string = 'users'): void {
-    const currentData = this.dataSubject.value;
-    currentData[entityType] = {};
-    this.dataSubject.next({ ...currentData });
 
-    const currentSteps = this.stepSubject.value;
-    currentSteps[entityType] = 1;
-    this.stepSubject.next({ ...currentSteps });
+    this.dataSubject.next({
+      ...this.dataSubject.value,
+      [entityType]: {}
+    });
+
+    this.stepSubject.next({
+      ...this.stepSubject.value,
+      [entityType]: 1
+    });
 
     this.isInternalNavigation = false;
   }
 
   // ------------------------------------------------------
-  // SEÇÃO: REGISTRO
+  // REGISTER FLOW
   // ------------------------------------------------------
 
-  async register(entityType: string) {
-    const data = this.getData(entityType);
+  async register(entityType: string): Promise<void> {
 
-    data['createdAt'] = formatDateShortBR(new Date());
+    const data = { ...this.getData(entityType) };
+
+    data['createdAt'] = this.buildTimestamp();
 
     if (entityType === 'users') {
+
       const credential = await createUserWithEmailAndPassword(
         this.auth,
-        data['email']!,
-        data['password']!
+        data['email'],
+        data['password']
       );
 
       data['situation'] = 1;
       data['uid'] = credential.user.uid;
 
       const { password, confirmPassword, savedUid, ...entityMap } = data;
-      console.log(entityMap)
 
       await this.firebaseService.write(
         `${entityType}/${credential.user.uid}`,
         entityMap,
         'create'
       );
+
     } else if (entityType === 'groups') {
+
       await this.firebaseService.write(
         `${entityType}/${data['key']}`,
         data,
@@ -181,10 +201,11 @@ export class RegisterService {
   }
 
   // ------------------------------------------------------
-  // SEÇÃO: UTILIDADES
+  // UTILITIES
   // ------------------------------------------------------
 
   hasUserProgress(entityType: string): boolean {
+
     const data = this.getData(entityType);
 
     if (!data) return false;
@@ -197,5 +218,21 @@ export class RegisterService {
       data['password'] ||
       data['confirmPassword']
     );
+  }
+
+  // ------------------------------------------------------
+  // PRIVATE HELPERS
+  // ------------------------------------------------------
+
+  private updateStep(entityType: string, step: number): void {
+
+    this.stepSubject.next({
+      ...this.stepSubject.value,
+      [entityType]: step
+    });
+  }
+
+  private buildTimestamp(): string {
+    return formatDateShortBR(new Date());
   }
 }

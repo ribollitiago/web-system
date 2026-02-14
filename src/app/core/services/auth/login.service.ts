@@ -5,100 +5,121 @@ import {
   User,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
-  onAuthStateChanged
+  onAuthStateChanged,
+  Unsubscribe
 } from 'firebase/auth';
 
 import { FirebaseService } from '../database/firebase.service';
 import { SessionService } from './session.service';
+
+interface LoginResult {
+  uid: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
 
+  // ------------------------------------------------------
+  // CONSTRUCTOR
+  // ------------------------------------------------------
+
   constructor(
     private router: Router,
     private firebaseService: FirebaseService,
     private sessionService: SessionService
-  ) { }
+  ) {}
 
   // ------------------------------------------------------
-  // SEÇÃO: LOGIN
+  // PUBLIC API
   // ------------------------------------------------------
 
-  login(email: string, password: string): Observable<any> {
+  login(email: string, password: string): Observable<LoginResult> {
+
     const auth = this.sessionService.getAuthInstance();
+
     return from(
       signInWithEmailAndPassword(auth, email, password)
-        .then(userCredential => this.handleLoginSuccess(userCredential))
-        .catch(this.handleError)
+        .then(credential => this.handleLoginSuccess(credential))
+        .catch(error => this.handleError(error))
     );
   }
 
-  private async handleLoginSuccess(userCredential: any): Promise<{ uid: string }> {
-    const user = userCredential.user;
+  recoverPassword(email: string): Observable<void> {
+
+    const auth = this.sessionService.getAuthInstance();
+
+    return this.handleFirebaseOperation(() =>
+      sendPasswordResetEmail(auth, email)
+    );
+  }
+
+  getAuthState(): Observable<User | null> {
+
+    const auth = this.sessionService.getAuthInstance();
+
+    return new Observable(subscriber => {
+
+      const unsubscribe: Unsubscribe = onAuthStateChanged(auth, user => {
+
+        if (!user) {
+          this.sessionService.clearSessionStorage();
+        }
+
+        subscriber.next(user);
+      });
+
+      return () => unsubscribe();
+    });
+  }
+
+  async logout(): Promise<void> {
+    await this.sessionService.logout();
+  }
+
+  // ------------------------------------------------------
+  // LOGIN FLOW
+  // ------------------------------------------------------
+
+  private async handleLoginSuccess(userCredential: any): Promise<LoginResult> {
+
+    const user = userCredential?.user;
 
     if (!user) {
       throw new Error('User not found');
     }
 
     this.sessionService.setLastLoginTime();
-    this.router.navigate(['/home']);
+
+    await this.router.navigate(['/home']);
 
     return { uid: user.uid };
   }
 
   // ------------------------------------------------------
-  // SEÇÃO: RECUPERAÇÃO DE SENHA
+  // FIREBASE HELPERS
   // ------------------------------------------------------
 
-  recoverPassword(email: string): Observable<void> {
-    const auth = this.sessionService.getAuthInstance();
-    return this.handleFirebaseOperation(
-      () => sendPasswordResetEmail(auth, email)
-    );
-  }
+  private handleFirebaseOperation<T>(
+    operation: () => Promise<T>
+  ): Observable<T> {
 
-  // ------------------------------------------------------
-  // SEÇÃO: ESTADO DE AUTENTICAÇÃO
-  // ------------------------------------------------------
-
-  getAuthState(): Observable<User | null> {
-    const auth = this.sessionService.getAuthInstance();
-
-    return new Observable(subscriber => {
-      onAuthStateChanged(auth, user => {
-        if (!user) {
-          this.sessionService.clearSessionStorage();
-        }
-        subscriber.next(user);
-      });
-    });
-  }
-
-  // ------------------------------------------------------
-  // SEÇÃO: FUNÇÕES AUXILIARES
-  // ------------------------------------------------------
-
-  private handleError(error: any): void {
-    console.error('Erro:', error);
-  }
-
-  private handleFirebaseOperation(
-    operation: () => Promise<any>
-  ): Observable<any> {
     return from(
-      operation()
-        .then(() => console.log('Operação concluída com sucesso.'))
-        .catch(this.handleError)
+      operation().catch(error => this.handleError(error))
     );
   }
 
   // ------------------------------------------------------
-  // SEÇÃO: LOGOUT
+  // ERROR HANDLING
   // ------------------------------------------------------
 
-  async logout(): Promise<void> {
-    await this.sessionService.logout();
+  private handleError(error: unknown): never {
+
+    if (error instanceof Error) {
+      throw error;
+    }
+
+    throw new Error('Unexpected authentication error');
   }
 }

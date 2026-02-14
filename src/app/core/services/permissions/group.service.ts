@@ -1,10 +1,5 @@
 import { Injectable } from '@angular/core';
 import { FirebaseService } from '../database/firebase.service';
-import { BehaviorSubject } from 'rxjs';
-
-// ------------------------------------------------------
-// SEÇÃO: INTERFACES
-// ------------------------------------------------------
 
 export interface Group {
   id: string;
@@ -19,20 +14,16 @@ export interface Group {
 export class GroupsService {
 
   // ------------------------------------------------------
-  // SEÇÃO: ESTADO
+  // START STATE
   // ------------------------------------------------------
 
   private groups: Group[] = [];
   private selectedGroups = new Set<string>();
 
-  // ------------------------------------------------------
-  // SEÇÃO: CONSTRUTOR
-  // ------------------------------------------------------
-
   constructor(private firebaseService: FirebaseService) { }
 
   // ------------------------------------------------------
-  // SEÇÃO: CARREGAMENTO
+  // START DATA LOAD
   // ------------------------------------------------------
 
   async unSubscribeGroups() {
@@ -40,6 +31,7 @@ export class GroupsService {
   }
 
   async subscribeGroups(): Promise<Group[]> {
+
     if (this.groups.length) return this.groups;
 
     return new Promise<Group[]>((resolve) => {
@@ -55,7 +47,7 @@ export class GroupsService {
   }
 
   // ------------------------------------------------------
-  // SEÇÃO: SELEÇÃO
+  // START SELECTION CONTROL
   // ------------------------------------------------------
 
   selectGroup(groupId: string): void {
@@ -87,10 +79,11 @@ export class GroupsService {
   }
 
   // ------------------------------------------------------
-  // SEÇÃO: PERMISSÕES
+  // START PERMISSION RESOLVER
   // ------------------------------------------------------
 
   getPermissionsFromGroups(): string[] {
+
     const permissionSet = new Set<string>();
 
     this.getSelectedGroups().forEach(group => {
@@ -101,7 +94,7 @@ export class GroupsService {
   }
 
   // ------------------------------------------------------
-  // SEÇÃO: PAYLOAD
+  // START PAYLOAD BUILDER
   // ------------------------------------------------------
 
   buildPayload() {
@@ -112,7 +105,7 @@ export class GroupsService {
   }
 
   // ------------------------------------------------------
-  // SEÇÃO: FORMATAÇÃO
+  // START MAPPERS
   // ------------------------------------------------------
 
   private formatGroups(groups: any[]): Group[] {

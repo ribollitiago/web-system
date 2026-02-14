@@ -9,11 +9,14 @@ import {
     remove,
     onValue,
     off,
-    DataSnapshot
+    DataSnapshot,
+    onDisconnect,
+    serverTimestamp
 } from 'firebase/database';
+
 import firebaseApp from '../../../firebase.config';
 import { combineLatest, Subscription } from 'rxjs';
-import { TabManagerService } from '../auth/tab-manager.service';
+import { TabManagerService } from '../application/tab-manager.service';
 
 type Entity = {
     uid?: string;
@@ -28,63 +31,23 @@ type WriteMode = 'create' | 'update' | 'push';
 export class FirebaseService implements OnDestroy {
 
     // ------------------------------------------------------
-    // FIREBASE: CORE DATABASE
+    // START CORE CONFIG
     // ------------------------------------------------------
 
     private readonly db = getDatabase(firebaseApp);
 
-    // ------------------------------------------------------
-    // REALTIME: STATE CONTROL
-    // ------------------------------------------------------
-
-    private masterSubscription!: Subscription;
-    private firebaseListeners = new Map<string, any>();
-    private activeSubscriptions = new Map<string, { path: string, callback: Function }>();
-
-    // ------------------------------------------------------
-    // REALTIME: CACHE
-    // ------------------------------------------------------
-
-    private lastDataCache = new Map<string, any>();
-
-    // ------------------------------------------------------
-    // REALTIME: BROADCAST CHANNEL
-    // ------------------------------------------------------
-
-    private broadcastChannel?: BroadcastChannel;
-
     constructor(private tabManager: TabManagerService) {
-
-        // ------------------------------------------------------
-        // REALTIME: MASTER / VISIBILITY OBSERVER
-        // ------------------------------------------------------
 
         this.masterSubscription = combineLatest([
             this.tabManager.isVisible$,
             this.tabManager.isMaster$
         ]).subscribe(() => this.evaluateRealtimeState());
 
-        // ------------------------------------------------------
-        // REALTIME: BROADCAST INIT
-        // ------------------------------------------------------
-
-        if ('BroadcastChannel' in window) {
-
-            this.broadcastChannel = new BroadcastChannel('firebase-realtime-sync');
-
-            this.broadcastChannel.onmessage = (event) => {
-                this.handleBroadcastMessage(event.data);
-            };
-
-            // Sync inicial
-            setTimeout(() => {
-                this.broadcastChannel?.postMessage({ type: 'REQUEST_SYNC' });
-            }, 500);
-        }
+        this.initBroadcastChannel();
     }
 
     // ------------------------------------------------------
-    // LIFECYCLE: DESTROY
+    // START LIFECYCLE
     // ------------------------------------------------------
 
     ngOnDestroy() {
@@ -94,7 +57,55 @@ export class FirebaseService implements OnDestroy {
     }
 
     // ------------------------------------------------------
-    // FIREBASE: REF HELPER
+    // START REALTIME STATE
+    // ------------------------------------------------------
+
+    private masterSubscription!: Subscription;
+    private firebaseListeners = new Map<string, any>();
+    private activeSubscriptions = new Map<string, { path: string, callback: Function }>();
+
+    private evaluateRealtimeState() {
+
+        const shouldRunRealtime =
+            this.tabManager.isVisible &&
+            this.tabManager.master;
+
+        if (shouldRunRealtime) {
+            this.resumeAllRealtime();
+        } else {
+            this.pauseAllRealtime();
+        }
+    }
+
+    // ------------------------------------------------------
+    // START CACHE
+    // ------------------------------------------------------
+
+    private lastDataCache = new Map<string, any>();
+
+    // ------------------------------------------------------
+    // START BROADCAST CHANNEL
+    // ------------------------------------------------------
+
+    private broadcastChannel?: BroadcastChannel;
+
+    private initBroadcastChannel() {
+
+        if (!('BroadcastChannel' in window)) return;
+
+        this.broadcastChannel = new BroadcastChannel('firebase-realtime-sync');
+
+        this.broadcastChannel.onmessage = (event) => {
+            this.handleBroadcastMessage(event.data);
+        };
+
+        setTimeout(() => {
+            this.broadcastChannel?.postMessage({ type: 'REQUEST_SYNC' });
+        }, 500);
+    }
+
+    // ------------------------------------------------------
+    // START FIREBASE HELPERS
     // ------------------------------------------------------
 
     private ref(path: string) {
@@ -102,7 +113,7 @@ export class FirebaseService implements OnDestroy {
     }
 
     // ------------------------------------------------------
-    // SNAPSHOT: PROCESSOR
+    // START SNAPSHOT NORMALIZER
     // ------------------------------------------------------
 
     private processSnapshot(snapshot: DataSnapshot): any {
@@ -129,7 +140,7 @@ export class FirebaseService implements OnDestroy {
     }
 
     // ------------------------------------------------------
-    // FIREBASE: WRITE OPERATIONS
+    // START WRITE OPERATIONS
     // ------------------------------------------------------
 
     async write(path: string, data: Entity, mode: WriteMode) {
@@ -146,7 +157,7 @@ export class FirebaseService implements OnDestroy {
     }
 
     // ------------------------------------------------------
-    // FIREBASE: READ OPERATIONS
+    // START READ OPERATIONS
     // ------------------------------------------------------
 
     async getList(path: string): Promise<Entity[]> {
@@ -170,7 +181,7 @@ export class FirebaseService implements OnDestroy {
     }
 
     // ------------------------------------------------------
-    // REALTIME: SUBSCRIBE ENTRY POINT
+    // START REALTIME SUBSCRIBE
     // ------------------------------------------------------
 
     subscribe(path: string, callback: (data: any) => void) {
@@ -179,7 +190,6 @@ export class FirebaseService implements OnDestroy {
 
         this.activeSubscriptions.set(path, { path, callback });
 
-        // Cache imediato
         const cached = this.lastDataCache.get(path);
         if (cached !== undefined) callback(cached);
 
@@ -195,7 +205,7 @@ export class FirebaseService implements OnDestroy {
     }
 
     // ------------------------------------------------------
-    // REALTIME: FIREBASE LISTENER CONTROL
+    // START REALTIME LISTENER CONTROL
     // ------------------------------------------------------
 
     private activateRealtime(path: string, callback: Function) {
@@ -235,29 +245,10 @@ export class FirebaseService implements OnDestroy {
 
             this.activateRealtime(sub.path, sub.callback);
         });
-
-        console.log('🔥 Firebase realtime reativado');
     }
 
     // ------------------------------------------------------
-    // REALTIME: MASTER STATE CONTROL
-    // ------------------------------------------------------
-
-    private evaluateRealtimeState() {
-
-        const shouldRunRealtime =
-            this.tabManager.isVisible &&
-            this.tabManager.master;
-
-        if (shouldRunRealtime) {
-            this.resumeAllRealtime();
-        } else {
-            this.pauseAllRealtime();
-        }
-    }
-
-    // ------------------------------------------------------
-    // REALTIME: BROADCAST HANDLERS
+    // START BROADCAST HANDLERS
     // ------------------------------------------------------
 
     private requestPathSync(path: string) {
@@ -269,7 +260,6 @@ export class FirebaseService implements OnDestroy {
 
     private handleBroadcastMessage(message: any) {
 
-        // MASTER → envia cache geral
         if (message.type === 'REQUEST_SYNC' && this.tabManager.master) {
 
             this.lastDataCache.forEach((data, path) => {
@@ -283,7 +273,6 @@ export class FirebaseService implements OnDestroy {
             return;
         }
 
-        // MASTER → envia cache por path
         if (message.type === 'REQUEST_PATH_SYNC' && this.tabManager.master) {
 
             const data = this.lastDataCache.get(message.path);
@@ -299,7 +288,6 @@ export class FirebaseService implements OnDestroy {
             return;
         }
 
-        // SLAVE → recebe update
         if (message.type === 'REALTIME_UPDATE' && !this.tabManager.master) {
 
             const sub = this.activeSubscriptions.get(message.path);
@@ -308,7 +296,19 @@ export class FirebaseService implements OnDestroy {
     }
 
     // ------------------------------------------------------
-    // REALTIME: UNSUBSCRIBE
+    // START LOW LEVEL HELPERS
+    // ------------------------------------------------------
+
+    onDisconnect(path: any) {
+        return onDisconnect(this.ref(path));
+    }
+
+    serverTimestamp() {
+        return serverTimestamp();
+    }
+
+    // ------------------------------------------------------
+    // START UNSUBSCRIBE
     // ------------------------------------------------------
 
     unsubscribe(path: string) {

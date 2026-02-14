@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { TranslationService } from '../../../../core/services/i18n/translate.service';
+import { TranslationService } from '../../../../core/services/shared/translate.service';
 
 @Component({
   selector: 'app-situation-chip',

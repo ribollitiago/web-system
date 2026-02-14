@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { TranslationService } from '../../../core/services/i18n/translate.service';
+import { TranslationService } from '../../../core/services/shared/translate.service';
 import { FirebaseService } from '../../../core/services/database/firebase.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';

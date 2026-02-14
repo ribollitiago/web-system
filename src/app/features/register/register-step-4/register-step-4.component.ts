@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 
-import { TranslationService } from '../../../core/services/i18n/translate.service';
+import { TranslationService } from '../../../core/services/shared/translate.service';
 import { RegisterService } from '../../../core/services/auth/register.service';
 import { PermissionsService } from '../../../core/services/permissions/permissions.service';
 

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { SearchInputComponent } from '../../../shared/components/input/search-input/search-input.component';
-import { TranslationService } from '../../../core/services/i18n/translate.service';
+import { TranslationService } from '../../../core/services/shared/translate.service';
 import { filter, Subscription } from 'rxjs';
 import { ListUsersComponent, User } from '../list-users/list-users.component';
 import { CommonModule } from '@angular/common';

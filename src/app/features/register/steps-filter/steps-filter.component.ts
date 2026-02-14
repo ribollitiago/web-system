@@ -9,7 +9,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 
 import { PermissionsService } from '../../../core/services/permissions/permissions.service';
-import { TranslationService } from '../../../core/services/i18n/translate.service';
+import { TranslationService } from '../../../core/services/shared/translate.service';
 
 // ------------------------------------------------------
 // COMPONENT

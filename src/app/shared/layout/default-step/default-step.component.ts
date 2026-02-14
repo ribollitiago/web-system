@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { TranslationService } from '../../../core/services/i18n/translate.service';
+import { TranslationService } from '../../../core/services/shared/translate.service';
 import { RegisterService } from '../../../core/services/auth/register.service';
 import { CommonModule } from '@angular/common';
 import { DefaultButtonComponent } from "../../components/button/default-button/default-button.component";

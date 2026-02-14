@@ -8,11 +8,11 @@ import { FormsModule } from '@angular/forms';
 import { PrimaryInputComponent } from '../../../shared/components/input/primary-input/primary-input.component';
 import { DefaultStepComponent } from '../../../shared/layout/default-step/default-step.component';
 
-import { TranslationService } from '../../../core/services/i18n/translate.service';
+import { TranslationService } from '../../../core/services/shared/translate.service';
 import { RegisterData, RegisterService } from '../../../core/services/auth/register.service';
 import { ToastrService } from 'ngx-toastr';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ValidatorsService } from '../../../core/services/validators/validators.service';
+import { ValidatorsService } from '../../../core/services/shared/validators.service';
 
 
 // ------------------------------------------------------
