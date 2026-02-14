@@ -84,8 +84,7 @@ export class TranslationService {
         this.englishLanguage = en_us;
       }
 
-      const response = await import(`../../i18n/${lang}.json`);
-      this.translations = response.default || response;
+      this.translations = await import(`../../i18n/${lang}.json`);
 
       this.languageSubject.next(lang);
       this.languageLoadedSubject.next(true);

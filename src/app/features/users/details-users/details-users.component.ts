@@ -62,7 +62,7 @@ export class DetailsUsersComponent implements OnDestroy {
   }
 
   private loadTranslations(): void {
-    const globalSection = 'Global_Components';
+    const globalSection = 'global_components';
     const usersSection = 'Users_Page';
     const permissionSection = 'Permissions_Page';
 

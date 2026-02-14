@@ -175,7 +175,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
       console.error('Error loading sidebar translations:', error);
     }
 
-    const section2 = 'Global_Components';
+    const section2 = 'global_components';
     this.inputSearch = this.translationService.getTranslation('inputSearch', section2);
   }
 
