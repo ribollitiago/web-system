@@ -1,40 +1,47 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { TranslationService } from '../../../../core/services/shared/translate.service';
+import { UserSession } from '../../../../core/services/session/session.types';
+import { resolveConnectionState } from '../../../../core/utils/connection.utils';
+import { UserConnectionState, USER_CONNECTION_STATE } from '../../../../core/services/session/connection-state.enum';
 
 @Component({
   selector: 'app-situation-chip',
-  imports: [
-
-  ],
   templateUrl: './situation-chip.component.html',
   styleUrl: './situation-chip.component.scss'
 })
-export class SituationChipComponent {
+export class SituationChipComponent implements OnChanges {
 
-  constructor(private translationService: TranslationService,) {
-  }
-  @Input() situation: string | number = '';
+  constructor(private translationService: TranslationService) {}
 
+  @Input() session?: UserSession | null;
+  @Input() blocked?: boolean;
 
-  getSituationIcon(situation: string | number): string {
-    const sitStr = String(situation);
+  state: UserConnectionState = USER_CONNECTION_STATE.OFFLINE;
 
-    const iconMap: Record<string, string> = {
-      '2': 'situation-actived.svg',
-      '1': 'situation-inactived.svg',
-      '0': 'situation-disabled.svg',
-
-    };
-    return `assets/svg/icon/users/${iconMap[sitStr] || 'situation-inactived.svg'}`;
+  ngOnChanges() {
+    this.state = resolveConnectionState(this.session, this.blocked);
   }
 
-  translateSituation(situation: string | number): string {
-    const sitStr = String(situation);
-    const situationMap: Record<string, string> = {
-      '2': 'actived',
-      '1': 'inactived',
-      '0': 'disabled'
+  get icon(): string {
+    const iconMap: Record<number, string> = {
+      [USER_CONNECTION_STATE.ONLINE]: 'situation-actived.svg',
+      [USER_CONNECTION_STATE.OFFLINE]: 'situation-inactived.svg',
+      [USER_CONNECTION_STATE.BLOCKED]: 'situation-disabled.svg',
     };
-    return this.translationService.getTranslation(situationMap[sitStr], 'Users_Page');
+
+    return `assets/svg/icon/users/${iconMap[this.state]}`;
+  }
+
+  get label(): string {
+    const translationMap: Record<number, string> = {
+      [USER_CONNECTION_STATE.ONLINE]: 'actived',
+      [USER_CONNECTION_STATE.OFFLINE]: 'inactived',
+      [USER_CONNECTION_STATE.BLOCKED]: 'disabled'
+    };
+
+    return this.translationService.getTranslation(
+      translationMap[this.state],
+      'Users_Page'
+    );
   }
 }

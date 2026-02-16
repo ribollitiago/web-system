@@ -1,111 +1,74 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { FirebaseService } from '../database/firebase.service';
-import { formatDateShortBR } from '../../utils/date.utils';
-
-export const USER_SITUATION = {
-    BLOCKED: 0,
-    OFFLINE: 1,
-    ONLINE: 2
-} as const;
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class PresenceService implements OnDestroy {
 
-    // ------------------------------------------------------
-    // PROPERTIES
-    // ------------------------------------------------------
+  private readonly PATH = {
+    CONNECTED: '.info/connected'
+  };
 
-    private readonly connectedPath = '.info/connected';
-    private currentUid?: string;
+  private currentUid?: string;
 
-    // ------------------------------------------------------
-    // CONSTRUCTOR
-    // ------------------------------------------------------
+  constructor(
+    private firebaseService: FirebaseService
+  ) {}
 
-    constructor(
-        private firebaseService: FirebaseService
-    ) {}
+  // ------------------------------------------------------
+  // START
+  // ------------------------------------------------------
 
-    // ------------------------------------------------------
-    // PUBLIC API
-    // ------------------------------------------------------
+  start(uid: string): void {
 
-    start(uid: string): void {
+    if (!uid) return;
+    if (this.currentUid === uid) return;
 
-        if (this.currentUid === uid) return;
+    this.stop();
+    this.currentUid = uid;
 
-        this.stop();
-        this.currentUid = uid;
+    const sessionPath = `users/${uid}/session`;
 
-        const userPath = this.getUserPath(uid);
+    this.firebaseService.subscribe(
+      this.PATH.CONNECTED,
+      async (isConnected: boolean) => {
 
-        this.firebaseService.subscribe(
-            this.connectedPath,
-            async (isConnected: boolean) => {
+        if (!isConnected) return;
 
-                if (!isConnected) return;
+        try {
 
-                await this.firebaseService
-                    .onDisconnect(userPath)
-                    .update(this.buildPresencePayload(USER_SITUATION.OFFLINE));
-
-                await this.firebaseService.write(
-                    userPath,
-                    this.buildPresencePayload(USER_SITUATION.ONLINE),
-                    'update'
-                );
-            }
-        );
-    }
-
-    async forceOffline(): Promise<void> {
-
-        if (!this.currentUid) return;
-
-        const userPath = this.getUserPath(this.currentUid);
-
-        await this.firebaseService.write(
-            userPath,
-            this.buildPresencePayload(USER_SITUATION.OFFLINE),
-            'update'
-        );
-
-        await this.firebaseService
-            .onDisconnect(userPath)
-            .cancel();
-    }
-
-    stop(): void {
-
-        if (this.currentUid) {
-            this.firebaseService.unsubscribe(this.connectedPath);
+          await this.firebaseService
+            .onDisconnect(sessionPath)
+            .update({
+              lastSeenAt: Date.now()
+            });
+            
+        } catch (err) {
+          console.error('Presence error:', err);
         }
+      }
+    );
+  }
 
-        this.currentUid = undefined;
+  // ------------------------------------------------------
+  // STOP
+  // ------------------------------------------------------
+
+  stop(): void {
+
+    if (this.currentUid) {
+      this.firebaseService.unsubscribe(this.PATH.CONNECTED);
     }
 
-    // ------------------------------------------------------
-    // PRIVATE HELPERS
-    // ------------------------------------------------------
+    this.currentUid = undefined;
+  }
 
-    private getUserPath(uid: string): string {
-        return `users/${uid}`;
-    }
+  // ------------------------------------------------------
+  // DESTROY
+  // ------------------------------------------------------
 
-    private buildPresencePayload(situation: number) {
-        return {
-            situation,
-            lastSession: formatDateShortBR(new Date())
-        };
-    }
-
-    // ------------------------------------------------------
-    // LIFECYCLE
-    // ------------------------------------------------------
-
-    ngOnDestroy(): void {
-        this.stop();
-    }
+  ngOnDestroy(): void {
+    this.stop();
+  }
 }

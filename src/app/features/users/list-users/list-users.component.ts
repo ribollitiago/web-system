@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { SituationChipComponent } from '../../../shared/components/chip/situation-chip/situation-chip.component';
 import { GroupChipComponent } from '../../../shared/components/chip/group-chip/group-chip.component';
 import { DefaultListComponent, ColumnConfig } from '../../../shared/layout/default-list/default-list.component';
+import { UserSession } from '../../../core/services/session/session.types';
 
 export interface User {
   id: number;
@@ -19,6 +20,8 @@ export interface User {
   permissions: [];
   groups: any[];
   situation: string;
+  session: UserSession | null | undefined;
+  blocked: boolean | undefined;
 }
 
 @Component({
