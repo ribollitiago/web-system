@@ -1,6 +1,6 @@
 <div class="situation">
   <div>
-    <img [src]="icon" />
-    {{ label }}
+    <img [src]="getSituationIcon()" alt="Status" />
+    <span>{{ translateSituation() }}</span>
   </div>
 </div>

@@ -6,6 +6,7 @@ import { Auth, getAuth, signOut, onAuthStateChanged, User } from 'firebase/auth'
 import firebaseApp from '../../../firebase.config';
 import { FirebaseService } from '../database/firebase.service';
 import { PresenceService } from '../application/presence.service';
+import { formatDateShortBR } from '../../utils/date.utils';
 
 type SessionExpireReason = 'TIMEOUT' | 'MAX_SESSION' | null;
 
@@ -23,6 +24,7 @@ export class SessionService {
     LAST_LOGIN: 'last-login-time',
     LAST_ACTIVITY: 'last-user-activity',
     LOGOUT_REASON: 'logout-reason',
+    SESSION_ID: 'session-id',
     USER_DATA: 'userData'
   };
 
@@ -38,9 +40,7 @@ export class SessionService {
   // START SESSION CONTROL
   // ------------------------------------------------------
 
-  private sessionId = crypto.randomUUID();
   private userSubscriptionPath?: string;
-  private isDestroyed = false;
 
   // ------------------------------------------------------
   // START STATE
@@ -55,6 +55,7 @@ export class SessionService {
 
   private userSubject = new BehaviorSubject<any | null>(null);
   public readonly user$ = this.userSubject.asObservable();
+  private activeListenerToken: string | undefined;
 
   // ------------------------------------------------------
   // START CONSTRUCTOR
@@ -97,8 +98,6 @@ export class SessionService {
   async logout(): Promise<void> {
 
     try {
-      this.isDestroyed = true;
-
       localStorage.setItem(this.STORAGE.LOGOUT_EVENT, 'true');
       await signOut(this.auth);
 
@@ -232,6 +231,7 @@ export class SessionService {
     localStorage.removeItem(this.STORAGE.USER_DATA);
     localStorage.removeItem(this.STORAGE.LAST_LOGIN);
     localStorage.removeItem(this.STORAGE.LAST_ACTIVITY);
+    localStorage.removeItem(this.STORAGE.SESSION_ID);
 
     this.stopTokenExpirationWatcher();
   }
@@ -271,106 +271,87 @@ export class SessionService {
   // ------------------------------------------------------
 
   async loadAndSetUserOnce(uid: string): Promise<void> {
+    this.userSubscriptionPath = `users/${uid}`;
+
+    let sessionId = localStorage.getItem(this.STORAGE.SESSION_ID);
+    if (!sessionId) {
+      sessionId = crypto.randomUUID();
+      localStorage.setItem(this.STORAGE.SESSION_ID, sessionId);
+    }
 
     return new Promise((resolve, reject) => {
-
-      this.prepareRealtimeSession(uid);
-
       let isFirstEmission = true;
 
-      this.firebaseService.subscribe(
-        this.userSubscriptionPath!,
-        async userData => {
+      const handleUserData = async (userData: any) => {
+        try {
 
-          try {
+          // Qualquer verificação antes de realmente pegar o usuario
 
-            if (!this.isRealtimeValid()) return;
-
-            if (!userData) {
-              await this.handleUserNotFound(reject);
-              return;
-            }
-
-            if (this.isUserBlocked(userData)) {
-              await this.logout();
-              return;
-            }
-
-            if (isFirstEmission) {
-              await this.handleFirstEmission(uid);
-              isFirstEmission = false;
-              return;
-            }
-
-            if (!this.isSessionOwner(userData)) {
-              await this.logout();
-              return;
-            }
-
-            await this.updateUserState(userData);
-
-            resolve();
-
-          } catch (err) {
-            reject(err);
+          if (!userData) {
+            await this.logout();
+            reject('USER_NOT_FOUND');
+            return;
           }
+
+          if (userData.blocked) {
+            await this.logout();
+            reject('BLOCKED');
+            return;
+          }
+
+          // Agora que o usuario pode se dizer online e com sessão
+
+          if (isFirstEmission) {
+            await this.createSession(uid, sessionId);
+            this.presenceService.start(uid);
+            isFirstEmission = false;
+          } else {
+
+            // Tudo aqui vai ocorrer após a primeira emissão
+
+            if (userData.session?.id !== sessionId) {
+              await this.logout();
+              reject('OTHER_SESSION');
+              return;
+            }
+
+            if (userData.revoked) {
+              await this.logout();
+              reject('REVOKED');
+              return;
+            }
+          }
+
+          // Pegando o usuario e seus grupos/permissoes
+
+          this.userSubject.next({
+            ...userData,
+            permissions: await this.resolveMergedPermissions(userData)
+          });
+          resolve();
+
+        } catch (err) {
+          reject(err);
         }
-      );
+      };
+
+      this.firebaseService.subscribe(this.userSubscriptionPath!, handleUserData);
     });
   }
 
-  // ------------------------------------------------------
-  // START REALTIME HELPERS
-  // ------------------------------------------------------
-
-  private prepareRealtimeSession(uid: string): void {
-
-    this.isDestroyed = false;
-
-    const listenerToken = crypto.randomUUID();
-
-    this.userSubscriptionPath = `users/${uid}`;
+  // ------------------------------------------------------------------
+  // Função auxiliar para criar a sessão no Firebase
+  // ------------------------------------------------------------------
+  private async createSession(uid: string, sessionId: string) {
+    await this.firebaseService.write(`users/${uid}/session`, {
+      id: sessionId,
+      lastLogin: formatDateShortBR(new Date()),
+      isOnline: true,
+      device: navigator.userAgent,
+      revoked: false
+    }, 'set');
   }
 
-  private isRealtimeValid(): boolean {
-    return !this.isDestroyed;
-  }
-
-  private isUserBlocked(userData: any): boolean {
-    return userData.session?.revoked || userData.blocked;
-  }
-
-  private isSessionOwner(userData: any): boolean {
-    return userData.session?.id === this.sessionId;
-  }
-
-  private async handleFirstEmission(uid: string): Promise<void> {
-
-    await this.firebaseService.write(
-      `users/${uid}/session`,
-      {
-        id: this.sessionId,
-        createdAt: Date.now(),
-        lastLoginAt: Date.now(),
-        lastSeenAt: Date.now(),
-        device: navigator.userAgent,
-        revoked: false
-      },
-      'create'
-    );
-
-    this.presenceService.start(uid);
-  }
-
-  private async updateUserState(userData: any): Promise<void> {
-
-    const permissions = await this.resolveMergedPermissions(userData);
-
-    this.userSubject.next({
-      ...userData,
-      permissions
-    });
-  }
 
   private async resolveMergedPermissions(userData: any): Promise<string[]> {
 
@@ -396,7 +377,6 @@ export class SessionService {
 
     if (!this.groups) {
       this.groups = await this.firebaseService.getList('groups');
-      console.log('teste')
     }
 
     const permissions = groupIds
@@ -405,13 +385,5 @@ export class SessionService {
       .flatMap(g => g!['permissions']);
 
     return Array.from(new Set(permissions));
-  }
-
-  private async handleUserNotFound(
-    reject: (reason?: any) => void
-  ): Promise<void> {
-
-    await this.logout();
-    reject('USER_NOT_FOUND');
   }
 }

@@ -185,7 +185,7 @@ export class RegisterService {
       await this.firebaseService.write(
         `${entityType}/${credential.user.uid}`,
         entityMap,
-        'create'
+        'set'
       );
 
     } else if (entityType === 'groups') {
@@ -193,7 +193,7 @@ export class RegisterService {
       await this.firebaseService.write(
         `${entityType}/${data['key']}`,
         data,
-        'create'
+        'set'
       );
     }
 

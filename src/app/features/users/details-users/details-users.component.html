@@ -33,13 +33,12 @@
       <img class="image-user" src="assets/user-photo.png" alt>
       <div class="user-line">
         <span class="name">{{ selectedUser.name }}</span>
-        <app-situation-chip [session]="selectedUser.session" [blocked]="selectedUser.blocked">
+        <app-situation-chip [isOnline]="selectedUser.session?.isOnline ?? false" [blocked]="selectedUser.blocked">
         </app-situation-chip>
       </div>
       <div class="email">{{ selectedUser.email }}</div>
       <div class="permissions-list">
         <app-group-chip [groups]="selectedUser.groups" [maxDisplay]="2" [allowExpand]="true">
-          <!-- O padrão é false, então o clique não funcionará -->
         </app-group-chip>
       </div>
       <div class="phone-and-enrollment">

@@ -7,7 +7,13 @@ import { FormsModule } from '@angular/forms';
 import { SituationChipComponent } from '../../../shared/components/chip/situation-chip/situation-chip.component';
 import { GroupChipComponent } from '../../../shared/components/chip/group-chip/group-chip.component';
 import { DefaultListComponent, ColumnConfig } from '../../../shared/layout/default-list/default-list.component';
-import { UserSession } from '../../../core/services/session/session.types';
+
+export interface Session {
+  id?: string;
+  isOnline?: boolean;
+  lastLoginAt?: string;
+  [key: string]: any;
+}
 
 export interface User {
   id: number;
@@ -19,9 +25,8 @@ export interface User {
   description: string;
   permissions: [];
   groups: any[];
-  situation: string;
-  session: UserSession | null | undefined;
-  blocked: boolean | undefined;
+  session?: Session;
+  blocked: boolean;
 }
 
 @Component({
@@ -88,14 +93,13 @@ export class ListUsersComponent implements OnInit, OnDestroy {
   }
 
   private loadTranslations(): void {
-    // Labels são carregadas no setupColumns via translationService
   }
 
   private loadUsers(): void {
     this.firebaseService.subscribe('users', (users: any[]) => {
       this.users = users || [];
       this.addGroupDetailsToUsers();
-      this.sortUsersByEnrollment(); // Ordenação inicial por matrícula
+      this.sortUsersByEnrollment(); 
       this.filterUsers();
     });
   }
@@ -123,7 +127,6 @@ export class ListUsersComponent implements OnInit, OnDestroy {
   }
 
   private sortUsersByEnrollment(): void {
-    // Ordenação alfabética por matrícula
     this.users.sort((a, b) => {
       const enrollmentA = a.enrollment?.toString().toLowerCase() || '';
       const enrollmentB = b.enrollment?.toString().toLowerCase() || '';
@@ -159,12 +162,9 @@ export class ListUsersComponent implements OnInit, OnDestroy {
   }
 
   onRowClick(user: User): void {
-    // Seleciona o usuário individualmente para abrir os detalhes
     if (this.defaultList) {
       this.defaultList.clearSelection();
-      // Simula o clique de seleção para o componente pai receber o evento
       this.onSelectionChange([user]);
-      // E marca visualmente no componente de lista
       this.defaultList.selectedItems.add(user.enrollment);
     }
   }

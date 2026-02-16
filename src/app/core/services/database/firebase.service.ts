@@ -23,7 +23,7 @@ type Entity = {
     [key: string]: any;
 };
 
-type WriteMode = 'create' | 'update' | 'push';
+type WriteMode = 'set' | 'update' | 'push';
 
 @Injectable({
     providedIn: 'root',
@@ -147,7 +147,7 @@ export class FirebaseService implements OnDestroy {
 
         const reference = this.ref(path);
 
-        if (mode === 'create') return set(reference, data);
+        if (mode === 'set') return set(reference, data);
         if (mode === 'push') return push(reference, data);
         if (mode === 'update') return update(reference, data);
     }
@@ -209,11 +209,8 @@ export class FirebaseService implements OnDestroy {
     // ------------------------------------------------------
 
     private activateRealtime(path: string, callback: Function) {
-
-        const listener = onValue(this.ref(path), snapshot => {
-
+        const listener = (snapshot: DataSnapshot) => {
             const data = this.processSnapshot(snapshot);
-
             this.lastDataCache.set(path, data);
             callback(data);
 
@@ -222,9 +219,9 @@ export class FirebaseService implements OnDestroy {
                 path,
                 data
             });
+        };
 
-        });
-
+        onValue(this.ref(path), listener);
         this.firebaseListeners.set(path, listener);
     }
 
@@ -311,9 +308,9 @@ export class FirebaseService implements OnDestroy {
     // START UNSUBSCRIBE
     // ------------------------------------------------------
 
-    unsubscribe(path: string) {
+    unsubscribe(path: string, optionalListener?: Function) {
 
-        const listener = this.firebaseListeners.get(path);
+        const listener = optionalListener ?? this.firebaseListeners.get(path);
 
         if (listener) {
             off(this.ref(path), 'value', listener);
@@ -322,4 +319,5 @@ export class FirebaseService implements OnDestroy {
 
         this.activeSubscriptions.delete(path);
     }
+
 }

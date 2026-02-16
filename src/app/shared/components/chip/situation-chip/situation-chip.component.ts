@@ -1,47 +1,27 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { TranslationService } from '../../../../core/services/shared/translate.service';
-import { UserSession } from '../../../../core/services/session/session.types';
-import { resolveConnectionState } from '../../../../core/utils/connection.utils';
-import { UserConnectionState, USER_CONNECTION_STATE } from '../../../../core/services/session/connection-state.enum';
 
 @Component({
   selector: 'app-situation-chip',
   templateUrl: './situation-chip.component.html',
-  styleUrl: './situation-chip.component.scss'
+  styleUrls: ['./situation-chip.component.scss']
 })
-export class SituationChipComponent implements OnChanges {
+export class SituationChipComponent {
 
-  constructor(private translationService: TranslationService) {}
-
-  @Input() session?: UserSession | null;
+  @Input() isOnline?: boolean;
   @Input() blocked?: boolean;
 
-  state: UserConnectionState = USER_CONNECTION_STATE.OFFLINE;
+  constructor(private translationService: TranslationService) { }
 
-  ngOnChanges() {
-    this.state = resolveConnectionState(this.session, this.blocked);
+  getSituationIcon(): string {
+    if (this.blocked) return 'assets/svg/icon/users/situation-disabled.svg';
+    if (this.isOnline) return 'assets/svg/icon/users/situation-actived.svg';
+    return 'assets/svg/icon/users/situation-inactived.svg';
   }
 
-  get icon(): string {
-    const iconMap: Record<number, string> = {
-      [USER_CONNECTION_STATE.ONLINE]: 'situation-actived.svg',
-      [USER_CONNECTION_STATE.OFFLINE]: 'situation-inactived.svg',
-      [USER_CONNECTION_STATE.BLOCKED]: 'situation-disabled.svg',
-    };
-
-    return `assets/svg/icon/users/${iconMap[this.state]}`;
-  }
-
-  get label(): string {
-    const translationMap: Record<number, string> = {
-      [USER_CONNECTION_STATE.ONLINE]: 'actived',
-      [USER_CONNECTION_STATE.OFFLINE]: 'inactived',
-      [USER_CONNECTION_STATE.BLOCKED]: 'disabled'
-    };
-
-    return this.translationService.getTranslation(
-      translationMap[this.state],
-      'Users_Page'
-    );
+  translateSituation(): string {
+    if (this.blocked) return this.translationService.getTranslation('disabled', 'Users_Page');
+    if (this.isOnline) return this.translationService.getTranslation('actived', 'Users_Page');
+    return this.translationService.getTranslation('inactived', 'Users_Page');
   }
 }
