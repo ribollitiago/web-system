@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import { Auth, getAuth, signOut, onAuthStateChanged, User } from 'firebase/auth';
 
 import firebaseApp from '../../../firebase.config';
@@ -11,45 +11,48 @@ import { OnlineLimitService } from '../application/online-limite.service';
 
 type SessionExpireReason = 'TIMEOUT' | 'MAX_SESSION' | null;
 
+export type SessionEvent =
+  | { type: 'SUCCESS'; message?: string }
+  | { type: 'ERROR'; message: string }
+  | { type: 'LOGOUT'; reason?: SessionExpireReason };
+
 @Injectable({
   providedIn: 'root'
 })
 export class SessionService {
 
-  // ------------------------------------------------------
+  // -----------------------------
   // CONSTANTS
-  // ------------------------------------------------------
-
+  // -----------------------------
   private readonly STORAGE = {
-    LOGOUT_EVENT: 'app-logout-event',
     LAST_LOGIN: 'last-login-time',
     LAST_ACTIVITY: 'last-user-activity',
-    LOGOUT_REASON: 'logout-reason',
     SESSION_ID: 'session-id'
   };
 
   private readonly TIME = {
-    IDLE_TIMEOUT: 30 * 60 * 1000,       // 30 minutos
-    MAX_SESSION: 8 * 60 * 60 * 1000,    // 8 horas
-    CHECK_INTERVAL: 10 * 1000           // 10 segundos
+    IDLE_TIMEOUT: 30 * 60 * 1000,          // 30s para teste, ajustar para 30*60*1000 produção
+    MAX_SESSION: 8 * 60 * 60 * 1000,  // 30s para teste, ajustar para 8*60*60*1000 produção
+    CHECK_INTERVAL: 5 * 1000          // checa a cada 5s
   };
 
+  // -----------------------------
+  // STATE
+  // -----------------------------
   private groups: any[] | undefined;
   private userSubscriptionPath?: string;
   private sessionCheckInterval?: ReturnType<typeof setInterval>;
-
-  // ------------------------------------------------------
-  // AUTH & STREAM STATE
-  // ------------------------------------------------------
 
   private readonly auth: Auth = getAuth(firebaseApp);
   private userSubject = new BehaviorSubject<any | null>(null);
   public readonly user$ = this.userSubject.asObservable();
 
-  // ------------------------------------------------------
-  // CONSTRUCTOR
-  // ------------------------------------------------------
+  private sessionSubject = new ReplaySubject<SessionEvent>(1);
+  public readonly sessionEvents$ = this.sessionSubject.asObservable();
 
+  // -----------------------------
+  // CONSTRUCTOR
+  // -----------------------------
   constructor(
     private router: Router,
     private firebaseService: FirebaseService,
@@ -57,56 +60,24 @@ export class SessionService {
     private onlineLimitService: OnlineLimitService
   ) {
     this.initializeSession();
-    this.setupStorageSync();
+    this.setupAuthSync();
   }
 
-  // ------------------------------------------------------
+  // -----------------------------
   // SESSION INIT
-  // ------------------------------------------------------
-
+  // -----------------------------
   private initializeSession(): void {
-    if (this.isSessionExpired()) {
+    const expiredReason = this.isSessionExpired();
+    if (expiredReason) {
+      this.sessionSubject.next({ type: 'LOGOUT', reason: expiredReason });
       this.logout();
       return;
     }
-
-    this.startTokenExpirationWatcher();
-    this.trackUserActivity();
   }
 
-  // ------------------------------------------------------
-  // LOGOUT
-  // ------------------------------------------------------
-
-  async logout(): Promise<void> {
-    try {
-      localStorage.setItem(this.STORAGE.LOGOUT_EVENT, 'true');
-
-      if (this.auth.currentUser) {
-        await this.onlineLimitService.remove(this.auth.currentUser.uid);
-      }
-
-      await signOut(this.auth);
-    } finally {
-      this.performLocalLogout();
-
-      // Remove flag de logout após breve delay
-      setTimeout(() => {
-        localStorage.removeItem(this.STORAGE.LOGOUT_EVENT);
-      }, 1000);
-    }
-  }
-
-  private performLocalLogout(): void {
-    this.presenceService.stop();
-    this.clearSessionStorage();
-    this.router.navigate(['/login']);
-  }
-
-  // ------------------------------------------------------
+  // -----------------------------
   // SESSION EXPIRATION
-  // ------------------------------------------------------
-
+  // -----------------------------
   isSessionExpired(): SessionExpireReason {
     const lastActivity = localStorage.getItem(this.STORAGE.LAST_ACTIVITY);
     const lastLogin = localStorage.getItem(this.STORAGE.LAST_LOGIN);
@@ -119,7 +90,6 @@ export class SessionService {
     if (now - sessionStart > this.TIME.MAX_SESSION) return 'MAX_SESSION';
 
     const reference = lastActivity ? new Date(lastActivity).getTime() : sessionStart;
-
     if (now - reference > this.TIME.IDLE_TIMEOUT) return 'TIMEOUT';
 
     return null;
@@ -127,13 +97,13 @@ export class SessionService {
 
   private checkTokenExpiration(): void {
     const reason = this.isSessionExpired();
-    if (!reason) return;
-
-    sessionStorage.setItem(this.STORAGE.LOGOUT_REASON, reason);
-    this.logout();
+    if (reason) {
+      this.sessionSubject.next({ type: 'LOGOUT', reason });
+      this.logout();
+    }
   }
 
-  private startTokenExpirationWatcher(): void {
+  public startTokenExpirationWatcher(): void {
     this.stopTokenExpirationWatcher();
     this.sessionCheckInterval = setInterval(() => this.checkTokenExpiration(), this.TIME.CHECK_INTERVAL);
   }
@@ -144,18 +114,16 @@ export class SessionService {
     this.sessionCheckInterval = undefined;
   }
 
-  // ------------------------------------------------------
-  // USER ACTIVITY TRACKING
-  // ------------------------------------------------------
-
-  private trackUserActivity(): void {
+  // -----------------------------
+  // USER ACTIVITY
+  // -----------------------------
+  public trackUserActivity(): void {
     const events = ['click', 'mousemove', 'keydown', 'scroll', 'touchstart'];
     let lastWrite = 0;
 
     const updateActivity = () => {
       const now = Date.now();
       if (now - lastWrite < 5000) return;
-
       localStorage.setItem(this.STORAGE.LAST_ACTIVITY, new Date().toISOString());
       lastWrite = now;
     };
@@ -163,22 +131,29 @@ export class SessionService {
     events.forEach(event => window.addEventListener(event, updateActivity, { passive: true }));
   }
 
-  // ------------------------------------------------------
-  // STORAGE SYNC
-  // ------------------------------------------------------
-
-  private setupStorageSync(): void {
-    window.addEventListener('storage', (event: StorageEvent) => {
-      if (event.key === this.STORAGE.LOGOUT_EVENT && event.newValue === 'true') {
-        this.performLocalLogout();
+  // -----------------------------
+  // LOGOUT
+  // -----------------------------
+  async logout(): Promise<void> {
+    try {
+      if (this.auth.currentUser) {
+        await this.onlineLimitService.remove(this.auth.currentUser.uid);
       }
-    });
+      await signOut(this.auth);
+    } finally {
+      this.performLocalLogout();
+    }
   }
 
-  // ------------------------------------------------------
-  // SESSION STORAGE
-  // ------------------------------------------------------
+  private performLocalLogout(): void {
+    this.presenceService.stop();
+    this.clearSessionStorage();
+    this.router.navigate(['/login']);
+  }
 
+  // -----------------------------
+  // SESSION STORAGE
+  // -----------------------------
   clearSessionStorage(): void {
     this.userSubject.next(null);
 
@@ -200,9 +175,17 @@ export class SessionService {
     localStorage.setItem(this.STORAGE.LAST_ACTIVITY, now);
   }
 
-  // ------------------------------------------------------
-  // AUTH HELPERS
-  // ------------------------------------------------------
+  // -----------------------------
+  // AUTH SYNC
+  // -----------------------------
+  private setupAuthSync(): void {
+    onAuthStateChanged(this.auth, (user) => {
+      if (!user) {
+        this.clearSessionStorage();
+        this.router.navigate(['/login']);
+      }
+    });
+  }
 
   getAuthInstance(): Auth {
     return this.auth;
@@ -218,22 +201,29 @@ export class SessionService {
     });
   }
 
-  // ------------------------------------------------------
+  // -----------------------------
   // REALTIME USER SESSION
-  // ------------------------------------------------------
-
+  // -----------------------------
   async loadAndSetUser(uid: string): Promise<void> {
-    this.userSubscriptionPath = this.userPath(uid);
+    this.userSubscriptionPath = `users/${uid}`;
     const sessionId = this.ensureSessionId();
-
     let isFirstEmission = true;
     let resolved = false;
 
     return new Promise((resolve, reject) => {
       const handleUserData = async (userData: any) => {
         try {
-          await this.validateUserExists(userData);
-          await this.validateBlocked(userData);
+          if (!userData) {
+            await this.logout();
+            this.sessionSubject.next({ type: 'ERROR', message: 'USER_NOT_FOUND' });
+            return;
+          }
+
+          if (userData.session?.blocked) {
+            await this.logout();
+            this.sessionSubject.next({ type: 'ERROR', message: 'BLOCKED' });
+            return;
+          }
 
           if (isFirstEmission) {
             isFirstEmission = await this.handleSessionOwnership(uid, sessionId, userData);
@@ -245,10 +235,12 @@ export class SessionService {
 
           if (!resolved) {
             resolved = true;
+            this.sessionSubject.next({ type: 'SUCCESS', message: 'Sessão carregada com sucesso!' });
             resolve();
           }
-
-        } catch (error) {
+        } catch (error: unknown) {
+          const msg = this.normalizeError(error);
+          this.sessionSubject.next({ type: 'ERROR', message: msg });
           reject(error);
         }
       };
@@ -257,10 +249,9 @@ export class SessionService {
     });
   }
 
-  // ------------------------------------------------------
-  // SESSION HELPERS
-  // ------------------------------------------------------
-
+  // -----------------------------
+  // HELPERS
+  // -----------------------------
   private ensureSessionId(): string {
     let sessionId = localStorage.getItem(this.STORAGE.SESSION_ID);
     if (!sessionId) {
@@ -270,47 +261,28 @@ export class SessionService {
     return sessionId;
   }
 
-  private userPath(uid: string) {
-    return `users/${uid}`;
+  private normalizeError(error: unknown): string {
+    if (typeof error === 'string') return error;
+    if (error instanceof Error) return error.message;
+    return 'UNKNOWN_ERROR';
   }
 
-  // ------------------------------------------------------
-  // USER VALIDATIONS
-  // ------------------------------------------------------
-
-  private async validateUserExists(userData: any) {
-    if (!userData) {
-      await this.logout();
-      throw 'USER_NOT_FOUND';
-    }
-  }
-
-  private async validateBlocked(userData: any) {
-    if (userData.session?.blocked) {
-      await this.logout();
-      throw 'BLOCKED';
-    }
-  }
-
+  // -----------------------------
+  // SESSION VALIDATIONS
+  // -----------------------------
   private async validateRuntimeSession(userData: any, sessionId: string) {
     if (userData.session?.id !== sessionId) {
       await this.logout();
       throw 'OTHER_SESSION';
     }
-
     if (userData.session?.revoked) {
       await this.logout();
       throw 'REVOKED';
     }
   }
 
-  // ------------------------------------------------------
-  // SESSION OWNERSHIP HANDLING
-  // ------------------------------------------------------
-
   private async handleSessionOwnership(uid: string, sessionId: string, userData: any) {
     const isMySession = userData.session?.id === sessionId;
-
     await this.ensureOnlineLimit();
 
     if (!isMySession) {
@@ -331,10 +303,6 @@ export class SessionService {
     }
   }
 
-  // ------------------------------------------------------
-  // CREATE SESSION
-  // ------------------------------------------------------
-
   private async createSession(uid: string, sessionId: string) {
     await this.firebaseService.write(`users/${uid}/session`, {
       id: sessionId,
@@ -342,10 +310,6 @@ export class SessionService {
       device: navigator.userAgent
     }, 'set');
   }
-
-  // ------------------------------------------------------
-  // USER EMISSION
-  // ------------------------------------------------------
 
   private async emitUser(userData: any) {
     this.userSubject.next({
@@ -362,7 +326,6 @@ export class SessionService {
         : [];
 
     const groupPermissions = await this.resolveGroupPermissions(groupIds);
-
     return Array.from(new Set([...(groupPermissions ?? []), ...(userData.permissions ?? [])]));
   }
 
@@ -371,11 +334,11 @@ export class SessionService {
       this.groups = await this.firebaseService.getList('groups');
     }
 
-    const permissions = groupIds
-      .map(id => this.groups?.find(g => g['id'] === id))
-      .filter(g => g?.['permissions']?.length)
-      .flatMap(g => g!.permissions);
-
-    return Array.from(new Set(permissions));
+    return Array.from(new Set(
+      groupIds
+        .map(id => this.groups?.find(g => g['id'] === id))
+        .filter(g => g?.permissions?.length)
+        .flatMap(g => g!.permissions)
+    ));
   }
 }

@@ -9,7 +9,6 @@ import {
   Unsubscribe
 } from 'firebase/auth';
 
-import { FirebaseService } from '../database/firebase.service';
 import { SessionService } from '../session/session.service';
 
 interface LoginResult {
@@ -27,9 +26,8 @@ export class LoginService {
 
   constructor(
     private router: Router,
-    private firebaseService: FirebaseService,
-    private sessionService: SessionService
-  ) {}
+    public sessionService: SessionService
+  ) { }
 
   // ------------------------------------------------------
   // PUBLIC API
@@ -91,6 +89,8 @@ export class LoginService {
     }
 
     this.sessionService.setLastLoginTime();
+    this.sessionService.startTokenExpirationWatcher();
+    this.sessionService.trackUserActivity();
 
     await this.router.navigate(['/home']);
 

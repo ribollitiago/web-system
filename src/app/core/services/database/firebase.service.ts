@@ -191,9 +191,6 @@ export class FirebaseService implements OnDestroy {
 
         this.activeSubscriptions.set(path, { path, callback });
 
-        const cached = this.lastDataCache.get(path);
-        if (cached !== undefined) callback(cached);
-
         const shouldRunRealtime =
             this.tabManager.isVisible &&
             this.tabManager.master;
@@ -223,6 +220,7 @@ export class FirebaseService implements OnDestroy {
         };
 
         onValue(this.ref(path), listener);
+        this.activeSubscriptions.set(path, { path, callback });
         this.firebaseListeners.set(path, listener);
     }
 
