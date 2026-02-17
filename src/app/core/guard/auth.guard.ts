@@ -31,7 +31,7 @@ export class AuthGuard implements CanActivate {
         }
 
         try {
-          await this.sessionService.loadAndSetUserOnce(user.uid);
+          await this.sessionService.loadAndSetUser(user.uid);
           return true;
         } catch {
           return false;

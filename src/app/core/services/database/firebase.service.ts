@@ -11,7 +11,8 @@ import {
     off,
     DataSnapshot,
     onDisconnect,
-    serverTimestamp
+    serverTimestamp,
+    runTransaction
 } from 'firebase/database';
 
 import firebaseApp from '../../../firebase.config';
@@ -302,6 +303,14 @@ export class FirebaseService implements OnDestroy {
 
     serverTimestamp() {
         return serverTimestamp();
+    }
+
+    async transaction<T>(
+        path: string,
+        updateFn: (currentData: T | null) => T | null
+    ) {
+        const reference = this.ref(path);
+        return runTransaction(reference, updateFn);
     }
 
     // ------------------------------------------------------
