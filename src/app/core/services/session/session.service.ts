@@ -134,19 +134,27 @@ export class SessionService {
   // -----------------------------
   // LOGOUT
   // -----------------------------
-  async logout(): Promise<void> {
+  async logout(reason?: 'OTHER_SESSION') {
+
+    const sessionId = localStorage.getItem(this.STORAGE.SESSION_ID);
+
     try {
-      if (this.auth.currentUser) {
+
+      if (this.auth.currentUser && reason !== 'OTHER_SESSION') {
         await this.onlineLimitService.remove(this.auth.currentUser.uid);
       }
+
       await signOut(this.auth);
+
     } finally {
-      this.performLocalLogout();
+      this.performLocalLogout(reason);
     }
   }
 
-  private performLocalLogout(): void {
-    this.presenceService.stop();
+  private performLocalLogout(reason: string | undefined): void {
+    if (reason !== 'OTHER_SESSION') {
+      this.presenceService.stop();
+    }
     this.clearSessionStorage();
     this.router.navigate(['/login']);
   }
@@ -272,7 +280,7 @@ export class SessionService {
   // -----------------------------
   private async validateRuntimeSession(userData: any, sessionId: string) {
     if (userData.session?.id !== sessionId) {
-      await this.logout();
+      await this.logout('OTHER_SESSION');
       throw 'OTHER_SESSION';
     }
     if (userData.session?.revoked) {
