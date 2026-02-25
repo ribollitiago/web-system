@@ -24,7 +24,7 @@
     "linkListUsers": "Usuários registrados",
     "linkAnalytics": "Monitoramento"
   },
-  "Header_user": {
+  "header_user": {
     "tooltipNotifications": "Notificações",
     "account": "Minha Conta",
     "signout": "Sair",
@@ -33,7 +33,13 @@
     "settings": "Configurações",
     "help": "Ajuda",
     "feedback": "Enviar Feedback",
-    "titleLanguage": "Selecione seu idioma"
+    "titleLanguage": "Selecione seu idioma",
+    "dialog_logout": {
+      "title": "Sair",
+      "description": "Deseja sair do sistema?",
+      "buttonLeftTitle": "Sair",
+      "buttonRightTitle": "Cancelar"
+    }
   },
   "register_page": {
     "step_1": {
@@ -54,22 +60,27 @@
       "tooltipEnrollment": "A mátricula não será possível alterar depois do usuário ser cadastrado.",
       "validators": {
         "emptyName": "O campo nome é obrigatório.",
+        "invalidName": "Digite um nome válido.",
+        "invalidLastName": "Digite um sobrenome válido.",
         "emptyEmail": "O campo e-mail é obrigatório.",
+        "invalidEmail": "Digite um e-mail válido.",
         "emptyPhone": "O campo telefone é obrigatório.",
+        "phoneTooShort": "O telefone deve conter no mínimo 10 dígitos.",
         "emptyEnrollment": "O campo matrícula é obrigatório.",
         "emptyPassword": "O campo senha é obrigatório.",
+        "passwordTooShort": "A senha deve ter no mínimo 8 caracteres.",
+        "passwordWeak": "A senha deve conter letras maiúsculas, minúsculas, números e caracteres especiais.",
+        "passwordContainsEmail": "A senha não pode conter seu e-mail.",
+        "passwordContainsName": "A senha não pode conter seu nome.",
         "emptyConfirmPassword": "O campo confirmar senha é obrigatório.",
         "passwordMismatch": "As senhas digitadas não coincidem.",
-        "emailAlreadyExists": "Este e-mail já está cadastrado.",
-        "enrollmentAlreadyExists": "Esta matrícula já está cadastrada.",
-        "passwordWeak": "A senha é fraca. Utilize letras, números e caracteres especiais.",
-        "passwordContainsEmail": "Por segurança, a senha não pode conter seu e-mail.",
-        "passwordContainsName": "Por segurança, a senha não pode conter seu nome.",
-        "msgMultiWrong": "Existem vários campos inválidos. Revise o formulário.",
+        "emailAlreadyExists": "Já existe uma conta com os dados informados.",
+        "enrollmentAlreadyExists": "Já existe uma conta com os dados informados.",
+        "msgMultiWrong": "Revise os campos destacados para continuar.",
         "msgDoubleWrongJoin": " e ",
-        "msgDoubleWrong": ": Corrija para continuar.",
-        "msgErrorField": "Erro no campo: ",
-        "msgUnknown": "desconhecido"
+        "msgDoubleWrong": ": corrija para continuar.",
+        "msgErrorField": "Erro no campo ",
+        "msgUnknown": "Ocorreu um erro inesperado. Tente novamente."
       }
     },
     "step_2": {

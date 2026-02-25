@@ -21,7 +21,7 @@
           <img class="icon" src="assets/svg/icon/header/user.svg" alt>
           <h4>{{account}}</h4>
         </div>
-        <div class="menu-item" (click)="logout()">
+        <div class="menu-item" (click)="handleOpenDialog()">
           <img class="icon" src="assets/svg/icon/header/logout.svg" alt>
           <h4>{{signout}}</h4>
         </div>
@@ -68,3 +68,12 @@
     </div>
   </div>
 </div>
+<app-default-popup
+  title={{dialogTitle}}
+  description={{dialogDescription}}
+  buttonLeftTitle={{dialogBtnLeft}}
+  buttonRightTitle={{dialogBtnRight}}
+  buttonLeftColor={{popupBtnLeftColor}}
+  buttonRightColor='{{popupBtnRightColor}}'
+  (confirmAction)="logout()">
+</app-default-popup>

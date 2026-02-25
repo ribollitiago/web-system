@@ -1,8 +1,8 @@
 //global styles styles.scss
-$background-color: #121212;
+$background-color: #1f1f1f;
 
 //default login e login page
-$login-bg: #121212;
+$login-bg: #1f1f1f;
 $image-bg: black;
 $title-color: #fff;
 $text-color: #fff;
@@ -14,7 +14,7 @@ $btn-color: #018BE3;
 $btn-text-color: #fff;
 
 //sidebar
-$sb-bg: #121212;
+$sb-bg: #1f1f1f;
 $sb-width: 300px;
 $sb-collapsed-width: 80px;
 $sb-logo-bg: #fff;
@@ -29,10 +29,10 @@ $sb-shadow-color: #8690a3;
 $sb-divider-color: #2c2c2c;
 
 //main layout
-$bg-main: #070707;
+$bg-main: #0a0a0a;
 
 //register
-$rg-bg: #121212;
+$rg-bg: #1f1f1f;
 $rg-title: #fff;
 $rg-subtitle: #838383;
 $rg-label: #fff;
@@ -48,7 +48,7 @@ $rg-delete-chip: #D35353;
 $rg-border-chip: #757575;
 
 //users
-$us-bg-filters: #252525;
+$us-bg-filters: #424242;
 $us-filter-arrow: #A7A7A7;
 $us-border-btn: #757575;
 $us-border-btn-active: #FFFFFF;
@@ -65,7 +65,7 @@ $dropdown-background: darken($text-color, 97%);
 
 //components
 //Popup Dialog
-$dialog-bg: #121212;
+$dialog-bg: #1f1f1f;
 $dialog-btn-left: #18AE6D;
 $dialog-btn-right: #D35353;
 

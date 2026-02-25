@@ -1,8 +1,8 @@
 @if (isVisible()) {
 
-  <div class="dialog-overlay">
+  <div class="dialog-overlay" [@overlayFade]>
 
-    <div class="dialog-box">
+    <div class="dialog-box" [@popupAnimation]>
 
       <h1 class="title">{{ title }}</h1>
       <p class="description">{{ description }}</p>

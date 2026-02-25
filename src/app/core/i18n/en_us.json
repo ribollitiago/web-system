@@ -24,7 +24,7 @@
     "linkListUsers": "Registered users",
     "linkAnalytics": "Monitoring"
   },
-  "Header_user": {
+  "header_user": {
     "tooltipNotifications": "Notifications",
     "account": "My Account",
     "signout": "Sign Out",
@@ -33,7 +33,13 @@
     "settings": "Settings",
     "help": "Help",
     "feedback": "Send Feedback",
-    "titleLanguage": "Select your language"
+    "titleLanguage": "Select your language",
+    "dialog_logout": {
+      "title": "Log Out",
+      "description": "Do you want to log out of the system?",
+      "buttonLeftTitle": "Log Out",
+      "buttonRightTitle": "Cancel"
+    }
   },
   "register_page": {
     "step_1": {
@@ -53,23 +59,28 @@
       "inputPasswordConfirm": "Confirm Password",
       "tooltipEnrollment": "The enrollment will not be possible to change after the user is registered.",
       "validators": {
-        "emptyName": "Name field is required.",
-        "emptyEmail": "Email field is required.",
-        "emptyPhone": "Phone field is required.",
-        "emptyEnrollment": "Enrollment field is required.",
-        "emptyPassword": "Password field is required.",
-        "emptyConfirmPassword": "Confirm password field is required.",
-        "passwordMismatch": "The entered passwords do not match.",
-        "emailAlreadyExists": "This email is already registered.",
-        "enrollmentAlreadyExists": "This enrollment is already registered.",
-        "passwordWeak": "Password is weak. Use letters, numbers and special characters.",
-        "passwordContainsEmail": "For security, the password cannot contain your email.",
-        "passwordContainsName": "For security, the password cannot contain your name.",
-        "msgMultiWrong": "There are multiple invalid fields. Review the form.",
+        "emptyName": "The name field is required.",
+        "invalidName": "Enter a valid name.",
+        "invalidLastName": "Enter a valid last name.",
+        "emptyEmail": "The email field is required.",
+        "invalidEmail": "Enter a valid email address.",
+        "emptyPhone": "The phone field is required.",
+        "phoneTooShort": "The phone number must contain at least 10 digits.",
+        "emptyEnrollment": "The enrollment field is required.",
+        "emptyPassword": "The password field is required.",
+        "passwordTooShort": "The password must be at least 8 characters long.",
+        "passwordWeak": "The password must contain uppercase letters, lowercase letters, numbers, and special characters.",
+        "passwordContainsEmail": "The password cannot contain your email address.",
+        "passwordContainsName": "The password cannot contain your name.",
+        "emptyConfirmPassword": "The confirm password field is required.",
+        "passwordMismatch": "The passwords do not match.",
+        "emailAlreadyExists": "An account with the provided information already exists.",
+        "enrollmentAlreadyExists": "An account with the provided information already exists.",
+        "msgMultiWrong": "Please review the highlighted fields to continue.",
         "msgDoubleWrongJoin": " and ",
-        "msgDoubleWrong": ": Fix to continue.",
-        "msgErrorField": "Error in field: ",
-        "msgUnknown": "unknown"
+        "msgDoubleWrong": ": please correct to continue.",
+        "msgErrorField": "Error in field ",
+        "msgUnknown": "An unexpected error occurred. Please try again."
       }
     },
     "step_2": {
