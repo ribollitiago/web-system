@@ -7,6 +7,7 @@ export interface ColumnConfig {
   label: string;
   flex?: string; // Para controlar a largura da coluna no CSS (ex: '0 0 54px' ou '1 1 10%')
   sortable?: boolean;
+  sortFn?: (valueA: any, valueB: any, objectA?: any, objectB?: any) => number; // Função de comparação customizada
 }
 
 @Component({
@@ -28,6 +29,7 @@ export class DefaultListComponent implements OnChanges {
   @Output() pageChange = new EventEmitter<number>();
   @Output() itemsPerPageChange = new EventEmitter<number>();
   @Output() rowClick = new EventEmitter<any>();
+  @Output() sortChange = new EventEmitter<{ column: string; direction: 'asc' | 'desc' }>();
 
   // Template customizado para as linhas, passado pelo componente pai
   @ContentChild('rowTemplate') rowTemplate?: TemplateRef<any>;
@@ -36,8 +38,14 @@ export class DefaultListComponent implements OnChanges {
   allSelected: boolean = false;
   totalPages: number = 1;
 
+  // Rastreamento de ordenação
+  sortColumn: string | null = null;
+  sortDirection: 'asc' | 'desc' = 'asc';
+  sortedData: any[] = [];
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['data'] || changes['itemsPerPage']) {
+      this.applySorting();
       this.updateTotalPages();
       this.updateAllSelectedState();
     }
@@ -47,11 +55,11 @@ export class DefaultListComponent implements OnChanges {
   get visibleData(): any[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     const end = start + this.itemsPerPage;
-    return this.data.slice(start, end);
+    return this.sortedData.slice(start, end);
   }
 
   updateTotalPages(): void {
-    this.totalPages = Math.ceil(this.data.length / this.itemsPerPage) || 1;
+    this.totalPages = Math.ceil(this.sortedData.length / this.itemsPerPage) || 1;
     if (this.currentPage > this.totalPages) {
       this.currentPage = this.totalPages;
       this.pageChange.emit(this.currentPage);
@@ -159,5 +167,70 @@ export class DefaultListComponent implements OnChanges {
   public clearSelection(): void {
     this.selectedItems.clear();
     this.emitSelection();
+  }
+
+  // --- Ordenação ---
+  sort(columnKey: string): void {
+    const previous = this.sortColumn;
+    const previousDirection = this.sortDirection;
+
+    // Se clicou na mesma coluna, inverte a direção
+    if (this.sortColumn === columnKey) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      // Se clicou em coluna diferente, começa com 'asc'
+      this.sortColumn = columnKey;
+      this.sortDirection = 'asc';
+    }
+
+    // debug
+    if (columnKey === 'situation') {
+      console.log('DefaultList.sort -> situação clicada', {
+        previous,
+        previousDirection,
+        newDirection: this.sortDirection
+      });
+    }
+
+    this.applySorting();
+    this.currentPage = 1;
+    this.pageChange.emit(this.currentPage);
+    this.sortChange.emit({ column: this.sortColumn, direction: this.sortDirection });
+  }
+
+  private applySorting(): void {
+    if (!this.sortColumn) {
+      this.sortedData = [...this.data];
+      return;
+    }
+
+    const column = this.columns.find(c => c.key === this.sortColumn);
+    if (!column) {
+      this.sortedData = [...this.data];
+      return;
+    }
+
+    this.sortedData = [...this.data].sort((a, b) => {
+      let comparison = 0;
+
+      // Usa a função customizada se fornecida
+      if (column.sortFn) {
+        comparison = column.sortFn(a[this.sortColumn!], b[this.sortColumn!], a, b);
+      } else {
+        // Default: ordenação alfabética/numérica simples
+        const aVal = a[this.sortColumn!];
+        const bVal = b[this.sortColumn!];
+
+        if (aVal < bVal) comparison = -1;
+        if (aVal > bVal) comparison = 1;
+      }
+
+      return this.sortDirection === 'asc' ? comparison : -comparison;
+    });
+    this.updateTotalPages();
+  }
+
+  isSorted(columnKey: string): boolean {
+    return this.sortColumn === columnKey;
   }
 }

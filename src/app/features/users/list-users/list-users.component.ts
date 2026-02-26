@@ -83,13 +83,110 @@ export class ListUsersComponent implements OnInit, OnDestroy {
 
   private setupColumns(): void {
     this.columns = [
-      { key: 'enrollment', label: 'Matrícula', flex: '0 0 80px' },
-      { key: 'name', label: this.translationService.getTranslation('filterName', 'Users_Page'), flex: '3 1 13%' },
-      { key: 'email', label: 'Email', flex: '3 1 18%' },
-      { key: 'group', label: this.translationService.getTranslation('filterGroup', 'Users_Page'), flex: '1 1 17%' },
-      { key: 'situation', label: this.translationService.getTranslation('filterSituation', 'Users_Page'), flex: '1 1 10%' },
-      { key: 'more', label: this.translationService.getTranslation('filterMore', 'Users_Page'), flex: '0 0 30px', sortable: false }
+      {
+        key: 'enrollment',
+        label: 'Matrícula',
+        flex: '0 0 80px',
+        sortFn: this.sortEnrollment.bind(this) // Alfabeto primeiro, depois numérico
+      },
+      {
+        key: 'name',
+        label: this.translationService.getTranslation('filterName', 'Users_Page'),
+        flex: '3 1 13%',
+        sortFn: this.sortAlphabetically.bind(this) // Ordenação alfabética
+      },
+      {
+        key: 'email',
+        label: 'Email',
+        flex: '3 1 18%',
+        sortFn: this.sortAlphabetically.bind(this) // Ordenação alfabética
+      },
+      {
+        key: 'groups',
+        label: this.translationService.getTranslation('filterGroup', 'Users_Page'),
+        flex: '1 1 17%',
+        sortFn: this.sortByGroupCount.bind(this)
+      },
+      {
+        key: 'situation',
+        label: this.translationService.getTranslation('filterSituation', 'Users_Page'),
+        flex: '1 1 10%',
+        sortable: true,
+        sortFn: this.sortBySituation.bind(this)
+      },
+      {
+        key: 'more',
+        label: this.translationService.getTranslation('filterMore', 'Users_Page'),
+        flex: '0 0 30px',
+        sortable: false
+      }
     ];
+
+    console.log('setupColumns - columns configuradas:', this.columns);
+  }
+
+  // Função de ordenação alfabética simples
+  private sortAlphabetically(a: any, b: any): number {
+    if (a == null) return 1;
+    if (b == null) return -1;
+    return String(a).toLowerCase().localeCompare(String(b).toLowerCase(), 'pt-BR');
+  }
+
+  // Função de ordenação: primeiro alfabeto, depois numérico
+  private sortEnrollment(a: any, b: any): number {
+    if (a == null) return 1;
+    if (b == null) return -1;
+
+    const aStr = String(a).toLowerCase();
+    const bStr = String(b).toLowerCase();
+
+    // Separa letras de números
+    const aLetters = aStr.replace(/[0-9]/g, '');
+    const bLetters = bStr.replace(/[0-9]/g, '');
+    const aNumbers = aStr.replace(/[^0-9]/g, '');
+    const bNumbers = bStr.replace(/[^0-9]/g, '');
+
+    // Compara parte alfabética primeiro
+    if (aLetters !== bLetters) {
+      return aLetters.localeCompare(bLetters, 'pt-BR');
+    }
+
+    // Se alfabeto é igual, compara números
+    const aNum = parseInt(aNumbers) || 0;
+    const bNum = parseInt(bNumbers) || 0;
+    return aNum - bNum;
+  }
+
+  // Função de ordenação: por quantidade de grupos
+  private sortByGroupCount(groupsA: any, groupsB: any): number {
+    // Ambos são arrays de grupos
+    const countA = Array.isArray(groupsA) ? groupsA.length : 0;
+    const countB = Array.isArray(groupsB) ? groupsB.length : 0;
+    return countB - countA; // Decrescente: mais grupos primeiro
+  }
+
+  // Função de ordenação: por status (ativo, inativo, bloqueado)
+  private sortBySituation(_: any, __: any, userA: any, userB: any): number {
+    const statusA = this.getUserStatus(userA);
+    const statusB = this.getUserStatus(userB);
+
+    const statusPriority: Record<string, number> = {
+      'ativo': 0,     // primeiro
+      'inativo': 1,   // segundo
+      'bloqueado': 2  // terceiro
+    };
+
+    const priorityA = statusPriority[statusA] ?? 3;
+    const priorityB = statusPriority[statusB] ?? 3;
+
+    return priorityA - priorityB;
+  }
+
+  // Helper: determina o status do usuário
+  private getUserStatus(user: any): string {
+    if (user?.blocked) return 'bloqueado';
+    if (user?.session?.isOnline) return 'ativo';
+    return 'inativo';
   }
 
   private loadTranslations(): void {
@@ -99,7 +196,7 @@ export class ListUsersComponent implements OnInit, OnDestroy {
     this.firebaseService.subscribe('users', (users: any[]) => {
       this.users = users || [];
       this.addGroupDetailsToUsers();
-      this.sortUsersByEnrollment(); 
+      this.sortUsersByEnrollment();
       this.filterUsers();
     });
   }

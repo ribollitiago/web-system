@@ -8,9 +8,17 @@
     <div *ngFor="let col of columns"
          class="filter-item"
          [ngClass]="col.key"
-         [style.flex]="col.flex">
+         [style.flex]="col.flex"
+         (click)="col.sortable !== false && sort(col.key)"
+         [class.sortable]="col.sortable !== false"
+         [class.sorted]="isSorted(col.key)">
       {{ col.label }}
-      <img *ngIf="col.sortable !== false" src="assets/svg/icon/users/arrow-filter.svg">
+      <!-- arrow SVG aparece apenas quando a coluna está ordenada -->
+      <img *ngIf="isSorted(col.key)"
+           src="assets/svg/icon/header/arrow.svg"
+           class="sort-arrow"
+           [class.asc]="sortDirection === 'asc'"
+           [class.desc]="sortDirection === 'desc'">
     </div>
   </div>
 

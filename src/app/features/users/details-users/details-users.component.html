@@ -5,7 +5,8 @@
       <h2 class="subtitle">{{subtitle}}</h2>
     </div>
     <div class="filters-wrapper">
-      <app-search-input [placeholder]="inputSearch" class="input-search" (searchChange)="handleSearchChange($event)">
+      <app-search-input [placeholder]="inputSearch" class="input-search"
+        (searchChange)="handleSearchChange($event)">
         <img src="assets/svg/icon/input/search.svg" alt />
       </app-search-input>
       <button class="filters"><img src="assets/svg/icon/users/filters.svg">{{
@@ -16,29 +17,39 @@
         {{ currentSelectedCount }} usuário(s) selecionado(s)
       </div>
     </div>
-    <app-list-users [searchQuery]="currentSearchQuery" (selectedCount)="handleSelectedCount($event)"
+    <app-list-users [searchQuery]="currentSearchQuery"
+      (selectedCount)="handleSelectedCount($event)"
       (selectedUsersEvent)="handleSelectedUsers($event)">>
     </app-list-users>
 
   </div>
-  <div class="users-container-details" [class.active]="isDetailsOpen" *ngIf="selectedUser">
+  <div class="users-container-details" [class.active]="isDetailsOpen"
+    *ngIf="selectedUser">
     <div class="users-header">
       <div class="line-header">
         <div class="title">Details user</div>
-        <div class="close-icon" matTooltipPosition="above" matTooltip="Fechar Menu" (click)="closeDetailsPanel()">
+        <div class="close-icon" matTooltipPosition="above"
+          matTooltip="Fechar Menu" (click)="closeDetailsPanel()">
           <img src="assets/svg/icon/input/clear.svg">
         </div>
       </div>
 
-      <img class="image-user" src="assets/user-photo.png" alt>
-      <div class="user-line">
-        <span class="name">{{ selectedUser.name }}</span>
-        <app-situation-chip [isOnline]="selectedUser.session?.isOnline ?? false" [blocked]="selectedUser.blocked">
-        </app-situation-chip>
+      <div class="user-info-wrapper">
+        <img class="image-user" src="assets/user-photo.png" alt>
+        <div class="user-info-text">
+          <div class="user-line">
+            <span class="name">{{ selectedUser.name }}</span>
+            <app-situation-chip
+              [isOnline]="selectedUser.session?.isOnline ?? false"
+              [blocked]="selectedUser.blocked">
+            </app-situation-chip>
+          </div>
+          <div class="email">{{ selectedUser.email }}</div>
+        </div>
       </div>
-      <div class="email">{{ selectedUser.email }}</div>
       <div class="permissions-list">
-        <app-group-chip [groups]="selectedUser.groups" [maxDisplay]="2" [allowExpand]="true">
+        <app-group-chip [groups]="selectedUser.groups" [maxDisplay]="2"
+          [allowExpand]="true">
         </app-group-chip>
       </div>
       <div class="phone-and-enrollment">
@@ -55,17 +66,23 @@
       <div class="permissions-container">
         <div class="title">Permissions</div>
         <div class="list-permissions">
-          <div class="permission" *ngFor="let permission of permissionUserSelected">
+          <div class="permission"
+            *ngFor="let permission of permissionUserSelected">
 
-            <img [matTooltip]="getCriticalText(permission.critical)" [matTooltipClass]="'tooltip'"
-              matTooltipPosition="above" [src]="getSvgFileName(permission.critical)" class="critical-icon" />
+            <img [matTooltip]="getCriticalText(permission.critical)"
+              [matTooltipClass]="'tooltip'"
+              matTooltipPosition="above"
+              [src]="getSvgFileName(permission.critical)"
+              class="critical-icon" />
 
-            <span class="title" matTooltipPosition="above" [matTooltipClass]="'tooltip'"
+            <span class="title" matTooltipPosition="above"
+              [matTooltipClass]="'tooltip'"
               matTooltip="{{permission.title}}">{{ permission.title }}</span>
 
             <div class="extra-information">
               <div class="icon-wrapper" [matMenuTriggerFor]="detailsMenu">
-                <img src="assets/svg/icon/register/step-2/extra_info.svg" alt="Info" [matTooltip]="menuTooltip"
+                <img src="assets/svg/icon/register/step-2/extra_info.svg"
+                  alt="Info" [matTooltip]="menuTooltip"
                   matTooltipPosition="above" />
               </div>
 
