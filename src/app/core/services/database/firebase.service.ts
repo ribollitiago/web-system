@@ -199,6 +199,12 @@ export class FirebaseService implements OnDestroy {
             this.activateRealtime(path, callback);
         } else {
             this.requestPathSync(path);
+            setTimeout(() => {
+                if (!this.lastDataCache.has(path)) {
+                    console.warn(`Fallback: Ativando realtime para ${path} em aba não-master.`);
+                    this.activateRealtime(path, callback);
+                }
+            }, 3000);
         }
     }
 
@@ -212,11 +218,13 @@ export class FirebaseService implements OnDestroy {
             this.lastDataCache.set(path, data);
             callback(data);
 
-            this.broadcastChannel?.postMessage({
-                type: 'REALTIME_UPDATE',
-                path,
-                data
-            });
+            if (this.tabManager.master) {
+                this.broadcastChannel?.postMessage({
+                    type: 'REALTIME_UPDATE',
+                    path,
+                    data
+                });
+            }
         };
 
         onValue(this.ref(path), listener);
@@ -289,6 +297,18 @@ export class FirebaseService implements OnDestroy {
             const sub = this.activeSubscriptions.get(message.path);
             if (sub) sub.callback(message.data);
         }
+
+        if (message.type === 'REALTIME_UPDATE' && !this.tabManager.master) {
+            const sub = this.activeSubscriptions.get(message.path);
+            if (sub) {
+                if (this.firebaseListeners.has(message.path)) {
+                    console.warn(`Aba não-master: Desativando fallback para ${message.path} após receber update da master.`);
+                    const listener = this.firebaseListeners.get(message.path);
+                    this.unsubscribe(message.path, undefined, false);
+                }
+                sub.callback(message.data);
+            }
+        }
     }
 
     // ------------------------------------------------------
@@ -315,7 +335,7 @@ export class FirebaseService implements OnDestroy {
     // START UNSUBSCRIBE
     // ------------------------------------------------------
 
-    unsubscribe(path: string, optionalListener?: Function) {
+    unsubscribe(path: string, optionalListener?: Function, shouldRemoveActiveSubscription: boolean = true) {
 
         const listener = optionalListener ?? this.firebaseListeners.get(path);
 
@@ -324,7 +344,9 @@ export class FirebaseService implements OnDestroy {
             this.firebaseListeners.delete(path);
         }
 
-        this.activeSubscriptions.delete(path);
+        if (shouldRemoveActiveSubscription) {
+            this.activeSubscriptions.delete(path);
+        }
     }
 
 }

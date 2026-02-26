@@ -9,9 +9,8 @@ import { GroupChipComponent } from '../../../shared/components/chip/group-chip/g
 import { DefaultListComponent, ColumnConfig } from '../../../shared/layout/default-list/default-list.component';
 
 export interface Session {
-  id?: string;
   isOnline?: boolean;
-  lastLoginAt?: string;
+  blocked?: boolean;
   [key: string]: any;
 }
 
@@ -26,7 +25,6 @@ export interface User {
   permissions: [];
   groups: any[];
   session?: Session;
-  blocked: boolean;
 }
 
 @Component({

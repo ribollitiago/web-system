@@ -47,7 +47,7 @@ export class SessionService {
   private userSubject = new BehaviorSubject<any | null>(null);
   public readonly user$ = this.userSubject.asObservable();
 
-  private sessionSubject = new ReplaySubject<SessionEvent>(1);
+  private sessionSubject = new ReplaySubject<SessionEvent | null>(1);
   public readonly sessionEvents$ = this.sessionSubject.asObservable();
 
   // -----------------------------
@@ -147,23 +147,24 @@ export class SessionService {
       await signOut(this.auth);
 
     } finally {
-      this.performLocalLogout(reason);
+      await this.performLocalLogout(reason);
     }
   }
 
-  private performLocalLogout(reason: string | undefined): void {
+  private async performLocalLogout(reason: string | undefined): Promise<void> {
     if (reason !== 'OTHER_SESSION') {
       this.presenceService.stop();
     }
-    this.clearSessionStorage();
+    await this.clearSessionStorage();
     this.router.navigate(['/login']);
   }
 
   // -----------------------------
   // SESSION STORAGE
   // -----------------------------
-  clearSessionStorage(): void {
+  async clearSessionStorage() {
     this.userSubject.next(null);
+    this.sessionSubject.next(null);
 
     if (this.userSubscriptionPath) {
       this.firebaseService.unsubscribe(this.userSubscriptionPath);
@@ -213,47 +214,131 @@ export class SessionService {
   // REALTIME USER SESSION
   // -----------------------------
   async loadAndSetUser(uid: string): Promise<void> {
+
     this.userSubscriptionPath = `users/${uid}`;
     const sessionId = this.ensureSessionId();
+
     let isFirstEmission = true;
     let resolved = false;
 
     return new Promise((resolve, reject) => {
-      const handleUserData = async (userData: any) => {
-        try {
-          if (!userData) {
-            await this.logout();
-            this.sessionSubject.next({ type: 'ERROR', message: 'USER_NOT_FOUND' });
-            return;
-          }
 
-          if (userData.session?.blocked) {
-            await this.logout();
-            this.sessionSubject.next({ type: 'ERROR', message: 'BLOCKED' });
-            return;
-          }
+      const handleUserData = async (userData: any) => {
+
+        try {
+
+          await this.validateUserAccess(userData);
 
           if (isFirstEmission) {
-            isFirstEmission = await this.handleSessionOwnership(uid, sessionId, userData);
+            isFirstEmission = false;
+            await this.bootstrapSession(uid, sessionId, userData);
           } else {
-            await this.validateRuntimeSession(userData, sessionId);
+            await this.validateActiveSession(userData, sessionId);
           }
 
-          await this.emitUser(userData);
+          await this.publishUserState(userData);
 
           if (!resolved) {
             resolved = true;
-            this.sessionSubject.next({ type: 'SUCCESS', message: 'Sessão carregada com sucesso!' });
+            this.emitSuccess();
             resolve();
           }
+
         } catch (error: unknown) {
+
           const msg = this.normalizeError(error);
-          this.sessionSubject.next({ type: 'ERROR', message: msg });
+          this.emitError(msg);
           reject(error);
         }
       };
 
       this.firebaseService.subscribe(this.userSubscriptionPath!, handleUserData);
+    });
+  }
+
+  // -----------------------------
+  // SESSION VALIDATION
+  // -----------------------------
+  private async validateUserAccess(userData: any) {
+    if (!userData) {
+      await this.logout();
+      throw 'USER_NOT_FOUND';
+    }
+
+    if (userData.session?.blocked) {
+      await this.logout();
+      throw 'BLOCKED';
+    }
+  }
+
+  private async validateActiveSession(
+    userData: any,
+    sessionId: string
+  ) {
+
+    if (userData.session?.id !== sessionId) {
+      await this.logout('OTHER_SESSION');
+      throw 'OTHER_SESSION';
+    }
+
+    if (userData.session?.revoked) {
+      await this.logout();
+      throw 'REVOKED';
+    }
+  }
+
+  // -----------------------------
+  // SESSION LIFECYCLE
+  // -----------------------------
+  private async bootstrapSession(
+    uid: string,
+    sessionId: string,
+    userData: any
+  ) {
+
+    const isMySession = userData.session?.id === sessionId;
+
+    await this.ensureOnlineLimit(sessionId);
+
+    if (!isMySession) {
+      await this.createSession(uid, sessionId);
+    }
+
+    await this.onlineLimitService.add(uid, sessionId);
+    this.presenceService.start(uid);
+  }
+
+  private async createSession(uid: string, sessionId: string) {
+    await this.firebaseService.write(`users/${uid}/session`, {
+      id: sessionId,
+      lastLogin: formatDateShortBR(new Date()),
+      device: navigator.userAgent
+    }, 'set');
+  }
+
+  private async ensureOnlineLimit(sessionId: any) {
+    const canEnter = await this.onlineLimitService.canEnter(sessionId);
+
+    if (!canEnter) {
+      await this.logout();
+      throw 'MAX_ONLINE_REACHED';
+    }
+  }
+
+  // -----------------------------
+  // SESSION EMIT
+  // -----------------------------
+  private emitSuccess() {
+    this.sessionSubject.next({
+      type: 'SUCCESS',
+      message: 'Sessão carregada com sucesso!'
+    });
+  }
+
+  private emitError(message: string) {
+    this.sessionSubject.next({
+      type: 'ERROR',
+      message
     });
   }
 
@@ -276,50 +361,9 @@ export class SessionService {
   }
 
   // -----------------------------
-  // SESSION VALIDATIONS
+  // USER STATE
   // -----------------------------
-  private async validateRuntimeSession(userData: any, sessionId: string) {
-    if (userData.session?.id !== sessionId) {
-      await this.logout('OTHER_SESSION');
-      throw 'OTHER_SESSION';
-    }
-    if (userData.session?.revoked) {
-      await this.logout();
-      throw 'REVOKED';
-    }
-  }
-
-  private async handleSessionOwnership(uid: string, sessionId: string, userData: any) {
-    const isMySession = userData.session?.id === sessionId;
-    await this.ensureOnlineLimit();
-
-    if (!isMySession) {
-      await this.createSession(uid, sessionId);
-    }
-
-    await this.onlineLimitService.add(uid, sessionId);
-    this.presenceService.start(uid);
-
-    return false;
-  }
-
-  private async ensureOnlineLimit() {
-    const canEnter = await this.onlineLimitService.canEnter();
-    if (!canEnter) {
-      await this.logout();
-      throw 'MAX_ONLINE_REACHED';
-    }
-  }
-
-  private async createSession(uid: string, sessionId: string) {
-    await this.firebaseService.write(`users/${uid}/session`, {
-      id: sessionId,
-      lastLogin: formatDateShortBR(new Date()),
-      device: navigator.userAgent
-    }, 'set');
-  }
-
-  private async emitUser(userData: any) {
+  private async publishUserState(userData: any) {
     this.userSubject.next({
       ...userData,
       permissions: await this.resolveMergedPermissions(userData)

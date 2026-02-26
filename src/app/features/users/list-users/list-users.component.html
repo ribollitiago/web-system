@@ -23,7 +23,7 @@
     <div class="list-item situation" style="flex: 1 1 10%">
       <app-situation-chip
         [isOnline]="user.session?.isOnline"
-        [blocked]="user.blocked">
+        [blocked]="user.session?.blocked">
       </app-situation-chip>
     </div>
     <div class="list-item more" style="flex: 0 0 20px; margin-left: 14px;">

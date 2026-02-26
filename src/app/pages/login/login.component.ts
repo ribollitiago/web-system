@@ -176,8 +176,10 @@ export class LoginComponent implements OnInit, OnDestroy {
   // ------------------------------------------------------
 
   private listenSessionEvents(): void {
-    const sub = this.sessionService.sessionEvents$.subscribe((event: SessionEvent) => {
-      // Limpa toasts anteriores
+    const sub = this.sessionService.sessionEvents$.subscribe((event: SessionEvent | null) => {
+
+      if (event === null) return;
+
       this.toast.clear();
 
       const toastOptions = { timeOut: 5000, progressBar: true, closeButton: true };
