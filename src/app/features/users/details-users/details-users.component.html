@@ -41,7 +41,7 @@
             <span class="name">{{ selectedUser.name }}</span>
             <app-situation-chip
               [isOnline]="selectedUser.session?.isOnline ?? false"
-              [blocked]="selectedUser.blocked">
+              [blocked]="selectedUser.session?.blocked">
             </app-situation-chip>
           </div>
           <div class="email">{{ selectedUser.email }}</div>
