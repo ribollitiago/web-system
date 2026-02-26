@@ -5,7 +5,7 @@ import { TabManagerService } from './tab-manager.service';
 @Injectable({ providedIn: 'root' })
 export class OnlineLimitService {
 
-    private readonly MAX_ONLINE = 2;
+    private readonly MAX_ONLINE = 20;
     private readonly ONLINE_PATH = 'system/onlineUsers';
 
     constructor(private firebase: FirebaseService, private tabManager: TabManagerService) { }

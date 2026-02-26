@@ -1,11 +1,32 @@
 import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
+import { trigger, style, animate, transition } from '@angular/animations';
 import { DefaultButtonComponent } from "../../button/default-button/default-button.component";
 
 @Component({
   selector: 'app-default-popup',
   imports: [DefaultButtonComponent],
   templateUrl: './default-popup.component.html',
-  styleUrl: './default-popup.component.scss'
+  styleUrl: './default-popup.component.scss',
+  animations: [
+    trigger('popupAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'scale(0.8)' }),
+        animate('200ms ease-out', style({ opacity: 1, transform: 'scale(1)' }))
+      ]),
+      transition(':leave', [
+        animate('150ms ease-in', style({ opacity: 0, transform: 'scale(0.8)' }))
+      ])
+    ]),
+    trigger('overlayFade', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('200ms ease-out', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('150ms ease-in', style({ opacity: 0 }))
+      ])
+    ])
+  ]
 })
 export class DefaultPopupComponent {
   //Entradas

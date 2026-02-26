@@ -4,10 +4,11 @@ import { Router } from '@angular/router';
 import { TranslationService } from '../../core/services/shared/translate.service';
 import { SessionService } from '../../core/services/session/session.service';
 import { LoginService } from '../../core/services/auth/login.service';
+import { DefaultPopupComponent } from "../../shared/components/popup/default-popup/default-popup.component";
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule],
+  imports: [CommonModule, DefaultPopupComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
@@ -30,10 +31,21 @@ export class HeaderComponent implements OnDestroy {
   userName: string = '';
   userEmail: string = '';
 
+  //DialogBox
+  dialogTitle = '';
+  dialogDescription = '';
+  dialogBtnLeft = '';
+  dialogBtnRight = '';
+
+  popupBtnLeftColor = 'var(--dialog-btn-left)';
+  popupBtnRightColor = 'var(--dialog-btn-right)';
+
   @ViewChild('menu') menuElement!: ElementRef;
   @ViewChild('userToggler') userTogglerElement!: ElementRef;
   @ViewChild('menuLanguage') menuLanguageElement!: ElementRef;
   @ViewChild('languageToggler') languageTogglerElement!: ElementRef;
+
+  @ViewChild(DefaultPopupComponent) popup!: DefaultPopupComponent;
 
   selectedLanguage!: string;
   supportedLanguages: any[] = [];
@@ -69,7 +81,9 @@ export class HeaderComponent implements OnDestroy {
   }
 
   loadTranslations() {
-    const section = "Header_user";
+    const section = "header_user";
+    const dialog = "dialog_logout."
+
     try {
       this.tooltipNotifications = this.translationService.getTranslation('tooltipNotifications', section);
       this.account = this.translationService.getTranslation('account', section);
@@ -81,6 +95,10 @@ export class HeaderComponent implements OnDestroy {
       this.feedback = this.translationService.getTranslation('feedback', section);
       this.titleLanguage = this.translationService.getTranslation('titleLanguage', section);
 
+      this.dialogTitle = this.translationService.getTranslation(dialog + 'title', section);
+      this.dialogDescription = this.translationService.getTranslation(dialog + 'description', section);
+      this.dialogBtnLeft = this.translationService.getTranslation(dialog + 'buttonLeftTitle', section);
+      this.dialogBtnRight = this.translationService.getTranslation(dialog + 'buttonRightTitle', section);
     } catch (error) {
       console.error('Error loading sidebar translations:', error);
     }
@@ -170,5 +188,9 @@ export class HeaderComponent implements OnDestroy {
     }).catch((err) => {
       console.error('Erro ao fazer logout:', err);
     });
+  }
+
+  handleOpenDialog() {
+    this.popup.open();
   }
 }

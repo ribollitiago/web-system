@@ -121,6 +121,9 @@ export class ValidatorsService {
       return { valid: false, error: 'EMPTY_PHONE' };
     }
 
+    if (value.length < 14) {
+      return { valid: false, error: 'PHONE_TOO_SHORT'}
+    }
     return { valid: true };
   }
 

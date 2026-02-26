@@ -1,7 +1,7 @@
 // ------------------------------------------------------
 // IMPORTS
 // ------------------------------------------------------
-import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -10,7 +10,7 @@ import { DefaultStepComponent } from '../../../shared/layout/default-step/defaul
 
 import { RegisterData, RegisterService } from '../../../core/services/auth/register.service';
 import { ToastrService } from 'ngx-toastr';
-import { MatTooltip, MatTooltipModule } from '@angular/material/tooltip';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslationService } from '../../../core/services/shared/translate.service';
 import { ValidatorsService } from '../../../core/services/shared/validators.service';
 
@@ -47,9 +47,6 @@ interface FieldErrorState {
   styleUrl: './register-step-1.component.scss'
 })
 export class RegisterStep1Component implements OnInit {
-  //Tooltip
-  @ViewChildren('errorTooltip', { read: MatTooltip })
-  errorTooltips!: QueryList<MatTooltip>;
 
 
   // ------------------------------------------------------
@@ -86,8 +83,12 @@ export class RegisterStep1Component implements OnInit {
 
   //Validators
   msgEmptyName = '';
+  msgInvalidName = '';
+  msgInvalidLastName = '';
   msgEmptyEmail = '';
+  msgInvalidEmail = '';
   msgEmptyPhone = '';
+  msgPhoneTooShort = '';
   msgEmptyEnrollment = '';
   msgEmptyPassword = '';
   msgEmptyConfirmPassword = '';
@@ -95,6 +96,7 @@ export class RegisterStep1Component implements OnInit {
   msgEmailAlreadyExists = '';
   msgEnrollmentAlreadyExists = '';
   msgPasswordWeak = '';
+  msgPasswordTooShort = '';
   msgPasswordContainsEmail = '';
   msgPasswordContainsName = '';
   msgMultiWrong = '';
@@ -107,6 +109,8 @@ export class RegisterStep1Component implements OnInit {
   // FIELD ERRORS (VALIDATION STATE)
   // ------------------------------------------------------
   fieldErrors: Partial<Record<FieldKey, FieldErrorState>> = {};
+  focusedField: FieldKey | null = null;
+  errorAnimationFields: Set<FieldKey> = new Set();
 
   // ------------------------------------------------------
   // CONSTRUCTOR
@@ -235,14 +239,19 @@ export class RegisterStep1Component implements OnInit {
 
     // --- Validators ---
     this.msgEmptyName = this.translationService.getTranslation(validators + 'emptyName', section);
+    this.msgInvalidName = this.translationService.getTranslation(validators + 'invalidName', section);
+    this.msgInvalidLastName = this.translationService.getTranslation(validators + 'invalidLastName', section);
     this.msgEmptyEmail = this.translationService.getTranslation(validators + 'emptyEmail', section);
+    this.msgInvalidEmail = this.translationService.getTranslation(validators + 'invalidEmail', section);
     this.msgEmptyPhone = this.translationService.getTranslation(validators + 'emptyPhone', section);
+    this.msgPhoneTooShort = this.translationService.getTranslation(validators + 'phoneTooShort', section);
     this.msgEmptyEnrollment = this.translationService.getTranslation(validators + 'emptyEnrollment', section);
     this.msgEmptyPassword = this.translationService.getTranslation(validators + 'emptyPassword', section);
     this.msgEmptyConfirmPassword = this.translationService.getTranslation(validators + 'emptyConfirmPassword', section);
     this.msgPasswordMismatch = this.translationService.getTranslation(validators + 'passwordMismatch', section);
     this.msgEmailAlreadyExists = this.translationService.getTranslation(validators + 'emailAlreadyExists', section);
     this.msgEnrollmentAlreadyExists = this.translationService.getTranslation(validators + 'enrollmentAlreadyExists', section);
+    this.msgPasswordTooShort = this.translationService.getTranslation(validators + 'passwordTooShort', section);
     this.msgPasswordWeak = this.translationService.getTranslation(validators + 'passwordWeak', section);
     this.msgPasswordContainsEmail = this.translationService.getTranslation(validators + 'passwordContainsEmail', section);
     this.msgPasswordContainsName = this.translationService.getTranslation(validators + 'passwordContainsName', section);
@@ -259,69 +268,89 @@ export class RegisterStep1Component implements OnInit {
   private async validateForm(): Promise<boolean> {
 
     // ------------------------------------------------------
-    // MAPAS DE ERRO
+    // MAPA DE MENSAGENS DE ERRO (ORGANIZADO POR CAMPO)
     // ------------------------------------------------------
-    const ERROR_FIELD_KEY_MAP: Record<string, FieldKey> = {
-      // NAME
-      EMPTY_NAME: 'name',
-      INVALID_NAME: 'name',
-      INVALID_NAME_PART: 'name',
+    const ERROR_MESSAGE_MAP: Record<string, { field: FieldKey; message: string }> = {
 
-      // EMAIL
-      EMPTY_EMAIL: 'email',
-      INVALID_EMAIL: 'email',
-      EMAIL_ALREADY_EXISTS: 'email',
+      // ---------------- NAME ----------------
+      EMPTY_NAME: {
+        field: 'name',
+        message: this.msgEmptyName
+      },
+      INVALID_NAME: {
+        field: 'name',
+        message: this.msgInvalidName
+      },
+      INVALID_NAME_PART: {
+        field: 'name',
+        message: this.msgInvalidLastName
+      },
 
-      // PHONE
-      EMPTY_PHONE: 'phone',
-      INVALID_PHONE: 'phone',
+      // ---------------- EMAIL ----------------
+      EMPTY_EMAIL: {
+        field: 'email',
+        message: this.msgEmptyEmail
+      },
+      INVALID_EMAIL: {
+        field: 'email',
+        message: this.msgInvalidEmail
+      },
+      EMAIL_ALREADY_EXISTS: {
+        field: 'email',
+        message: this.msgEmailAlreadyExists
+      },
 
-      // ENROLLMENT
-      EMPTY_ENROLLMENT: 'enrollment',
-      ENROLLMENT_ALREADY_EXISTS: 'enrollment',
+      // ---------------- PHONE ----------------
+      EMPTY_PHONE: {
+        field: 'phone',
+        message: this.msgEmptyPhone
+      },
+      PHONE_TOO_SHORT: {
+        field: 'phone',
+        message: this.msgPhoneTooShort
+      },
 
-      // PASSWORD
-      EMPTY_PASSWORD: 'password',
-      PASSWORD_TOO_SHORT: 'password',
-      PASSWORD_WEAK: 'password',
-      PASSWORD_CONTAINS_EMAIL: 'password',
-      PASSWORD_CONTAINS_NAME: 'password',
+      // ---------------- ENROLLMENT ----------------
+      EMPTY_ENROLLMENT: {
+        field: 'enrollment',
+        message: this.msgEmptyEnrollment
+      },
+      ENROLLMENT_ALREADY_EXISTS: {
+        field: 'enrollment',
+        message: this.msgEnrollmentAlreadyExists
+      },
 
-      // CONFIRM PASSWORD
-      EMPTY_CONFIRMPASSWORD: 'confirmPassword',
-      PASSWORD_MISMATCH: 'confirmPassword'
-    };
+      // ---------------- PASSWORD ----------------
+      EMPTY_PASSWORD: {
+        field: 'password',
+        message: this.msgEmptyPassword
+      },
+      PASSWORD_TOO_SHORT: {
+        field: 'password',
+        message: this.msgPasswordTooShort
+      },
+      PASSWORD_WEAK: {
+        field: 'password',
+        message: this.msgPasswordWeak
+      },
+      PASSWORD_CONTAINS_EMAIL: {
+        field: 'password',
+        message: this.msgPasswordContainsEmail
+      },
+      PASSWORD_CONTAINS_NAME: {
+        field: 'password',
+        message: this.msgPasswordContainsName
+      },
 
-    const ERROR_MESSAGE_MAP: Record<string, string> = {
-      EMPTY_NAME: this.msgEmptyName,
-      EMPTY_EMAIL: this.msgEmptyEmail,
-      EMPTY_PHONE: this.msgEmptyPhone,
-      EMPTY_ENROLLMENT: this.msgEmptyEnrollment,
-      EMPTY_PASSWORD: this.msgEmptyPassword,
-      EMPTY_CONFIRMPASSWORD: this.msgEmptyConfirmPassword,
-      EMPTY_Inva: this.msgEmptyConfirmPassword,
-      PASSWORD_MISMATCH: this.msgPasswordMismatch,
-      EMAIL_ALREADY_EXISTS: this.msgEmailAlreadyExists,
-      ENROLLMENT_ALREADY_EXISTS: this.msgEnrollmentAlreadyExists,
-      PASSWORD_WEAK: this.msgPasswordWeak,
-      PASSWORD_CONTAINS_EMAIL: this.msgPasswordContainsEmail,
-      PASSWORD_CONTAINS_NAME: this.msgPasswordContainsName,
-
-
-      INVALID_NAME: 'name',
-      INVALID_NAME_PART: 'name',
-
-      // EMAIL
-      INVALID_EMAIL: 'email',
-
-      // PHONE
-      INVALID_PHONE: 'phone',
-
-      // ENROLLMENT
-
-      // PASSWORD
-      PASSWORD_TOO_SHORT: 'password',
-
+      // ---------------- CONFIRM PASSWORD ----------------
+      EMPTY_CONFIRMPASSWORD: {
+        field: 'confirmPassword',
+        message: this.msgEmptyConfirmPassword
+      },
+      PASSWORD_MISMATCH: {
+        field: 'confirmPassword',
+        message: this.msgPasswordMismatch
+      }
     };
 
     // ------------------------------------------------------
@@ -353,16 +382,16 @@ export class RegisterStep1Component implements OnInit {
     // PREENCHE ERROS POR CAMPO
     // ------------------------------------------------------
     for (const error of errors) {
-      const fieldKey = ERROR_FIELD_KEY_MAP[error.error!];
-      const message =
-        ERROR_MESSAGE_MAP[error.error!] ||
-        `${this.msgErrorField}${this.msgUnknown}`;
+      const mapped = ERROR_MESSAGE_MAP[error.error!];
 
-      if (fieldKey) {
-        this.fieldErrors[fieldKey] = {
+      if (mapped) {
+        this.fieldErrors[mapped.field] = {
           errorCode: error.error!,
-          message
+          message: mapped.message
         };
+        this.triggerErrorAnimation(mapped.field);
+      } else {
+        console.warn('Erro não mapeado:', error.error);
       }
     }
 
@@ -370,19 +399,8 @@ export class RegisterStep1Component implements OnInit {
     // MOSTRA TOOLTIPS + BLOQUEIA SUBMIT
     // ------------------------------------------------------
     if (errors.length > 0) {
-      setTimeout(() => {
-        this.errorTooltips.forEach(t => {
-          t.show();
-
-          setTimeout(() => {
-            t.hide();
-          }, 5000);
-        });
-      });
-
       return false;
     }
-
 
     // ------------------------------------------------------
     // FORM OK
@@ -400,6 +418,30 @@ export class RegisterStep1Component implements OnInit {
   }
 
   // ------------------------------------------------------
+  // FOCUS TRACKING & ANIMATION
+  // ------------------------------------------------------
+  onFieldFocus(field: FieldKey): void {
+    this.focusedField = field;
+  }
+
+  onFieldBlur(): void {
+    this.focusedField = null;
+  }
+
+  shouldAnimateError(field: FieldKey): boolean {
+    return this.errorAnimationFields.has(field);
+  }
+
+  private triggerErrorAnimation(field: FieldKey): void {
+    this.errorAnimationFields.add(field);
+
+    // Remove animação após 600ms para possibilitar re-trigger
+    setTimeout(() => {
+      this.errorAnimationFields.delete(field);
+    }, 600);
+  }
+
+  // ------------------------------------------------------
   // SUBMIT
   // ------------------------------------------------------
   async submit(): Promise<void> {
@@ -413,3 +455,6 @@ export class RegisterStep1Component implements OnInit {
     this.registerService.nextStep('users');
   }
 }
+
+
+

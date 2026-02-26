@@ -38,6 +38,34 @@
         margin-left: 5px;
         cursor: pointer;
       }
+
+      &.sortable {
+        cursor: pointer;
+        transition: color 0.2s ease;
+
+        &:hover {
+          color: darken($rg-text, 10%);
+        }
+      }
+
+      &.sorted {
+        color: $text-color;
+        font-weight: 600;
+      }
+
+      /* seta de ordenação customizada */
+      .sort-arrow {
+        transition: transform 0.2s ease;
+
+        width: 10px;
+        height: 10px;
+      }
+      .sort-arrow.asc {
+        transform: rotate(270deg);
+      }
+      .sort-arrow.desc {
+        transform: rotate(90deg);
+      }
     }
 
     .checkbox {
