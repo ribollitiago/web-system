@@ -42,6 +42,13 @@ export class GroupsService {
     });
   }
 
+  async getGroupsOnce(): Promise<Group[]> {
+
+    const groups = await this.firebaseService.getList('groups') ?? [];
+
+    return this.formatGroups(groups);
+  }
+
   getGroups(): readonly Group[] {
     return this.groups;
   }
