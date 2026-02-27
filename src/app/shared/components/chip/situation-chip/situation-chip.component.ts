@@ -8,20 +8,19 @@ import { TranslationService } from '../../../../core/services/shared/translate.s
 })
 export class SituationChipComponent {
 
-  @Input() isOnline?: boolean;
   @Input() blocked?: boolean;
 
-  constructor(private translationService: TranslationService) { }
+  constructor(private translationService: TranslationService) {}
 
-  getSituationIcon(): string {
-    if (this.blocked) return 'assets/svg/icon/users/situation-disabled.svg';
-    if (this.isOnline) return 'assets/svg/icon/users/situation-actived.svg';
-    return 'assets/svg/icon/users/situation-inactived.svg';
+  getIcon(): string {
+    return this.blocked
+      ? 'assets/svg/icon/users/situation-disabled.svg'
+      : 'assets/svg/icon/users/situation-actived.svg';
   }
 
-  translateSituation(): string {
-    if (this.blocked) return this.translationService.getTranslation('disabled', 'Users_Page');
-    if (this.isOnline) return this.translationService.getTranslation('actived', 'Users_Page');
-    return this.translationService.getTranslation('inactived', 'Users_Page');
+  getLabel(): string {
+    return this.blocked
+      ? this.translationService.getTranslation('situation.blocked', 'users_page')
+      : this.translationService.getTranslation('situation.noBlocked', 'users_page');
   }
 }

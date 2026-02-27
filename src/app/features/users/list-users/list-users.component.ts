@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { SituationChipComponent } from '../../../shared/components/chip/situation-chip/situation-chip.component';
 import { GroupChipComponent } from '../../../shared/components/chip/group-chip/group-chip.component';
 import { DefaultListComponent, ColumnConfig } from '../../../shared/layout/default-list/default-list.component';
+import { StatusChipComponent } from "../../../shared/components/chip/status-chip/status-chip.component";
 
 export interface Session {
   isOnline?: boolean;
@@ -30,7 +31,7 @@ export interface User {
 @Component({
   selector: 'app-list-users',
   standalone: true,
-  imports: [CommonModule, FormsModule, SituationChipComponent, GroupChipComponent, DefaultListComponent],
+  imports: [CommonModule, FormsModule, SituationChipComponent, GroupChipComponent, DefaultListComponent, StatusChipComponent],
   templateUrl: './list-users.component.html',
   styleUrl: './list-users.component.scss'
 })
@@ -89,7 +90,7 @@ export class ListUsersComponent implements OnInit, OnDestroy {
       },
       {
         key: 'name',
-        label: this.translationService.getTranslation('filterName', 'Users_Page'),
+        label: this.translationService.getTranslation('filterName', 'users_page'),
         flex: '3 1 13%',
         sortFn: this.sortAlphabetically.bind(this) // Ordenação alfabética
       },
@@ -101,23 +102,25 @@ export class ListUsersComponent implements OnInit, OnDestroy {
       },
       {
         key: 'groups',
-        label: this.translationService.getTranslation('filterGroup', 'Users_Page'),
+        label: this.translationService.getTranslation('filterGroup', 'users_page'),
         flex: '1 1 17%',
         sortFn: this.sortByGroupCount.bind(this)
       },
       {
-        key: 'situation',
-        label: this.translationService.getTranslation('filterSituation', 'Users_Page'),
+        key: 'status',
+        label: this.translationService.getTranslation('filterStatus', 'users_page'),
         flex: '1 1 10%',
         sortable: true,
-        sortFn: this.sortBySituation.bind(this)
+        sortFn: this.sortByOnlineStatus.bind(this)
       },
       {
-        key: 'more',
-        label: this.translationService.getTranslation('filterMore', 'Users_Page'),
-        flex: '0 0 30px',
-        sortable: false
+        key: 'situation',
+        label: this.translationService.getTranslation('filterSituation', 'users_page'),
+        flex: '1 1 4%',
+        sortable: true,
+        sortFn: this.sortByBlocked.bind(this)
       }
+
     ];
 
     console.log('setupColumns - columns configuradas:', this.columns);
@@ -164,20 +167,20 @@ export class ListUsersComponent implements OnInit, OnDestroy {
   }
 
   // Função de ordenação: por status (ativo, inativo, bloqueado)
-  private sortBySituation(_: any, __: any, userA: any, userB: any): number {
-    const statusA = this.getUserStatus(userA);
-    const statusB = this.getUserStatus(userB);
+  private sortByBlocked(_: any, __: any, userA: any, userB: any): number {
+    const blockedA = userA?.session?.blocked ? 1 : 0;
+    const blockedB = userB?.session?.blocked ? 1 : 0;
 
-    const statusPriority: Record<string, number> = {
-      'ativo': 0,     // primeiro
-      'inativo': 1,   // segundo
-      'bloqueado': 2  // terceiro
-    };
+    // Não bloqueados primeiro
+    return blockedA - blockedB;
+  }
 
-    const priorityA = statusPriority[statusA] ?? 3;
-    const priorityB = statusPriority[statusB] ?? 3;
+  private sortByOnlineStatus(_: any, __: any, userA: any, userB: any): number {
+    const onlineA = userA?.session?.isOnline ? 1 : 0;
+    const onlineB = userB?.session?.isOnline ? 1 : 0;
 
-    return priorityA - priorityB;
+    // Online primeiro
+    return onlineB - onlineA;
   }
 
   // Helper: determina o status do usuário

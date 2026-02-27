@@ -1,16 +1,68 @@
-<div class="users-wrapper">
+<div class="users-wrapper" (click)="isFilterOpen = false">
   <div class="users-container-list" [class.with-details]="isDetailsOpen">
     <div class="users-header">
       <h1 class="title">{{title}}</h1>
       <h2 class="subtitle">{{subtitle}}</h2>
     </div>
-    <div class="filters-wrapper">
+    <div class="filters-wrapper" (click)="$event.stopPropagation()">
       <app-search-input [placeholder]="inputSearch" class="input-search"
         (searchChange)="handleSearchChange($event)">
         <img src="assets/svg/icon/input/search.svg" alt />
       </app-search-input>
-      <button class="filters"><img src="assets/svg/icon/users/filters.svg">{{
-        btnFilters }}</button>
+      <div class="filters-container">
+        <button class="filters" (click)="toggleFiltersPopup()"><img
+            src="assets/svg/icon/users/filters.svg">{{
+          btnFilters }}</button>
+        <!-- filters popup -->
+        <div class="filters-popup" *ngIf="isFilterOpen"
+          (click)="$event.stopPropagation()">
+          <div class="menu-header">
+            <button (click)="clearFilters()" class="clear-btn">Clear</button>
+            <h1>Filter</h1>
+            <button (click)="applyFilters()" class="apply-btn">Done</button>
+          </div>
+          <div class="menu-item">
+            <!-- Filters layout as requested -->
+            <div class="filter-section">
+              <div class="section-title">Status</div>
+              <label><input type="checkbox" /> Online</label>
+              <label><input type="checkbox" /> Offline</label>
+              <hr />
+              <div class="section-title">Situation</div>
+              <label><input type="checkbox" /> Ativo</label>
+              <label><input type="checkbox" /> Bloqueado</label>
+            </div>
+            <hr />
+            <div class="filter-section">
+              <div class="section-title">Grupo</div>
+              <label><input type="checkbox" /> Admin</label>
+              <label><input type="checkbox" /> RH</label>
+              <label><input type="checkbox" /> Financeiro</label>
+            </div>
+            <hr />
+            <div class="filter-section">
+              <div class="section-title">Último login</div>
+              <label><input type="radio" name="lastLogin" /> Hoje</label>
+              <label><input type="radio" name="lastLogin" /> 7 dias</label>
+              <label><input type="radio" name="lastLogin" /> 30 dias</label>
+              <label><input type="radio" name="lastLogin" /> Intervalo</label>
+            </div>
+            <hr />
+            <div class="filter-section">
+              <div class="section-title">Criado em</div>
+              <input type="date" class="date-input" /> até <input type="date"
+                class="date-input" />
+            </div>
+            <hr />
+            <div class="filter-section">
+              <div class="section-title">Dispositivo</div>
+              <label><input type="checkbox" /> Windows</label>
+              <label><input type="checkbox" /> Mac</label>
+              <label><input type="checkbox" /> Mobile</label>
+            </div>
+          </div>
+        </div>
+      </div>
       <button class="export"><img src="assets/svg/icon/users/export.svg">{{
         btnExport }}</button>
       <div class="selected-count" *ngIf="currentSelectedCount > 0">
@@ -40,7 +92,6 @@
           <div class="user-line">
             <span class="name">{{ selectedUser.name }}</span>
             <app-situation-chip
-              [isOnline]="selectedUser.session?.isOnline ?? false"
               [blocked]="selectedUser.session?.blocked">
             </app-situation-chip>
           </div>

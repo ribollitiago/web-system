@@ -132,7 +132,7 @@
       "buttonRightTitle": "Cancelar"
     }
   },
-  "Users_Page": {
+  "users_page": {
     "title": "Lista de usuários",
     "subtitle": "Usuários cadastrados no sistema",
     "btnFilters": "Filtros",
@@ -140,10 +140,15 @@
     "filterName": "Nome",
     "filterGroup": "Grupo",
     "filterSituation": "Situação",
-    "filterMore": "Mais",
-    "inactived": "Inativo",
-    "actived": "Ativo",
-    "disabled": "Desativado"
+    "filterStatus": "Status",
+    "status": {
+      "offline": "Offline",
+      "online": "Online"
+    },
+    "situation": {
+      "blocked": "Bloqueado",
+      "noBlocked": "Ativo"
+    }
   },
   "Permissions": {
     "010001": {
