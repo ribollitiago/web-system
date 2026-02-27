@@ -10,7 +10,8 @@
   (rowClick)="onRowClick($event)">
 
   <ng-template #rowTemplate let-user>
-    <div class="list-item enrollment" style="flex: 0 0 80px">{{user.enrollment}}</div>
+    <div class="list-item enrollment"
+      style="flex: 0 0 80px">{{user.enrollment}}</div>
     <div class="list-item name" style="flex: 3 1 13%">{{user.name}}</div>
     <div class="list-item email" style="flex: 3 1 18%">{{user.email}}</div>
     <div class="list-item group" style="flex: 1 1 16.5%">
@@ -20,14 +21,17 @@
         [allowExpand]="false">
       </app-group-chip>
     </div>
-    <div class="list-item situation" style="flex: 1 1 10%">
+
+    <div class="list-item status" style="flex: 1 1 10%">
+      <app-status-chip
+        [isOnline]="user.session?.isOnline">
+      </app-status-chip>
+
+    </div>
+    <div class="list-item situation" style="flex: 1 1 4%">
       <app-situation-chip
-        [isOnline]="user.session?.isOnline"
         [blocked]="user.session?.blocked">
       </app-situation-chip>
-    </div>
-    <div class="list-item more" style="flex: 0 0 20px; margin-left: 14px;">
-      <img src="assets/svg/icon/register/step-2/extra_info.svg">
     </div>
   </ng-template>
 

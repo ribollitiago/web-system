@@ -14,11 +14,11 @@ import { BorderButtonComponent } from "../../../shared/components/button/border-
 @Component({
   selector: 'app-details-users',
   imports: [SearchInputComponent, ListUsersComponent, CommonModule, MatTooltipModule, MatMenuModule, SituationChipComponent, GroupChipComponent, BorderButtonComponent],
-  templateUrl: './details-users.component.html',
-  styleUrl: './details-users.component.scss'
+  templateUrl: './users.component.html',
+  styleUrl: './users.component.scss'
 })
-export class DetailsUsersComponent implements OnDestroy {
-  @ViewChild(ListUsersComponent) listUsersComponent!: ListUsersComponent;
+export class UsersComponent implements OnDestroy {
+  @ViewChild(UsersComponent) listUsersComponent!: ListUsersComponent;
 
   title: string = '';
   subtitle: string = '';
@@ -38,6 +38,9 @@ export class DetailsUsersComponent implements OnDestroy {
   isDetailsOpen: boolean = false;
 
   permissionUserSelected: any;
+
+  // state for filters popup
+  isFilterOpen: boolean = false;
 
   private languageSubscription: Subscription;
 
@@ -163,5 +166,21 @@ export class DetailsUsersComponent implements OnDestroy {
       case 'ZERO_LEVEL': return this.zeroTooltip;
       default: return '';
     }
+  }
+
+  /*** filter popup handlers ***/
+  toggleFiltersPopup(): void {
+    this.isFilterOpen = !this.isFilterOpen;
+  }
+
+  clearFilters(): void {
+    // reset filter values here
+    console.log('clear filters');
+  }
+
+  applyFilters(): void {
+    // apply filters logic; update search/query or emit event
+    console.log('apply filters');
+    this.isFilterOpen = false;
   }
 }
