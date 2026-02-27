@@ -1,0 +1,77 @@
+<div class="filters-popup" *ngIf="isOpen" (click)="$event.stopPropagation()">
+  <div class="menu-header">
+    <button (click)="handleClear()" class="clear-btn">Clear</button>
+    <h1>Filter</h1>
+    <button (click)="handleApply()" class="apply-btn">Done</button>
+  </div>
+
+  <div class="menu-item">
+    <ng-container *ngFor="let section of sections; let sectionIndex = index">
+      <div class="filter-section">
+        <div class="section-title">{{ section.title }}</div>
+
+        <ng-container *ngFor="let field of section.fields">
+          <!-- CHECKBOX -->
+          <ng-container *ngIf="field.kind === 'checkbox'">
+            <ng-container *ngFor="let opt of field.options">
+              <label>
+                <input
+                  type="checkbox"
+                  [checked]="isCheckboxChecked(field.key, opt.value)"
+                  (change)="onToggleCheckbox(field.key, opt.value, ($any($event.target).checked))" />
+                {{ opt.label }}
+              </label>
+            </ng-container>
+          </ng-container>
+
+          <!-- RADIO -->
+          <ng-container *ngIf="field.kind === 'radio'">
+            <ng-container *ngFor="let opt of field.options">
+              <label>
+                <input
+                  type="radio"
+                  [name]="field.key"
+                  [checked]="isRadioSelected(field.key, opt.value)"
+                  (change)="onSelectRadio(field.key, opt.value)" />
+                {{ opt.label }}
+              </label>
+            </ng-container>
+          </ng-container>
+          <!-- GROUP (hover → submenu lateral) -->
+          <ng-container *ngIf="field.kind === 'group'">
+            <app-filter-group-item
+              [field]="$any(field)"
+              [selected]="model[field.key] || []"
+              (selectedChange)="onGroupChange(field.key, $event)" />
+          </ng-container>
+        </ng-container>
+
+      </div>
+
+      <hr *ngIf="sectionIndex < sections.length - 1 || fixedDate" />
+    </ng-container>
+
+    <!-- DATE FIXO -->
+    <ng-container *ngIf="fixedDate">
+      <div class="filter-section">
+        <div class="section-title">{{ fixedDate.label }}</div>
+
+        <input
+          type="date"
+          class="date-input"
+          [attr.min]="fixedDate.min"
+          [attr.max]="fixedDate.max"
+          [value]="model[fixedDate.fromKey] || ''"
+          (change)="onDateChange(fixedDate.fromKey, $any($event.target).value)" />
+        <span class="date-range-label">Até</span>
+        <input
+          type="date"
+          class="date-input"
+          [attr.min]="fixedDate.min"
+          [attr.max]="fixedDate.max"
+          [value]="model[fixedDate.toKey] || ''"
+          (change)="onDateChange(fixedDate.toKey, $any($event.target).value)" />
+      </div>
+    </ng-container>
+  </div>
+</div>

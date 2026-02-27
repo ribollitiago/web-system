@@ -1,0 +1,30 @@
+<div class="group-wrapper">
+
+  <div class="group-trigger" (click)="toggle($event)">
+    <span class="group-label">{{ field.label }}</span>
+
+    <span class="group-meta">
+      <span *ngIf="selected.length" class="group-badge">{{ selected.length
+        }}</span>
+      <span class="group-arrow" [class.open]="isOpen">›</span>
+    </span>
+  </div>
+
+  <div class="group-submenu" *ngIf="isOpen" (click)="$event.stopPropagation()">
+    <div class="submenu-title">{{ field.label }}</div>
+    <hr class="submenu-divider" />
+
+    <div class="submenu-options">
+      <ng-container *ngFor="let opt of field.options">
+        <label class="submenu-option">
+          <input
+            type="checkbox"
+            [checked]="isChecked(opt.value)"
+            (change)="onToggle(opt.value, $any($event.target).checked)" />
+          {{ opt.label }}
+        </label>
+      </ng-container>
+    </div>
+  </div>
+
+</div>

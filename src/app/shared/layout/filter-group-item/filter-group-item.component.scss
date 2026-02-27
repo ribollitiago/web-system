@@ -1,0 +1,143 @@
+@import "../../../../styles/variables.scss";
+
+.group-wrapper {
+  position: relative; // ancora o submenu
+}
+
+.group-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  color: $text-color;
+  font-weight: 300;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .group-label {
+    flex: 1;
+  }
+
+  .group-meta {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .group-badge {
+    background: $btn-color;
+    color: $text-color;
+    border-radius: 14px;
+    padding: 0 5px;
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 14px;
+  }
+
+  .group-arrow {
+    font-size: 14px;
+    line-height: 1;
+    opacity: 0.6;
+    display: inline-block;
+    transition: transform 0.2s ease;
+
+    &.open {
+      transform: rotate(90deg);
+    }
+  }
+}
+
+// Submenu flutuante à direita
+// Submenu flutuante à direita
+.group-submenu {
+  position: absolute;
+  top: -8px;
+  left: calc(100% + 6px);
+  z-index: 40;
+
+  background: $rg-bg;
+  border-radius: 8px;
+  min-width: 160px;
+  padding: 10px;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 1);
+
+  display: flex;
+  flex-direction: column;
+  max-height: 260px;
+
+  .submenu-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: $text-color;
+    margin-bottom: 4px;
+    flex-shrink: 0;
+  }
+
+  .submenu-divider {
+    border: none;
+    border-top: 1px solid $us-border-btn;
+    margin: 4px 0 6px;
+    flex-shrink: 0;
+  }
+
+  // ← overflow aqui, no container, não no item
+  .submenu-options {
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+  }
+
+  .submenu-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: $text-color;
+    font-weight: 300;
+    margin-bottom: 4px;
+    cursor: pointer;
+
+    input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border: 1px solid $text-color;
+      border-radius: 3px;
+      background: transparent;
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+
+      &:checked {
+        background: $text-color;
+
+        &::after {
+          content: "";
+          position: absolute;
+          left: 3px;
+          top: 0;
+          width: 4px;
+          height: 8px;
+          border: solid $background-color;
+          border-width: 0 2px 2px 0;
+          transform: rotate(45deg);
+        }
+      }
+    }
+  }
+}

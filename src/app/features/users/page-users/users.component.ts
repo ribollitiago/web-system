@@ -14,6 +14,11 @@ import { User } from '../../../core/services/components/users.service';
 
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
+import {
+  DefaultFilterListComponent,
+  DefaultFilterSection,
+  DefaultFixedDateConfig
+} from "../../../shared/layout/default-filter-list/default-filter-list.component";
 
 @Component({
   selector: 'app-details-users',
@@ -26,7 +31,8 @@ import { MatMenuModule } from '@angular/material/menu';
     MatMenuModule,
     SituationChipComponent,
     GroupChipComponent,
-    BorderButtonComponent
+    BorderButtonComponent,
+    DefaultFilterListComponent
   ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
@@ -60,6 +66,100 @@ export class UsersComponent implements OnInit, OnDestroy {
   }[] = [];
 
   isFilterOpen = false;
+
+  filtersSections: DefaultFilterSection[] = [
+    {
+      title: 'Status',
+      fields: [
+        {
+          key: 'status',
+          label: 'Status',
+          kind: 'checkbox',
+          options: [
+            { label: 'Online', value: 'ONLINE' },
+            { label: 'Offline', value: 'OFFLINE' }
+          ]
+        }
+      ]
+    },
+    {
+      title: 'Situation',
+      fields: [
+        {
+          key: 'situation',
+          label: 'Situation',
+          kind: 'checkbox',
+          options: [
+            { label: 'Ativo', value: 'ACTIVE' },
+            { label: 'Bloqueado', value: 'BLOCKED' }
+          ]
+        }
+      ]
+    },
+    {
+      title: 'Grupo',
+      fields: [
+        {
+          key: 'grupo',
+          label: 'Selecione os Grupos',
+          kind: 'group',        // <-- novo kind
+          options: [
+            { label: 'Equipe Alpha', value: 'alpha' },
+            { label: 'Equipe Beta', value: 'beta' },
+            { label: 'Equipe Gamma', value: 'gamma' },
+          ]
+        }
+      ]
+    },
+    {
+      title: 'Último login',
+      fields: [
+        {
+          key: 'lastLogin',
+          label: 'Último login',
+          kind: 'radio',
+          options: [
+            { label: 'Hoje', value: 'TODAY' },
+            { label: '7 dias', value: '7D' },
+            { label: '30 dias', value: '30D' },
+            { label: 'Intervalo', value: 'RANGE' }
+          ]
+        }
+      ]
+    },
+    {
+      title: 'Dispositivos',
+      fields: [
+        {
+          key: 'dispositivos',
+          label: 'Selecione os Dispositivos',
+          kind: 'group',        // <-- novo kind
+          options: [
+            { label: 'Mac', value: 'alpha' },
+            { label: 'Windows', value: 'beta' },
+            { label: 'Mobile', value: 'gamma' },
+            { label: 'Linux', value: 'gamma' },
+          ]
+        }
+      ]
+    },
+  ];
+
+  fixedDate: DefaultFixedDateConfig = {
+    label: 'Criado em',
+    fromKey: 'createdFrom',
+    toKey: 'createdTo'
+  };
+
+  filtersModel: Record<string, any> = {
+    status: [],
+    situation: [],
+    group: [],
+    device: [],
+    lastLogin: null,
+    createdFrom: null,
+    createdTo: null
+  };
 
   private languageSubscription: Subscription;
 
@@ -218,11 +318,24 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.isFilterOpen = !this.isFilterOpen;
   }
 
-  clearFilters(): void {
-    this.currentSearchQuery = '';
+  clearUserFilters(): void {
+    this.filtersModel = {
+      status: [],
+      situation: [],
+      group: [],
+      device: [],
+      lastLogin: null,
+      createdFrom: null,
+      createdTo: null
+    };
   }
 
-  applyFilters(): void {
+  applyUserFilters(model: Record<string, any>): void {
+    // aqui você pode disparar uma busca no backend, ou filtrar localmente.
+    // por enquanto, apenas fecha o popup via binding do componente.
+    this.filtersModel = model;
     this.isFilterOpen = false;
   }
+
+
 }
