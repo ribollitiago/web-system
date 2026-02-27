@@ -3,10 +3,10 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import { Auth, getAuth, signOut, onAuthStateChanged, User } from 'firebase/auth';
 
-import firebaseApp from '../../../firebase.config';
-import { FirebaseService } from '../database/firebase.service';
+import firebaseApp from '../../../../firebase.config';
+import { FirebaseService } from '../../database/firebase.service';
 import { PresenceService } from '../application/presence.service';
-import { formatDateShortBR } from '../../utils/date.utils';
+import { formatDateShortBR } from '../../../utils/date.utils';
 import { OnlineLimitService } from '../application/online-limite.service';
 
 type SessionExpireReason = 'TIMEOUT' | 'MAX_SESSION' | null;

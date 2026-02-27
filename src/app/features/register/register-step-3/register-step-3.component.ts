@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { TranslationService } from '../../../core/services/shared/translate.service';
-import { RegisterData, RegisterService } from '../../../core/services/auth/register.service';
+import { RegisterData, RegisterService } from '../../../core/services/components/register.service';
 import { DefaultStepComponent } from '../../../shared/layout/default-step/default-step.component';
 
 // ------------------------------------------------------

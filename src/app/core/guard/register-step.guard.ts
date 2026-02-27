@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { RegisterService } from '../services/auth/register.service';
+import { RegisterService } from '../services/components/register.service';
 
 @Injectable({
   providedIn: 'root',

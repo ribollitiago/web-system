@@ -17,7 +17,7 @@ import {
 
 import firebaseApp from '../../../firebase.config';
 import { combineLatest, Subscription } from 'rxjs';
-import { TabManagerService } from '../application/tab-manager.service';
+import { TabManagerService } from '../core/application/tab-manager.service';
 
 type Entity = {
     uid?: string;

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FirebaseService } from '../database/firebase.service';
+import { FirebaseService } from '../../database/firebase.service';
 import { TabManagerService } from './tab-manager.service';
 
 @Injectable({ providedIn: 'root' })

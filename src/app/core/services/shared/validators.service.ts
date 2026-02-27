@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { RegisterData } from '../auth/register.service';
+import { RegisterData } from '../components/register.service';
 import { FirebaseService } from '../database/firebase.service';
 
 export interface ValidationResult {

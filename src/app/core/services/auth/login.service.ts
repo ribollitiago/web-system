@@ -9,7 +9,7 @@ import {
   Unsubscribe
 } from 'firebase/auth';
 
-import { SessionService } from '../session/session.service';
+import { SessionService } from '../core/session/session.service';
 
 interface LoginResult {
   uid: string;

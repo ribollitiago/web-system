@@ -9,7 +9,7 @@ import { ToastrService } from 'ngx-toastr';
 import { PrimaryInputComponent } from '../../shared/components/input/primary-input/primary-input.component';
 import { DefaultLoginLayoutComponent } from '../../layout/default-login-layout/default-login-layout.component';
 import { TranslationService } from '../../core/services/shared/translate.service';
-import { SessionService, SessionEvent } from '../../core/services/session/session.service';
+import { SessionService, SessionEvent } from '../../core/services/core/session/session.service';
 
 @Component({
   selector: 'app-login',

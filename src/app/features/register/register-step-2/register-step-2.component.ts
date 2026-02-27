@@ -7,9 +7,9 @@ import { map, Observable, startWith, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
 import { TranslationService } from '../../../core/services/shared/translate.service';
-import { RegisterService } from '../../../core/services/auth/register.service';
-import { PermissionsService } from '../../../core/services/permissions/permissions.service';
-import { GroupsService, Group } from '../../../core/services/permissions/group.service';
+import { RegisterService } from '../../../core/services/components/register.service';
+import { PermissionsService } from '../../../core/services/components/permissions.service';
+import { GroupsService, Group } from '../../../core/services/components/groups.service';
 
 import { SearchInputComponent } from '../../../shared/components/input/search-input/search-input.component';
 import { StepsFilterComponent } from '../steps-filter/steps-filter.component';

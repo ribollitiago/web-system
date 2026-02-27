@@ -8,7 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 
-import { PermissionsService } from '../../../core/services/permissions/permissions.service';
+import { PermissionsService } from '../../../core/services/components/permissions.service';
 import { TranslationService } from '../../../core/services/shared/translate.service';
 
 // ------------------------------------------------------

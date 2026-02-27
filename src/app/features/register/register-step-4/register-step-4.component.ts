@@ -9,12 +9,12 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 
 import { TranslationService } from '../../../core/services/shared/translate.service';
-import { RegisterService } from '../../../core/services/auth/register.service';
-import { PermissionsService } from '../../../core/services/permissions/permissions.service';
+import { RegisterService } from '../../../core/services/components/register.service';
+import { PermissionsService } from '../../../core/services/components/permissions.service';
 
 import { DefaultStepComponent } from '../../../shared/layout/default-step/default-step.component';
 import { GroupChipComponent } from "../../../shared/components/chip/group-chip/group-chip.component";
-import { GroupsService } from '../../../core/services/permissions/group.service';
+import { GroupsService } from '../../../core/services/components/groups.service';
 import { DefaultPopupComponent } from "../../../shared/components/popup/default-popup/default-popup.component";
 
 

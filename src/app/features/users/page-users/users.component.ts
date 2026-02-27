@@ -1,46 +1,65 @@
-import { Component, OnDestroy, ViewChild } from '@angular/core';
-import { SearchInputComponent } from '../../../shared/components/input/search-input/search-input.component';
-import { TranslationService } from '../../../core/services/shared/translate.service';
-import { filter, Subscription } from 'rxjs';
-import { ListUsersComponent, User } from '../list-users/list-users.component';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PermissionsService } from '../../../core/services/permissions/permissions.service';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatMenuModule } from '@angular/material/menu';
+import { Subscription } from 'rxjs';
+
+import { SearchInputComponent } from '../../../shared/components/input/search-input/search-input.component';
+import { ListUsersComponent } from '../list-users/list-users.component';
 import { SituationChipComponent } from '../../../shared/components/chip/situation-chip/situation-chip.component';
 import { GroupChipComponent } from '../../../shared/components/chip/group-chip/group-chip.component';
 import { BorderButtonComponent } from "../../../shared/components/button/border-button/border-button.component";
 
+import { TranslationService } from '../../../core/services/shared/translate.service';
+import { PermissionsService } from '../../../core/services/components/permissions.service';
+import { User } from '../../../core/services/components/users.service';
+
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule } from '@angular/material/menu';
+
 @Component({
   selector: 'app-details-users',
-  imports: [SearchInputComponent, ListUsersComponent, CommonModule, MatTooltipModule, MatMenuModule, SituationChipComponent, GroupChipComponent, BorderButtonComponent],
+  standalone: true,
+  imports: [
+    CommonModule,
+    SearchInputComponent,
+    ListUsersComponent,
+    MatTooltipModule,
+    MatMenuModule,
+    SituationChipComponent,
+    GroupChipComponent,
+    BorderButtonComponent
+  ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
 })
-export class UsersComponent implements OnDestroy {
-  @ViewChild(UsersComponent) listUsersComponent!: ListUsersComponent;
+export class UsersComponent implements OnInit, OnDestroy {
 
-  title: string = '';
-  subtitle: string = '';
-  inputSearch: string = '';
-  btnFilters: string = '';
-  btnExport: string = '';
+  @ViewChild(ListUsersComponent) listUsersComponent!: ListUsersComponent;
 
-  menuTooltip: string = '';
-  zeroTooltip: string = '';
-  lowTooltip: string = '';
-  mediumTooltip: string = '';
-  highTooltip: string = '';
+  title = '';
+  subtitle = '';
+  inputSearch = '';
+  btnFilters = '';
+  btnExport = '';
 
-  currentSearchQuery: string = '';
-  currentSelectedCount: number = 0;
+  menuTooltip = '';
+  zeroTooltip = '';
+  lowTooltip = '';
+  mediumTooltip = '';
+  highTooltip = '';
+
+  currentSearchQuery = '';
+  currentSelectedCount = 0;
+
   selectedUser: User | null = null;
-  isDetailsOpen: boolean = false;
+  isDetailsOpen = false;
 
-  permissionUserSelected: any;
+  permissionUserSelected: {
+    title: string;
+    critical: string;
+    description: string;
+  }[] = [];
 
-  // state for filters popup
-  isFilterOpen: boolean = false;
+  isFilterOpen = false;
 
   private languageSubscription: Subscription;
 
@@ -53,18 +72,20 @@ export class UsersComponent implements OnDestroy {
     });
   }
 
-  async ngOnInit() {
+  ngOnInit(): void {
     this.loadTranslations();
-    // const permissionIds = ['010003', '020002', '030003'];
-    // const filtered = this.permissionsService.filterPermissionsByIds(await this.permissionsService.getPermissions(), permissionIds);
-    // console.log('Permissões filtradas:', JSON.stringify(filtered, null, 2));
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.languageSubscription.unsubscribe();
   }
 
+  // ------------------------------------------------------
+  // TRANSLATIONS
+  // ------------------------------------------------------
+
   private loadTranslations(): void {
+
     const globalSection = 'global_components';
     const usersSection = 'Users_Page';
     const permissionSection = 'Permissions_Page';
@@ -83,6 +104,10 @@ export class UsersComponent implements OnDestroy {
     this.btnExport = this.translationService.getTranslation('btnExport', usersSection);
   }
 
+  // ------------------------------------------------------
+  // LIST EVENTS
+  // ------------------------------------------------------
+
   handleSearchChange(query: string): void {
     this.currentSearchQuery = query;
   }
@@ -92,8 +117,10 @@ export class UsersComponent implements OnDestroy {
   }
 
   handleSelectedUsers(users: User[]): void {
+
     this.selectedUser = users.length === 1 ? users[0] : null;
     this.isDetailsOpen = !!this.selectedUser;
+
     if (this.selectedUser) {
       this.listPermissions(this.selectedUser);
     }
@@ -102,22 +129,33 @@ export class UsersComponent implements OnDestroy {
   closeDetailsPanel(): void {
     this.isDetailsOpen = false;
     this.selectedUser = null;
-    // this.listUsersComponent?.resetSelections();
   }
 
-  async listPermissions(user: User) {
+  // ------------------------------------------------------
+  // PERMISSIONS
+  // ------------------------------------------------------
+
+  listPermissions(user: User): void {
+
     const filtered = this.permissionsService.filterPermissionsByIds(
       this.permissionsService.getPermissions(),
       user.permissions
     );
 
-    const permissions: any[] = []; // Mudamos para array de objetos
+    const permissions: {
+      title: string;
+      critical: string;
+      description: string;
+    }[] = [];
 
     Object.keys(filtered).forEach(category => {
+
       const categoryPermissions = filtered[category as keyof typeof filtered];
 
       if (categoryPermissions && Object.keys(categoryPermissions).length > 0) {
-        Object.values(categoryPermissions).forEach(permission => {
+
+        Object.values(categoryPermissions).forEach((permission: any) => {
+
           if (permission.title) {
             permissions.push({
               title: permission.title,
@@ -133,12 +171,13 @@ export class UsersComponent implements OnDestroy {
     this.permissionUserSelected = permissions;
   }
 
-  private sortByCriticalLevel(permissions: any[]) {
-    const levelOrder: { [key: string]: number } = {
-      'HIGH_LEVEL': 0,
-      'MEDIUM_LEVEL': 1,
-      'LOW_LEVEL': 2,
-      'ZERO_LEVEL': 3
+  private sortByCriticalLevel(permissions: { critical: string }[]): void {
+
+    const levelOrder: Record<string, number> = {
+      HIGH_LEVEL: 0,
+      MEDIUM_LEVEL: 1,
+      LOW_LEVEL: 2,
+      ZERO_LEVEL: 3
     };
 
     permissions.sort((a, b) => {
@@ -149,16 +188,19 @@ export class UsersComponent implements OnDestroy {
   }
 
   getSvgFileName(critical: string): string {
-    const mapping: { [key: string]: string } = {
+
+    const mapping: Record<string, string> = {
       HIGH_LEVEL: 'high_level.svg',
       MEDIUM_LEVEL: 'medium_level.svg',
       LOW_LEVEL: 'low_level.svg',
       ZERO_LEVEL: 'zero_level.svg'
     };
+
     return `assets/svg/icon/register/step-2/${mapping[critical] || 'default.svg'}`;
   }
 
   getCriticalText(critical: string): string {
+
     switch (critical) {
       case 'HIGH_LEVEL': return this.highTooltip;
       case 'MEDIUM_LEVEL': return this.mediumTooltip;
@@ -168,19 +210,19 @@ export class UsersComponent implements OnDestroy {
     }
   }
 
-  /*** filter popup handlers ***/
+  // ------------------------------------------------------
+  // FILTER POPUP
+  // ------------------------------------------------------
+
   toggleFiltersPopup(): void {
     this.isFilterOpen = !this.isFilterOpen;
   }
 
   clearFilters(): void {
-    // reset filter values here
-    console.log('clear filters');
+    this.currentSearchQuery = '';
   }
 
   applyFilters(): void {
-    // apply filters logic; update search/query or emit event
-    console.log('apply filters');
     this.isFilterOpen = false;
   }
 }

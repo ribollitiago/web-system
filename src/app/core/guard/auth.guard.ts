@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { User } from 'firebase/auth';
 import { Observable, take, switchMap, of } from 'rxjs';
-import { SessionService } from '../services/session/session.service';
+import { SessionService } from '../services/core/session/session.service';
 
 @Injectable({
   providedIn: 'root',

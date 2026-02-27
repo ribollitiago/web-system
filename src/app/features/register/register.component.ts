@@ -4,7 +4,7 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { RegisterService } from '../../core/services/auth/register.service';
+import { RegisterService } from '../../core/services/components/register.service';
 
 import { RegisterStep1Component } from './register-step-1/register-step-1.component';
 import { RegisterStep2Component } from './register-step-2/register-step-2.component';

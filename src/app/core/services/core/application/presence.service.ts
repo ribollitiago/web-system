@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { FirebaseService } from '../database/firebase.service';
-import { formatDateShortBR } from '../../utils/date.utils';
+import { FirebaseService } from '../../database/firebase.service';
+import { formatDateShortBR } from '../../../utils/date.utils';
 
 @Injectable({
   providedIn: 'root'
