@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import { FirebaseService } from '../database/firebase.service';
 
 export interface Group {
@@ -14,8 +15,11 @@ export interface Group {
 export class GroupsService {
 
   // ------------------------------------------------------
-  // START STATE
+  // STATE
   // ------------------------------------------------------
+
+  private groupsSubject = new BehaviorSubject<Group[]>([]);
+  groups$ = this.groupsSubject.asObservable();
 
   private groups: Group[] = [];
   private selectedGroups = new Set<string>();
@@ -23,23 +27,21 @@ export class GroupsService {
   constructor(private firebaseService: FirebaseService) { }
 
   // ------------------------------------------------------
-  // START DATA LOAD
+  // REALTIME SUBSCRIBE
   // ------------------------------------------------------
 
-  async unSubscribeGroups() {
-    this.firebaseService.unsubscribe('groups');
+  async subscribe(): Promise<void> {
+
+    this.firebaseService.subscribe('groups', (groups: any[]) => {
+
+      this.groups = this.formatGroups(groups || []);
+      this.groupsSubject.next(this.groups);
+
+    });
   }
 
-  async subscribeGroups(): Promise<Group[]> {
-
-    if (this.groups.length) return this.groups;
-
-    return new Promise<Group[]>((resolve) => {
-      this.firebaseService.subscribe('groups', (groups: any[]) => {
-        this.groups = this.formatGroups(groups || []);
-        resolve(this.groups);
-      });
-    });
+  unSubscribe(): void {
+    this.firebaseService.unsubscribe('groups');
   }
 
   async getGroupsOnce(): Promise<Group[]> {
@@ -48,13 +50,13 @@ export class GroupsService {
 
     return this.formatGroups(groups);
   }
-
+  
   getGroups(): readonly Group[] {
     return this.groups;
   }
 
   // ------------------------------------------------------
-  // START SELECTION CONTROL
+  // SELECTION CONTROL
   // ------------------------------------------------------
 
   selectGroup(groupId: string): void {
@@ -86,7 +88,7 @@ export class GroupsService {
   }
 
   // ------------------------------------------------------
-  // START PERMISSION RESOLVER
+  // PERMISSIONS
   // ------------------------------------------------------
 
   getPermissionsFromGroups(): string[] {
@@ -100,10 +102,6 @@ export class GroupsService {
     return Array.from(permissionSet);
   }
 
-  // ------------------------------------------------------
-  // START PAYLOAD BUILDER
-  // ------------------------------------------------------
-
   buildPayload() {
     return {
       groups: this.getSelectedGroupIds(),
@@ -112,7 +110,7 @@ export class GroupsService {
   }
 
   // ------------------------------------------------------
-  // START MAPPERS
+  // MAPPER
   // ------------------------------------------------------
 
   private formatGroups(groups: any[]): Group[] {

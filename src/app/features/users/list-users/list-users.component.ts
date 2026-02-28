@@ -21,6 +21,8 @@ import { SituationChipComponent } from '../../../shared/components/chip/situatio
 import { GroupChipComponent } from '../../../shared/components/chip/group-chip/group-chip.component';
 import { StatusChipComponent } from "../../../shared/components/chip/status-chip/status-chip.component";
 import { DefaultListComponent, ColumnConfig } from '../../../shared/layout/default-list/default-list.component';
+import { parseDateShortBR } from '../../../core/utils/date.utils';
+import { detectDeviceFromUserAgent } from '../../../core/utils/device.utils';
 
 @Component({
   selector: 'app-list-users',
@@ -44,6 +46,8 @@ export class ListUsersComponent implements OnInit, OnDestroy {
   @Input() currentPage: number = 1;
   @Input() itemsPerPage: number = 10;
 
+  @Input() filters: Record<string, any> = {};
+
   @Output() selectedCount = new EventEmitter<number>();
   @Output() selectedUsersEvent = new EventEmitter<User[]>();
   @Output() filteredUsersCount = new EventEmitter<number>();
@@ -65,16 +69,18 @@ export class ListUsersComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+
     this.setupColumns();
 
-    this.users = await this.usersService.subscribe();
-    this.filteredUsers = [...this.users];
+    this.usersService.subscribe();
 
-    this.filteredUsersCount.emit(this.filteredUsers.length);
+    this.usersService.users$.subscribe(users => {
+      this.users = users;
+      this.filterUsers();
+    });
   }
-
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['searchQuery']) {
+    if (changes['searchQuery'] || changes['filters']) {
       this.filterUsers();
     }
   }
@@ -188,14 +194,168 @@ export class ListUsersComponent implements OnInit, OnDestroy {
 
     const search = this.searchQuery?.toLowerCase().trim() || '';
 
-    this.filteredUsers = search
-      ? this.users.filter(user =>
-          user.enrollment?.toString().includes(search) ||
-          user.name.toLowerCase().includes(search) ||
-          user.email.toLowerCase().includes(search)
-        )
-      : [...this.users];
+    let result = [...this.users];
 
+    // ---------------------------------------
+    // SEARCH FILTER
+    // ---------------------------------------
+
+    if (search) {
+      result = result.filter(user =>
+        user.enrollment?.toString().includes(search) ||
+        user.name.toLowerCase().includes(search) ||
+        user.email.toLowerCase().includes(search)
+      );
+    }
+
+    // ---------------------------------------
+    // STATUS FILTER (ONLINE / OFFLINE)
+    // ---------------------------------------
+
+    const statusFilter: string[] = this.filters?.['status'] || [];
+
+    if (statusFilter.length > 0) {
+      result = result.filter(user => {
+
+        const isOnline = user?.session?.isOnline;
+
+        if (statusFilter.includes('ONLINE') && isOnline) return true;
+        if (statusFilter.includes('OFFLINE') && !isOnline) return true;
+
+        return false;
+      });
+    }
+
+    // ---------------------------------------
+    // SITUATION FILTER (BLOCKED / ACTIVE)
+    // ---------------------------------------
+
+    const situationFilter: string[] = this.filters?.['situation'] || [];
+
+    if (situationFilter.length > 0) {
+      result = result.filter(user => {
+
+        const blocked = user?.session?.blocked;
+
+        if (situationFilter.includes('BLOCKED') && blocked) return true;
+        if (situationFilter.includes('ACTIVE') && !blocked) return true;
+
+        return false;
+      });
+    }
+
+    // ---------------------------------------
+    // GROUP FILTER
+    // ---------------------------------------
+
+    const groupFilter: string[] = this.filters?.['groups'] || [];
+
+    if (groupFilter.length > 0) {
+
+      result = result.filter(user => {
+        if (!user.groups?.length) return false;
+        return user.groups.some(group =>
+          groupFilter.includes(group.id)
+        )
+      })
+    }
+
+    // ---------------------------------------
+    // LASTLOGIN FILTER
+    // ---------------------------------------
+
+    const lastLoginFilter: string | null = this.filters?.['lastLogin'];
+
+    if (lastLoginFilter) {
+
+      const now = new Date();
+
+      result = result.filter(user => {
+
+        const lastLoginDate = user?.session?.lastLogin;
+
+        if (!lastLoginDate) return false;
+
+        const loginDate = parseDateShortBR(lastLoginDate)
+
+        if (!loginDate) return false;
+
+        const daysAgo = new Date();
+
+        if (lastLoginFilter === 'TODAY') {
+          return loginDate.toDateString() === now.toDateString();
+        }
+
+        if (lastLoginFilter === '7D') {
+          daysAgo.setDate(now.getDate() - 7)
+          return loginDate >= daysAgo;
+        }
+
+        if (lastLoginFilter === '30D') {
+          daysAgo.setDate(now.getDate() - 30);
+          return loginDate >= daysAgo;
+        }
+
+        return true;
+      })
+    }
+
+    // ---------------------------------------
+    // DEVICE FILTER
+    // ---------------------------------------
+
+    const deviceFilter: string[] = this.filters?.['device'] || [];
+
+    if (deviceFilter.length > 0) {
+
+      result = result.filter(user => {
+
+        const userAgent = user?.session?.device;
+        if (!userAgent) return false;
+
+        const detectedDevice = detectDeviceFromUserAgent(userAgent);
+        if (!detectedDevice) return false;
+
+        return deviceFilter.includes(detectedDevice);
+
+      });
+
+    }
+
+    // ---------------------------------------
+    // CREATED DATE FILTER
+    // ---------------------------------------
+
+    const createdFrom: string | null = this.filters?.['createdFrom'];
+    const createdTo: string | null = this.filters?.['createdTo'];
+
+    if (createdFrom || createdTo) {
+
+      const fromDate = createdFrom ? new Date(createdFrom) : null;
+      const toDate = createdTo ? new Date(createdTo) : null;
+
+      if (toDate) {
+        toDate.setHours(23, 59, 59, 999);
+      }
+
+      result = result.filter(user => {
+
+        const createdAt = user?.createdAt;
+        
+        if (!createdAt) return false;
+
+        const createdDate = parseDateShortBR(createdAt);
+        if (!createdDate) return false;
+
+        if (fromDate && createdDate < fromDate) return false;
+        if (toDate && createdDate > toDate) return false;
+
+        return true;
+
+      });
+    }
+
+    this.filteredUsers = result;
     this.filteredUsersCount.emit(this.filteredUsers.length);
     this.cdr.detectChanges();
   }
@@ -224,4 +384,4 @@ export class ListUsersComponent implements OnInit, OnDestroy {
       this.defaultList.selectedItems.add(user.enrollment);
     }
   }
-}
+} 

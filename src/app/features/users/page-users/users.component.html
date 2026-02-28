@@ -29,7 +29,9 @@
         {{ currentSelectedCount }} usuário(s) selecionado(s)
       </div>
     </div>
-    <app-list-users [searchQuery]="currentSearchQuery"
+    <app-list-users 
+      [searchQuery]="currentSearchQuery"
+      [filters]="filtersModel"
       (selectedCount)="handleSelectedCount($event)"
       (selectedUsersEvent)="handleSelectedUsers($event)">>
     </app-list-users>

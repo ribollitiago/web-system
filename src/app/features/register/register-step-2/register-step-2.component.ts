@@ -120,7 +120,7 @@ export class RegisterStep2Component implements OnDestroy {
 
   ngOnDestroy(): void {
     this.languageSubscription?.unsubscribe();
-    this.groupsService.unSubscribeGroups();
+    this.groupsService.unSubscribe();
   }
 
   // ------------------------------------------------------
@@ -245,8 +245,12 @@ export class RegisterStep2Component implements OnDestroy {
   }
 
   async loadGroups(): Promise<void> {
-    this.allGroups = await this.groupsService.subscribeGroups();
-    this.updateGroupOptions();
+    await this.groupsService.subscribe();
+
+    this.groupsService.groups$.subscribe(groups => {
+      this.allGroups = groups;
+      this.updateGroupOptions();
+    });
   }
 
   // ------------------------------------------------------

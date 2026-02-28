@@ -191,6 +191,7 @@ export class FirebaseService implements OnDestroy {
 
         this.activeSubscriptions.set(path, { path, callback });
 
+        console.log('Realtime ativo?', this.tabManager.isVisible, this.tabManager.master);
         const shouldRunRealtime =
             this.tabManager.isVisible &&
             this.tabManager.master;

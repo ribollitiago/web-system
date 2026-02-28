@@ -19,6 +19,7 @@ import {
   DefaultFilterSection,
   DefaultFixedDateConfig
 } from "../../../shared/layout/default-filter-list/default-filter-list.component";
+import { GroupsService } from '../../../core/services/components/groups.service';
 
 @Component({
   selector: 'app-details-users',
@@ -100,14 +101,10 @@ export class UsersComponent implements OnInit, OnDestroy {
       title: 'Grupo',
       fields: [
         {
-          key: 'grupo',
+          key: 'groups',
           label: 'Selecione os Grupos',
-          kind: 'group',        // <-- novo kind
-          options: [
-            { label: 'Equipe Alpha', value: 'alpha' },
-            { label: 'Equipe Beta', value: 'beta' },
-            { label: 'Equipe Gamma', value: 'gamma' },
-          ]
+          kind: 'group',
+          options: []
         }
       ]
     },
@@ -131,14 +128,14 @@ export class UsersComponent implements OnInit, OnDestroy {
       title: 'Dispositivos',
       fields: [
         {
-          key: 'dispositivos',
+          key: 'device',
           label: 'Selecione os Dispositivos',
-          kind: 'group',        // <-- novo kind
+          kind: 'group',
           options: [
-            { label: 'Mac', value: 'alpha' },
-            { label: 'Windows', value: 'beta' },
-            { label: 'Mobile', value: 'gamma' },
-            { label: 'Linux', value: 'gamma' },
+            { label: 'Mac', value: 'MAC' },
+            { label: 'Windows', value: 'WINDOWS' },
+            { label: 'Mobile', value: 'MOBILE' },
+            { label: 'Linux', value: 'LINUX' },
           ]
         }
       ]
@@ -154,7 +151,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   filtersModel: Record<string, any> = {
     status: [],
     situation: [],
-    group: [],
+    groups: [],
     device: [],
     lastLogin: null,
     createdFrom: null,
@@ -165,19 +162,44 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   constructor(
     private permissionsService: PermissionsService,
-    private translationService: TranslationService
+    private translationService: TranslationService,
+    private groupsService: GroupsService
   ) {
     this.languageSubscription = this.translationService.language$.subscribe(() => {
       this.loadTranslations();
     });
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.loadTranslations();
+    await this.loadGroupFilterOptions();
   }
 
   ngOnDestroy(): void {
     this.languageSubscription.unsubscribe();
+  }
+
+  private async loadGroupFilterOptions(): Promise<void> {
+
+    const groups = await this.groupsService.getGroupsOnce();
+
+    const groupOptions = groups.map(group => ({
+      label: group.title,
+      value: group.id
+    }))
+
+    this.setDynamicGroupOptions(groupOptions);
+  }
+
+  private setDynamicGroupOptions(options: any[]): void {
+
+    this.filtersSections.forEach(section => {
+      section.fields.forEach(field => {
+        if (field.key === 'groups') {
+          field.options = options;
+        }
+      });
+    });
   }
 
   // ------------------------------------------------------
@@ -331,11 +353,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   applyUserFilters(model: Record<string, any>): void {
-    // aqui você pode disparar uma busca no backend, ou filtrar localmente.
-    // por enquanto, apenas fecha o popup via binding do componente.
-    this.filtersModel = model;
+    this.filtersModel = { ...model };
     this.isFilterOpen = false;
   }
-
-
 }
