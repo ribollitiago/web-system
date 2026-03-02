@@ -35,7 +35,8 @@
         </app-export-list>
       </div>
       <div class="selected-count" *ngIf="currentSelectedCount > 0">
-        {{ currentSelectedCount }} usuário(s) selecionado(s)
+        <label>{{ currentSelectedCount }} usuário(s) selecionado(s)</label>
+        <button (click)="clearSelectedUsers()"><img src="assets/svg/icon/input/clear.svg">Limpar</button>
       </div>
     </div>
     <app-list-users
