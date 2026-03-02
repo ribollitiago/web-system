@@ -20,6 +20,8 @@ import {
   DefaultFixedDateConfig
 } from "../../../shared/layout/default-filter-list/default-filter-list.component";
 import { GroupsService } from '../../../core/services/components/groups.service';
+import { exportService } from '../../../core/services/shared/export.service';
+import { detectDeviceFromUserAgent } from '../../../core/utils/device.utils';
 
 @Component({
   selector: 'app-details-users',
@@ -163,7 +165,8 @@ export class UsersComponent implements OnInit, OnDestroy {
   constructor(
     private permissionsService: PermissionsService,
     private translationService: TranslationService,
-    private groupsService: GroupsService
+    private groupsService: GroupsService,
+    private exportService: exportService
   ) {
     this.languageSubscription = this.translationService.language$.subscribe(() => {
       this.loadTranslations();
@@ -246,6 +249,70 @@ export class UsersComponent implements OnInit, OnDestroy {
     if (this.selectedUser) {
       this.listPermissions(this.selectedUser);
     }
+  }
+
+  handleExport(): void {
+
+    if (!this.listUsersComponent) return;
+
+    const users = this.listUsersComponent.filteredUsers;
+
+    if (!users || users.length === 0) return;
+
+    const allPermissions = this.permissionsService.getPermissions();
+
+    const formatted = users.map(user => {
+
+      // -----------------------------
+      // PERMISSIONS (converter ID → title)
+      // -----------------------------
+      const filteredPermissions = this.permissionsService
+        .filterPermissionsByIds(allPermissions, user.permissions);
+
+      const permissionTitles: string[] = [];
+
+      Object.values(filteredPermissions).forEach(category => {
+        if (category) {
+          Object.values(category).forEach((perm: any) => {
+            if (perm.title) permissionTitles.push(perm.title);
+          });
+        }
+      });
+
+      permissionTitles.sort((a, b) =>
+        a.localeCompare(b, 'pt-BR')
+      );
+
+      // -----------------------------
+      // DEVICE (userAgent → nome amigável)
+      // -----------------------------
+      const device = user?.session?.device
+        ? detectDeviceFromUserAgent(user.session.device)
+        : '';
+
+      // -----------------------------
+      // RETURN ORGANIZED OBJECT
+      // (A ORDEM AQUI DEFINE A ORDEM NO CSV)
+      // -----------------------------
+      return {
+        Matrícula: user.enrollment ?? '',
+        Nome: user.name ?? '',
+        Email: user.email ?? '',
+        Telefone: user.phone ?? '',
+        Grupos: user.groups?.map(g => g.title).join(', ') ?? '',
+        Permissões: permissionTitles.join(', '),
+
+        Status: user.session?.isOnline ? 'Online' : 'Offline',
+        Situação: user.session?.blocked ? 'Bloqueado' : 'Ativo',
+        Dispositivo: device,
+
+        'Último Login': user.session?.lastLogin ?? '',
+        'Criado Em': user.createdAt ?? '',
+        Descrição: user.description ?? ''
+      };
+    });
+
+    this.exportService.exportToCsv(formatted, 'usuarios');
   }
 
   closeDetailsPanel(): void {

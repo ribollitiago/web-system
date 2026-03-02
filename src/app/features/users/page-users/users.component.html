@@ -23,8 +23,10 @@
           (closed)="isFilterOpen = false">
         </app-default-filter-list>
       </div>
-      <button class="export"><img src="assets/svg/icon/users/export.svg">{{
-        btnExport }}</button>
+      <button class="export" (click)="handleExport()">
+        <img src="assets/svg/icon/users/export.svg">
+        {{ btnExport }}
+      </button>
       <div class="selected-count" *ngIf="currentSelectedCount > 0">
         {{ currentSelectedCount }} usuário(s) selecionado(s)
       </div>
