@@ -447,8 +447,8 @@ export class RegisterStep1Component implements OnInit {
   async submit(): Promise<void> {
 
     //NÃO ESQUEÇA DE ATIVAR!!!
-    //NÃO ESQUEÇA DE ATIVAR!!!
-    // if (!(await this.validateForm())) return;
+    // NÃO ESQUEÇA DE ATIVAR!!!
+    if (!(await this.validateForm())) return;
     //NÃO ESQUEÇA DE ATIVAR!!!
     //NÃO ESQUEÇA DE ATIVAR!!!
 
