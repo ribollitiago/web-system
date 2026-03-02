@@ -18,8 +18,9 @@ import {
   DefaultFilterListComponent,
   DefaultFilterSection,
   DefaultFixedDateConfig
-} from "../../../shared/layout/default-filter-list/default-filter-list.component";
+} from "../../../shared/components/filter/default-filter-list/default-filter-list.component";
 import { GroupsService } from '../../../core/services/components/groups.service';
+import { ExportListComponent } from "../../../shared/components/export-list/export-list.component";
 
 @Component({
   selector: 'app-details-users',
@@ -33,8 +34,9 @@ import { GroupsService } from '../../../core/services/components/groups.service'
     SituationChipComponent,
     GroupChipComponent,
     BorderButtonComponent,
-    DefaultFilterListComponent
-  ],
+    DefaultFilterListComponent,
+    ExportListComponent
+],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
 })
@@ -67,6 +69,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   }[] = [];
 
   isFilterOpen = false;
+  isExportOpen = false;
 
   filtersSections: DefaultFilterSection[] = [
     {
@@ -333,11 +336,15 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   // ------------------------------------------------------
-  // FILTER POPUP
+  // POPUP UTILS
   // ------------------------------------------------------
 
   toggleFiltersPopup(): void {
     this.isFilterOpen = !this.isFilterOpen;
+    if (this.isFilterOpen) {
+      // make sure export is closed when filter opens
+      this.isExportOpen = false;
+    }
   }
 
   clearUserFilters(): void {
@@ -355,5 +362,13 @@ export class UsersComponent implements OnInit, OnDestroy {
   applyUserFilters(model: Record<string, any>): void {
     this.filtersModel = { ...model };
     this.isFilterOpen = false;
+  }
+
+  toggleExportPopup(): void {
+    this.isExportOpen = !this.isExportOpen;
+    if (this.isExportOpen) {
+      // close filters when export menu opens
+      this.isFilterOpen = false;
+    }
   }
 }
