@@ -10,8 +10,10 @@ import { Component, Input, Output, EventEmitter, ElementRef, HostListener } from
 export class ExportListComponent {
   @Input() isOpen = false;
   @Output() closed = new EventEmitter<void>();
+  @Output() exportSelected = new EventEmitter<void>();
+  @Output() exportAll = new EventEmitter<void>();
 
-  constructor(private elementRef: ElementRef) {}
+  constructor(private elementRef: ElementRef) { }
 
   /**
    * Listen for clicks anywhere in the document. If the popup is open and the
@@ -28,5 +30,15 @@ export class ExportListComponent {
     if (!clickedInside) {
       this.closed.emit();
     }
+  }
+
+  onExportSelected() {
+    this.exportSelected.emit();
+    this.closed.emit();
+  }
+
+  onExportAll() {
+    this.exportAll.emit();
+    this.closed.emit();
   }
 }

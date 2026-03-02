@@ -29,7 +29,9 @@
           btnExport }}</button>
         <app-export-list
           [isOpen]="isExportOpen"
-          (closed)="isExportOpen = false">
+          (closed)="isExportOpen = false"
+          (exportSelected)="exportSelectedUsers()"
+          (exportAll)="exportAllUsers()">
         </app-export-list>
       </div>
       <div class="selected-count" *ngIf="currentSelectedCount > 0">

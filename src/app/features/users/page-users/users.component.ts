@@ -39,7 +39,7 @@ import { ExportListComponent } from "../../../shared/components/export-list/expo
     BorderButtonComponent,
     DefaultFilterListComponent,
     ExportListComponent
-],
+  ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
 })
@@ -73,6 +73,9 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   isFilterOpen = false;
   isExportOpen = false;
+
+  selectedUsers: any[] = [];
+  allUsers: any[] = [];
 
   filtersSections: DefaultFilterSection[] = [
     {
@@ -247,76 +250,14 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   handleSelectedUsers(users: User[]): void {
 
+    this.selectedUsers = users;
+
     this.selectedUser = users.length === 1 ? users[0] : null;
     this.isDetailsOpen = !!this.selectedUser;
 
     if (this.selectedUser) {
       this.listPermissions(this.selectedUser);
     }
-  }
-
-  handleExport(): void {
-
-    if (!this.listUsersComponent) return;
-
-    const users = this.listUsersComponent.filteredUsers;
-
-    if (!users || users.length === 0) return;
-
-    const allPermissions = this.permissionsService.getPermissions();
-
-    const formatted = users.map(user => {
-
-      // -----------------------------
-      // PERMISSIONS (converter ID → title)
-      // -----------------------------
-      const filteredPermissions = this.permissionsService
-        .filterPermissionsByIds(allPermissions, user.permissions);
-
-      const permissionTitles: string[] = [];
-
-      Object.values(filteredPermissions).forEach(category => {
-        if (category) {
-          Object.values(category).forEach((perm: any) => {
-            if (perm.title) permissionTitles.push(perm.title);
-          });
-        }
-      });
-
-      permissionTitles.sort((a, b) =>
-        a.localeCompare(b, 'pt-BR')
-      );
-
-      // -----------------------------
-      // DEVICE (userAgent → nome amigável)
-      // -----------------------------
-      const device = user?.session?.device
-        ? detectDeviceFromUserAgent(user.session.device)
-        : '';
-
-      // -----------------------------
-      // RETURN ORGANIZED OBJECT
-      // (A ORDEM AQUI DEFINE A ORDEM NO CSV)
-      // -----------------------------
-      return {
-        Matrícula: user.enrollment ?? '',
-        Nome: user.name ?? '',
-        Email: user.email ?? '',
-        Telefone: user.phone ?? '',
-        Grupos: user.groups?.map(g => g.title).join(', ') ?? '',
-        Permissões: permissionTitles.join(', '),
-
-        Status: user.session?.isOnline ? 'Online' : 'Offline',
-        Situação: user.session?.blocked ? 'Bloqueado' : 'Ativo',
-        Dispositivo: device,
-
-        'Último Login': user.session?.lastLogin ?? '',
-        'Criado Em': user.createdAt ?? '',
-        Descrição: user.description ?? ''
-      };
-    });
-
-    this.exportService.exportToCsv(formatted, 'usuarios');
   }
 
   closeDetailsPanel(): void {
@@ -438,5 +379,77 @@ export class UsersComponent implements OnInit, OnDestroy {
       // close filters when export menu opens
       this.isFilterOpen = false;
     }
+  }
+
+  exportUsers(users: User[]): void {
+
+    const allPermissions = this.permissionsService.getPermissions();
+
+    const formatted = users.map(user => {
+
+      // -----------------------------
+      // PERMISSIONS (converter ID → title)
+      // -----------------------------
+      const filteredPermissions = this.permissionsService
+        .filterPermissionsByIds(allPermissions, user.permissions);
+
+      const permissionTitles: string[] = [];
+
+      Object.values(filteredPermissions).forEach(category => {
+        if (category) {
+          Object.values(category).forEach((perm: any) => {
+            if (perm.title) permissionTitles.push(perm.title);
+          });
+        }
+      });
+
+      permissionTitles.sort((a, b) =>
+        a.localeCompare(b, 'pt-BR')
+      );
+
+      // -----------------------------
+      // DEVICE (userAgent → nome amigável)
+      // -----------------------------
+      const device = user?.session?.device
+        ? detectDeviceFromUserAgent(user.session.device)
+        : '';
+
+      // -----------------------------
+      // RETURN ORGANIZED OBJECT
+      // (A ORDEM AQUI DEFINE A ORDEM NO CSV)
+      // -----------------------------
+      return {
+        Matrícula: user.enrollment ?? '',
+        Nome: user.name ?? '',
+        Email: user.email ?? '',
+        Telefone: user.phone ?? '',
+        Grupos: user.groups?.map(g => g.title).join(', ') ?? '',
+        Permissões: permissionTitles.join(', '),
+
+        Status: user.session?.isOnline ? 'Online' : 'Offline',
+        Situação: user.session?.blocked ? 'Bloqueado' : 'Ativo',
+        Dispositivo: device,
+
+        'Último Login': user.session?.lastLogin ?? '',
+        'Criado Em': user.createdAt ?? '',
+        Descrição: user.description ?? ''
+      };
+    });
+
+    this.exportService.exportToCsv(formatted, 'usuarios');
+  }
+
+  exportSelectedUsers(): void {
+
+    if (!this.selectedUsers || this.selectedUsers.length === 0) return;
+    this.exportUsers(this.selectedUsers);
+
+  }
+
+  exportAllUsers(): void {
+
+    if (!this.listUsersComponent?.filteredUsers?.length) return;
+
+    this.exportUsers(this.listUsersComponent.filteredUsers);
   }
 }
