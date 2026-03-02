@@ -136,8 +136,6 @@ export class SessionService {
   // -----------------------------
   async logout(reason?: 'OTHER_SESSION') {
 
-    const sessionId = localStorage.getItem(this.STORAGE.SESSION_ID);
-
     try {
 
       if (this.auth.currentUser && reason !== 'OTHER_SESSION') {
@@ -313,7 +311,7 @@ export class SessionService {
       id: sessionId,
       lastLogin: formatDateShortBR(new Date()),
       device: navigator.userAgent
-    }, 'set');
+    }, 'update');
   }
 
   private async ensureOnlineLimit(sessionId: any) {
