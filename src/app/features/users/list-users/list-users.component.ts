@@ -341,7 +341,7 @@ export class ListUsersComponent implements OnInit, OnDestroy {
       result = result.filter(user => {
 
         const createdAt = user?.createdAt;
-        
+
         if (!createdAt) return false;
 
         const createdDate = parseDateShortBR(createdAt);
@@ -384,4 +384,14 @@ export class ListUsersComponent implements OnInit, OnDestroy {
       this.defaultList.selectedItems.add(user.enrollment);
     }
   }
-} 
+
+  /**
+   * External API used by parent components to remove any selected
+   * rows. It simply delegates to the underlying `DefaultListComponent`.
+   */
+  public clearSelection(): void {
+    if (this.defaultList) {
+      this.defaultList.clearSelection();
+    }
+  }
+}

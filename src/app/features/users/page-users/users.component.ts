@@ -439,4 +439,19 @@ export class UsersComponent implements OnInit, OnDestroy {
       this.isFilterOpen = false;
     }
   }
+
+  /**
+   * Clears the current set of selected users by instructing the child
+   * list component to reset its selection state.  The existing event
+   * callbacks already handle updating `currentSelectedCount` and
+   * `selectedUser`, but we also clear `selectedUser` here just to be
+   * explicit.
+   */
+  clearSelectedUsers(): void {
+    if (this.listUsersComponent) {
+      this.listUsersComponent.clearSelection();
+    }
+    this.currentSelectedCount = 0;
+    this.selectedUser = null;
+  }
 }
