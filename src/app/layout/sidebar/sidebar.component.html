@@ -17,7 +17,10 @@
   <app-search-input class="search-input" [placeholder]="inputSearch"
     [isCollapsed]="isSidebarVisuallyCollapsed"
     (iconClick)="handleSearchIconClick()"
-    (searchChange)="onSearchInput($event)">
+    (searchChange)="onSearchInput($event)"
+    [matTooltip]="inputSearch"
+    matTooltipPosition="right"
+    [matTooltipDisabled]="!isSidebarVisuallyCollapsed">
     <img src="assets/svg/icon/input/search.svg" alt>
   </app-search-input>
   <div class="divider"></div>
