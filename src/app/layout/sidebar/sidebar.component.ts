@@ -3,6 +3,7 @@ import { Component, EventEmitter, Output, Input, ViewChild, OnDestroy, OnInit, C
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { SearchInputComponent } from '../../shared/components/input/search-input/search-input.component';
 import { TranslationService } from '../../core/services/shared/translate.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { filter, Subscription } from 'rxjs';
 
 interface SidebarItem {
@@ -17,7 +18,7 @@ interface SidebarItem {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterModule, CommonModule, SearchInputComponent],
+  imports: [RouterModule, CommonModule, SearchInputComponent, MatTooltipModule],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
   providers: [TranslationService]
@@ -26,6 +27,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   @Input() isLeftSidebarCollapsed: boolean = false;
   @Output() changeIsLeftSidebarCollapsed = new EventEmitter<boolean>();
   @ViewChild(SearchInputComponent) searchInputComponent!: SearchInputComponent;
+  isOverlayExpanded = false;
 
   tooltipMenuClose: string = '';
   tooltipMenuOpen: string = '';
@@ -67,6 +69,17 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.routerSubscription.unsubscribe();
+  }
+
+  get isSidebarVisuallyCollapsed(): boolean {
+    return this.isLeftSidebarCollapsed && !this.isOverlayExpanded;
+  }
+
+  onSidebarMouseLeave(): void {
+    if (this.isOverlayExpanded) {
+      this.isOverlayExpanded = false;
+      this.openedSubmenuIndex = null;
+    }
   }
 
   onSearchInput(value: string) {
@@ -112,11 +125,25 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
 
   shouldOpenSubmenu(item: SidebarItem, index: number): boolean {
-    if (this.isLeftSidebarCollapsed) return false;
+    if (this.isSidebarVisuallyCollapsed) return false;
     if (this.inputSearchValue) {
       return !!item.itemsSubMenu?.length;
     }
     return this.openedSubmenuIndex === index;
+  }
+
+  onParentMenuClick(item: SidebarItem, index: number): void {
+    if (!item.submenu) return;
+
+    if (this.isSidebarVisuallyCollapsed) {
+      this.isOverlayExpanded = true;
+      this.closedSubmenus.delete(index);
+      this.openedSubmenuIndex = index;
+      this.saveClosedSubmenus();
+      return;
+    }
+
+    this.toggleSubmenu(index);
   }
 
   private loadClosedSubmenus() {
@@ -230,7 +257,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   handleSearchIconClick() {
-    if (this.isLeftSidebarCollapsed) {
+    if (this.isSidebarVisuallyCollapsed) {
       this.toggleSidebar();
       setTimeout(() => this.searchInputComponent.focusInput(), 200);
     }
@@ -238,6 +265,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   toggleSidebar() {
     this.isLeftSidebarCollapsed = !this.isLeftSidebarCollapsed;
+    this.isOverlayExpanded = false;
     if (this.isLeftSidebarCollapsed) {
       this.openedSubmenuIndex = null;
     } else {

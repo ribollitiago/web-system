@@ -1,6 +1,9 @@
-<div class="sidenav" [class.sidenav-collapsed]="isLeftSidebarCollapsed">
+<div class="sidenav"
+  [class.sidenav-collapsed]="isSidebarVisuallyCollapsed"
+  [class.sidenav-overlay-open]="isOverlayExpanded"
+  (mouseleave)="onSidebarMouseLeave()">
   <div class="logo-container">
-    <div class="logo-text" *ngIf="!isLeftSidebarCollapsed">GT System</div>
+    <div class="logo-text" *ngIf="!isSidebarVisuallyCollapsed">GT System</div>
     <button class="menu" (click)="toggleSidebar()">
       <img [src]="isLeftSidebarCollapsed ?
            'assets/svg/icon/sidebar/sidebar-open.svg' :
@@ -12,7 +15,7 @@
     </button>
   </div>
   <app-search-input class="search-input" [placeholder]="inputSearch"
-    [isCollapsed]="isLeftSidebarCollapsed"
+    [isCollapsed]="isSidebarVisuallyCollapsed"
     (iconClick)="handleSearchIconClick()"
     (searchChange)="onSearchInput($event)">
     <img src="assets/svg/icon/input/search.svg" alt>
@@ -24,16 +27,19 @@
       [class.parent-active]="activeParentIndex === idx">
       <a class="sidenav-nav-link"
         [routerLink]="!item.submenu ? item.routeLink : null"
-        (click)="item.submenu && toggleSubmenu(idx)" routerLinkActive="active"
+        (click)="onParentMenuClick(item, idx)" routerLinkActive="active"
+        [matTooltip]="item.label"
+        matTooltipPosition="right"
+        [matTooltipDisabled]="!isSidebarVisuallyCollapsed"
         [routerLinkActiveOptions]="{ exact: true }">
         <span class="sidenav-link-icon"
           [style.mask-image]="'url(' + item.icon + ')'"
           [attr.aria-label]="item.label"></span>
-        <span class="sidenav-link-text" *ngIf="!isLeftSidebarCollapsed">
+        <span class="sidenav-link-text" *ngIf="!isSidebarVisuallyCollapsed">
           <span [innerHTML]="highlightMatches(item.label)"></span>
         </span>
-        @if (item.submenu && !isLeftSidebarCollapsed) {
-        <span class="submenu-icon" *ngIf="!isLeftSidebarCollapsed">
+        @if (item.submenu && !isSidebarVisuallyCollapsed) {
+        <span class="submenu-icon" *ngIf="!isSidebarVisuallyCollapsed">
           <img src="assets/svg/icon/header/arrow.svg" class="arrow-icon"
             [class.rotated]="openedSubmenuIndex === idx" />
         </span>

@@ -53,3 +53,8 @@ body {
     supporting-text-line-height: 20px,
   ));
 }
+
+.cdk-overlay-container,
+.cdk-global-overlay-wrapper {
+  z-index: 1300 !important;
+}
