@@ -62,6 +62,11 @@
         display: inline-block;
       }
 
+      .export-container {
+        position: relative;
+        display: inline-block;
+      }
+
       button {
         width: min-content;
         height: 40px;
@@ -113,6 +118,8 @@
         transition: 0.2s ease;
 
         img {
+          width: 17px;
+          height: 17px;
           user-select: none;
           -webkit-user-select: none;
           -moz-user-select: none;
@@ -125,9 +132,30 @@
       }
 
       .selected-count {
-        color: $rg-subtitle;
+        display: flex;
+        align-items: center;
         margin-left: auto;
-        font-size: 14px;
+        gap: 10px;
+
+        label {
+          color: $rg-subtitle;
+          font-size: 14px;
+        }
+
+        button {
+          background-color: $dialog-btn-right;
+          border: none;
+          transition: background-color 0.2s ease;
+
+          img {
+            width: 14px;
+            height: 14px;
+          }
+
+          &:hover {
+            background-color: darken($dialog-btn-right, 16%);
+          }
+        }
       }
 
     }

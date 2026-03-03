@@ -1,0 +1,10 @@
+<div class="export-popup" *ngIf="isOpen" (click)="$event.stopPropagation()">
+  <div class="menu-header">
+    <img
+            src="assets/svg/icon/users/export.svg"><h1>Export</h1>
+  </div>
+  <div class="menu-item">
+    <button class="export-selected" (click)="onExportSelected()"> Exportar Selecionado<img src="assets/svg/icon/users/arrow-exit.svg"></button>
+    <button class="export-all" (click)="onExportAll()">Exportar Tudo<img src="assets/svg/icon/users/arrow-exit.svg"></button>
+  </div>
+</div>

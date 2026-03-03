@@ -1,4 +1,4 @@
-<div class="users-wrapper" (click)="isFilterOpen = false">
+<div class="users-wrapper" (click)="isFilterOpen = false; isExportOpen = false">
   <div class="users-container-list" [class.with-details]="isDetailsOpen">
     <div class="users-header">
       <h1 class="title">{{title}}</h1>
@@ -23,13 +23,23 @@
           (closed)="isFilterOpen = false">
         </app-default-filter-list>
       </div>
-      <button class="export"><img src="assets/svg/icon/users/export.svg">{{
-        btnExport }}</button>
+      <div class="export-container" (click)="$event.stopPropagation()">
+        <button class="export" (click)="toggleExportPopup()"><img
+            src="assets/svg/icon/users/export.svg">{{
+          btnExport }}</button>
+        <app-export-list
+          [isOpen]="isExportOpen"
+          (closed)="isExportOpen = false"
+          (exportSelected)="exportSelectedUsers()"
+          (exportAll)="exportAllUsers()">
+        </app-export-list>
+      </div>
       <div class="selected-count" *ngIf="currentSelectedCount > 0">
-        {{ currentSelectedCount }} usuário(s) selecionado(s)
+        <label>{{ currentSelectedCount }} usuário(s) selecionado(s)</label>
+        <button (click)="clearSelectedUsers()"><img src="assets/svg/icon/input/clear.svg">Limpar</button>
       </div>
     </div>
-    <app-list-users 
+    <app-list-users
       [searchQuery]="currentSearchQuery"
       [filters]="filtersModel"
       (selectedCount)="handleSelectedCount($event)"

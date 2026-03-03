@@ -18,8 +18,12 @@ import {
   DefaultFilterListComponent,
   DefaultFilterSection,
   DefaultFixedDateConfig
-} from "../../../shared/layout/default-filter-list/default-filter-list.component";
+} from "../../../shared/components/filter/default-filter-list/default-filter-list.component";
 import { GroupsService } from '../../../core/services/components/groups.service';
+
+import { exportService } from '../../../core/services/shared/export.service';
+import { detectDeviceFromUserAgent } from '../../../core/utils/device.utils';
+import { ExportListComponent } from "../../../shared/components/export-list/export-list.component";
 
 @Component({
   selector: 'app-details-users',
@@ -33,7 +37,8 @@ import { GroupsService } from '../../../core/services/components/groups.service'
     SituationChipComponent,
     GroupChipComponent,
     BorderButtonComponent,
-    DefaultFilterListComponent
+    DefaultFilterListComponent,
+    ExportListComponent
   ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
@@ -67,6 +72,10 @@ export class UsersComponent implements OnInit, OnDestroy {
   }[] = [];
 
   isFilterOpen = false;
+  isExportOpen = false;
+
+  selectedUsers: any[] = [];
+  allUsers: any[] = [];
 
   filtersSections: DefaultFilterSection[] = [
     {
@@ -165,7 +174,8 @@ export class UsersComponent implements OnInit, OnDestroy {
   constructor(
     private permissionsService: PermissionsService,
     private translationService: TranslationService,
-    private groupsService: GroupsService
+    private groupsService: GroupsService,
+    private exportService: exportService
   ) {
     this.languageSubscription = this.translationService.language$.subscribe(() => {
       this.loadTranslations();
@@ -241,6 +251,8 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   handleSelectedUsers(users: User[]): void {
+
+    this.selectedUsers = users;
 
     this.selectedUser = users.length === 1 ? users[0] : null;
     this.isDetailsOpen = !!this.selectedUser;
@@ -335,11 +347,15 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   // ------------------------------------------------------
-  // FILTER POPUP
+  // POPUP UTILS
   // ------------------------------------------------------
 
   toggleFiltersPopup(): void {
     this.isFilterOpen = !this.isFilterOpen;
+    if (this.isFilterOpen) {
+      // make sure export is closed when filter opens
+      this.isExportOpen = false;
+    }
   }
 
   clearUserFilters(): void {
@@ -354,8 +370,95 @@ export class UsersComponent implements OnInit, OnDestroy {
     };
   }
 
+  clearSelectedUsers(): void {
+    if (this.listUsersComponent) {
+      this.listUsersComponent.clearSelection();
+    }
+    this.currentSelectedCount = 0;
+    this.selectedUser = null;
+  }
+
   applyUserFilters(model: Record<string, any>): void {
     this.filtersModel = { ...model };
     this.isFilterOpen = false;
+  }
+
+  toggleExportPopup(): void {
+    this.isExportOpen = !this.isExportOpen;
+    if (this.isExportOpen) {
+      this.isFilterOpen = false;
+    }
+  }
+
+  exportUsers(users: User[]): void {
+
+    const allPermissions = this.permissionsService.getPermissions();
+
+    const formatted = users.map(user => {
+
+      // -----------------------------
+      // PERMISSIONS (converter ID → title)
+      // -----------------------------
+      const filteredPermissions = this.permissionsService
+        .filterPermissionsByIds(allPermissions, user.permissions);
+
+      const permissionTitles: string[] = [];
+
+      Object.values(filteredPermissions).forEach(category => {
+        if (category) {
+          Object.values(category).forEach((perm: any) => {
+            if (perm.title) permissionTitles.push(perm.title);
+          });
+        }
+      });
+
+      permissionTitles.sort((a, b) =>
+        a.localeCompare(b, 'pt-BR')
+      );
+
+      // -----------------------------
+      // DEVICE (userAgent → nome amigável)
+      // -----------------------------
+      const device = user?.session?.device
+        ? detectDeviceFromUserAgent(user.session.device)
+        : '';
+
+      // -----------------------------
+      // RETURN ORGANIZED OBJECT
+      // (A ORDEM AQUI DEFINE A ORDEM NO CSV)
+      // -----------------------------
+      return {
+        Matrícula: user.enrollment ?? '',
+        Nome: user.name ?? '',
+        Email: user.email ?? '',
+        Telefone: user.phone ?? '',
+        Grupos: user.groups?.map(g => g.title).join(', ') ?? '',
+        Permissões: permissionTitles.join(', '),
+
+        Status: user.session?.isOnline ? 'Online' : 'Offline',
+        Situação: user.session?.blocked ? 'Bloqueado' : 'Ativo',
+        Dispositivo: device,
+
+        'Último Login': user.session?.lastLogin ?? '',
+        'Criado Em': user.createdAt ?? '',
+        Descrição: user.description ?? ''
+      };
+    });
+
+    this.exportService.exportToCsv(formatted, 'usuarios');
+  }
+
+  exportSelectedUsers(): void {
+
+    if (!this.selectedUsers || this.selectedUsers.length === 0) return;
+    this.exportUsers(this.selectedUsers);
+
+  }
+
+  exportAllUsers(): void {
+
+    if (!this.listUsersComponent?.filteredUsers?.length) return;
+
+    this.exportUsers(this.listUsersComponent.filteredUsers);
   }
 }
