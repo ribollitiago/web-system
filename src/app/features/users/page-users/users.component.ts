@@ -75,7 +75,7 @@ export class UsersComponent implements OnInit, OnDestroy {
         {
           key: 'status',
           label: 'Status',
-          kind: 'checkbox',
+          kind: 'radio',
           options: [
             { label: 'Online', value: 'ONLINE' },
             { label: 'Offline', value: 'OFFLINE' }
@@ -89,7 +89,7 @@ export class UsersComponent implements OnInit, OnDestroy {
         {
           key: 'situation',
           label: 'Situation',
-          kind: 'checkbox',
+          kind: 'radio',
           options: [
             { label: 'Ativo', value: 'ACTIVE' },
             { label: 'Bloqueado', value: 'BLOCKED' }
@@ -114,7 +114,8 @@ export class UsersComponent implements OnInit, OnDestroy {
         {
           key: 'lastLogin',
           label: 'Último login',
-          kind: 'radio',
+          kind: 'group',
+          mode: 'radio',
           options: [
             { label: 'Hoje', value: 'TODAY' },
             { label: '7 dias', value: '7D' },
@@ -131,6 +132,7 @@ export class UsersComponent implements OnInit, OnDestroy {
           key: 'device',
           label: 'Selecione os Dispositivos',
           kind: 'group',
+          mode: 'checkbox',
           options: [
             { label: 'Mac', value: 'MAC' },
             { label: 'Windows', value: 'WINDOWS' },

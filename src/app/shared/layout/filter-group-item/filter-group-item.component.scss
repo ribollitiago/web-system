@@ -139,5 +139,21 @@
         }
       }
     }
+
+    input[type="radio"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border: 1px solid $text-color;
+      border-radius: 50%;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    input[type="radio"]:checked {
+      background: $text-color;
+      box-shadow: inset 0 0 0 3px $background-color;
+    }
   }
 }

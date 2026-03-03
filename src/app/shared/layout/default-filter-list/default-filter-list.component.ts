@@ -84,7 +84,20 @@ export class DefaultFilterListComponent {
   }
 
   onSelectRadio(fieldKey: string, optionValue: string): void {
+    // kept for backwards-compatibility if anyone uses the change event
     this.emitModel({ ...this.model, [fieldKey]: optionValue });
+  }
+
+  /**
+   * Clicking a radio toggles its value. When already selected it will clear it.
+   * Angular's native <input type="radio"> never fires change when you click the
+   * same option again so we handle the click event manually to allow
+   * deselection.
+   */
+  onRadioClick(fieldKey: string, optionValue: string): void {
+    const current = this.model[fieldKey];
+    const next = current === optionValue ? null : optionValue;
+    this.emitModel({ ...this.model, [fieldKey]: next });
   }
 
   onDateChange(key: string, value: string): void {

@@ -18,9 +18,11 @@
       <ng-container *ngFor="let opt of field.options">
         <label class="submenu-option">
           <input
-            type="checkbox"
+            [type]="mode === 'radio' ? 'radio' : 'checkbox'"
+            [name]="field.key"
             [checked]="isChecked(opt.value)"
-            (change)="onToggle(opt.value, $any($event.target).checked)" />
+            (change)="mode === 'checkbox' ? onToggle(opt.value, $any($event.target).checked) : onToggle(opt.value, $any($event.target).checked)"
+            (click)="mode === 'radio' ? onOptionClick(opt.value) : null" />
           {{ opt.label }}
         </label>
       </ng-container>

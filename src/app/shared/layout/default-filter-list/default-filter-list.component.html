@@ -32,7 +32,7 @@
                   type="radio"
                   [name]="field.key"
                   [checked]="isRadioSelected(field.key, opt.value)"
-                  (change)="onSelectRadio(field.key, opt.value)" />
+                  (click)="onRadioClick(field.key, opt.value)" />
                 {{ opt.label }}
               </label>
             </ng-container>
