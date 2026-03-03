@@ -1,5 +1,6 @@
 export const environment = {
     production: false,
+    backendApiUrl: 'http://localhost:3000',
     firebaseConfig: {
         apiKey: "AIzaSyCLNQzDAc_GYAjNdrrWQBF8DXByzF_EM14",
         authDomain: "student-angular-19ff6.firebaseapp.com",

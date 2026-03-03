@@ -1,3 +1,25 @@
 <div class="home-wrapper">
   <h1>Home Page Content</h1>
+
+  <section class="backend-status-card">
+    <div class="backend-status-header">
+      <h2>Status Backend</h2>
+      <span
+        class="status-badge"
+        [class.checking]="backendStatus === 'checking'"
+        [class.online]="backendStatus === 'online'"
+        [class.offline]="backendStatus === 'offline'"
+      >
+        {{ backendStatusLabel }}
+      </span>
+    </div>
+
+    <p class="backend-status-endpoint">
+      Endpoint: <code>http://localhost:3000/health</code>
+    </p>
+
+    <p *ngIf="lastCheckedAt" class="backend-status-check">
+      Ultima verificacao: {{ lastCheckedAt }}
+    </p>
+  </section>
 </div>

@@ -19,4 +19,13 @@ describe('AppController', () => {
       expect(appController.getHello()).toBe('Hello World!');
     });
   });
+
+  describe('health', () => {
+    it('should return backend as online', () => {
+      const health = appController.getHealth();
+
+      expect(health.status).toBe('ok');
+      expect(new Date(health.timestamp).toString()).not.toBe('Invalid Date');
+    });
+  });
 });
