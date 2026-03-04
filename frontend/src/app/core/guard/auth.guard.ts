@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { User } from 'firebase/auth';
 import { Observable, take, switchMap, of } from 'rxjs';
 import { SessionService } from '../services/core/session/session.service';
 
@@ -23,7 +22,7 @@ export class AuthGuard implements CanActivate {
 
     return this.sessionService.getAuthState().pipe(
       take(1),
-      switchMap(async (user: User | null) => {
+      switchMap(async (user) => {
 
         if (!user) {
           this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });

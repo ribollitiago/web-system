@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
-
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import firebaseApp from '../../../firebase.config';
+import { BehaviorSubject, Subject, firstValueFrom } from 'rxjs';
 
 import { FirebaseService } from '../database/firebase.service';
 import { formatDateShortBR } from '../../utils/date.utils';
+import { ApiService } from '../backend/api.service';
+import { SessionService } from '../core/session/session.service';
 
 export interface RegisterData {
   [key: string]: any;
@@ -15,17 +14,7 @@ export interface RegisterData {
   providedIn: 'root'
 })
 export class RegisterService {
-
-  // ------------------------------------------------------
-  // CONSTANTS
-  // ------------------------------------------------------
-
   private readonly MAX_STEP = 4;
-  private readonly auth = getAuth(firebaseApp);
-
-  // ------------------------------------------------------
-  // STREAMS
-  // ------------------------------------------------------
 
   private openContinuePopupSubject = new Subject<void>();
   public readonly openContinuePopup$ = this.openContinuePopupSubject.asObservable();
@@ -36,23 +25,13 @@ export class RegisterService {
   private dataSubject = new BehaviorSubject<Record<string, RegisterData>>({});
   public readonly data$ = this.dataSubject.asObservable();
 
-  // ------------------------------------------------------
-  // STATE
-  // ------------------------------------------------------
-
   private isInternalNavigation = false;
 
-  // ------------------------------------------------------
-  // CONSTRUCTOR
-  // ------------------------------------------------------
-
   constructor(
-    private firebaseService: FirebaseService
+    private readonly firebaseService: FirebaseService,
+    private readonly apiService: ApiService,
+    private readonly sessionService: SessionService,
   ) {}
-
-  // ------------------------------------------------------
-  // PUBLIC API
-  // ------------------------------------------------------
 
   triggerContinuePopup(): void {
     this.openContinuePopupSubject.next();
@@ -73,25 +52,19 @@ export class RegisterService {
   }
 
   isSameUser(entityType: string): boolean {
-
     const data = this.getData(entityType);
-    const currentUser = this.auth.currentUser;
+    const currentUser = this.sessionService.getCurrentAuthUser();
 
     if (!data['savedUid'] || !currentUser) return true;
 
     return data['savedUid'] === currentUser.uid;
   }
 
-  // ------------------------------------------------------
-  // STEP CONTROL
-  // ------------------------------------------------------
-
   getStep(entityType: string): number {
     return this.stepSubject.value[entityType] || 1;
   }
 
   nextStep(entityType: string): void {
-
     this.setInternalNavigation(true);
 
     const current = this.getStep(entityType);
@@ -102,7 +75,6 @@ export class RegisterService {
   }
 
   previousStep(entityType: string): void {
-
     const current = this.getStep(entityType);
 
     if (current <= 1) return;
@@ -111,28 +83,22 @@ export class RegisterService {
   }
 
   setStep(entityType: string, step: number): void {
-
     if (step < 1 || step > this.MAX_STEP) return;
 
     this.updateStep(entityType, step);
   }
 
-  // ------------------------------------------------------
-  // DATA CONTROL
-  // ------------------------------------------------------
-
   updateData(entityType: string, partial: Partial<RegisterData>): void {
-
     const current = this.getData(entityType);
-    const currentUser = this.auth.currentUser;
+    const currentUser = this.sessionService.getCurrentAuthUser();
 
     this.dataSubject.next({
       ...this.dataSubject.value,
       [entityType]: {
         ...current,
         ...partial,
-        savedUid: currentUser?.uid
-      }
+        savedUid: currentUser?.uid,
+      },
     });
   }
 
@@ -140,72 +106,42 @@ export class RegisterService {
     return this.dataSubject.value[entityType] || {};
   }
 
-  // ------------------------------------------------------
-  // RESET
-  // ------------------------------------------------------
-
   reset(entityType: string = 'users'): void {
-
     this.dataSubject.next({
       ...this.dataSubject.value,
-      [entityType]: {}
+      [entityType]: {},
     });
 
     this.stepSubject.next({
       ...this.stepSubject.value,
-      [entityType]: 1
+      [entityType]: 1,
     });
 
     this.isInternalNavigation = false;
   }
 
-  // ------------------------------------------------------
-  // REGISTER FLOW
-  // ------------------------------------------------------
-
   async register(entityType: string): Promise<void> {
-
     const data = { ...this.getData(entityType) };
 
     data['createdAt'] = this.buildTimestamp();
 
     if (entityType === 'users') {
+      const { confirmPassword, savedUid, ...payload } = data;
 
-      const credential = await createUserWithEmailAndPassword(
-        this.auth,
-        data['email'],
-        data['password']
+      await firstValueFrom(
+        this.apiService.post<Record<string, unknown>, { uid: string }>('/auth/register-user', {
+          ...payload,
+          email: String(payload['email'] ?? '').toLowerCase(),
+        }),
       );
-
-      data['situation'] = 1;
-      data['uid'] = credential.user.uid;
-
-      const { password, confirmPassword, savedUid, ...entityMap } = data;
-
-      await this.firebaseService.write(
-        `${entityType}/${credential.user.uid}`,
-        entityMap,
-        'set'
-      );
-
     } else if (entityType === 'groups') {
-
-      await this.firebaseService.write(
-        `${entityType}/${data['key']}`,
-        data,
-        'set'
-      );
+      await this.firebaseService.write(`${entityType}/${String(data['key'] ?? '')}`, data, 'set');
     }
 
     this.reset(entityType);
   }
 
-  // ------------------------------------------------------
-  // UTILITIES
-  // ------------------------------------------------------
-
   hasUserProgress(entityType: string): boolean {
-
     const data = this.getData(entityType);
 
     if (!data) return false;
@@ -216,19 +152,14 @@ export class RegisterService {
       data['phone'] ||
       data['enrollment'] ||
       data['password'] ||
-      data['confirmPassword']
+      data['confirmPassword'],
     );
   }
 
-  // ------------------------------------------------------
-  // PRIVATE HELPERS
-  // ------------------------------------------------------
-
   private updateStep(entityType: string, step: number): void {
-
     this.stepSubject.next({
       ...this.stepSubject.value,
-      [entityType]: step
+      [entityType]: step,
     });
   }
 

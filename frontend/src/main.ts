@@ -7,15 +7,12 @@ import { provideHttpClient } from '@angular/common/http';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
-import { AngularFireModule } from '@angular/fire/compat';
-import { environment } from './environments/environment';
 
 const appConfig = {
   providers: [
     provideRouter(routes),
     provideHttpClient(),
     importProvidersFrom(
-      AngularFireModule.initializeApp(environment.firebaseConfig), 
       ToastrModule.forRoot(),
       BrowserAnimationsModule
     )

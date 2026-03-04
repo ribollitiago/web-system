@@ -150,19 +150,24 @@ export class LoginComponent implements OnInit, OnDestroy {
   // ERROS CENTRALIZADOS
   // ------------------------------------------------------
   private handleAuthError(error: any, isRecovery = false): void {
-    const code = error?.code || error?.error;
+    const code = error?.code || error?.error || error?.message;
 
     switch (code) {
       case 'auth/user-not-found':
       case 'auth/wrong-password':
+      case 'INVALID_LOGIN_CREDENTIALS':
+      case 'EMAIL_NOT_FOUND':
+      case 'INVALID_PASSWORD':
         this.toast.error(this.messages.loginInvalid);
         break;
 
       case 'auth/user-disabled':
+      case 'USER_DISABLED':
         this.toast.error(this.messages.loginBlockedUser);
         break;
 
       case 'auth/invalid-email':
+      case 'INVALID_EMAIL':
         this.toast.error(isRecovery ? this.messages.loginEmailRecoveryInvalid : this.messages.loginInvalid);
         break;
 

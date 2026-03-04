@@ -1,15 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { from, Observable } from 'rxjs';
-import {
-  User,
-  signInWithEmailAndPassword,
-  sendPasswordResetEmail,
-  onAuthStateChanged,
-  Unsubscribe
-} from 'firebase/auth';
 
-import { SessionService } from '../core/session/session.service';
+import { SessionService, AuthStateUser } from '../core/session/session.service';
 
 interface LoginResult {
   uid: string;
@@ -19,75 +12,34 @@ interface LoginResult {
   providedIn: 'root'
 })
 export class LoginService {
-
-  // ------------------------------------------------------
-  // CONSTRUCTOR
-  // ------------------------------------------------------
-
   constructor(
-    private router: Router,
-    public sessionService: SessionService
-  ) { }
-
-  // ------------------------------------------------------
-  // PUBLIC API
-  // ------------------------------------------------------
+    private readonly router: Router,
+    public readonly sessionService: SessionService,
+  ) {}
 
   login(email: string, password: string): Observable<LoginResult> {
-
-    const auth = this.sessionService.getAuthInstance();
-
     return from(
-      signInWithEmailAndPassword(auth, email, password)
-        .then(credential => this.handleLoginSuccess(credential))
-        .catch(error => this.handleError(error))
+      this.sessionService.loginWithBackend(email, password)
+        .then((authUser) => this.handleLoginSuccess(authUser))
+        .catch((error) => this.handleError(error)),
     );
   }
 
   recoverPassword(email: string): Observable<void> {
-
-    const auth = this.sessionService.getAuthInstance();
-
-    return this.handleFirebaseOperation(() =>
-      sendPasswordResetEmail(auth, email)
+    return from(
+      this.sessionService.recoverPassword(email).catch((error) => this.handleError(error)),
     );
   }
 
-  getAuthState(): Observable<User | null> {
-
-    const auth = this.sessionService.getAuthInstance();
-
-    return new Observable(subscriber => {
-
-      const unsubscribe: Unsubscribe = onAuthStateChanged(auth, user => {
-
-        if (!user) {
-          this.sessionService.clearSessionStorage();
-        }
-
-        subscriber.next(user);
-      });
-
-      return () => unsubscribe();
-    });
+  getAuthState(): Observable<AuthStateUser | null> {
+    return this.sessionService.getAuthState();
   }
 
   async logout(): Promise<void> {
     await this.sessionService.logout();
   }
 
-  // ------------------------------------------------------
-  // LOGIN FLOW
-  // ------------------------------------------------------
-
-  private async handleLoginSuccess(userCredential: any): Promise<LoginResult> {
-
-    const user = userCredential?.user;
-
-    if (!user) {
-      throw new Error('User not found');
-    }
-
+  private async handleLoginSuccess(user: AuthStateUser): Promise<LoginResult> {
     this.sessionService.setLastLoginTime();
     this.sessionService.startTokenExpirationWatcher();
     this.sessionService.trackUserActivity();
@@ -97,27 +49,16 @@ export class LoginService {
     return { uid: user.uid };
   }
 
-  // ------------------------------------------------------
-  // FIREBASE HELPERS
-  // ------------------------------------------------------
-
-  private handleFirebaseOperation<T>(
-    operation: () => Promise<T>
-  ): Observable<T> {
-
-    return from(
-      operation().catch(error => this.handleError(error))
-    );
-  }
-
-  // ------------------------------------------------------
-  // ERROR HANDLING
-  // ------------------------------------------------------
-
   private handleError(error: unknown): never {
-
     if (error instanceof Error) {
       throw error;
+    }
+
+    const backendError = (error as { error?: { message?: string } })?.error?.message;
+    if (backendError) {
+      const normalized = new Error(backendError);
+      (normalized as Error & { code?: string }).code = backendError;
+      throw normalized;
     }
 
     throw new Error('Unexpected authentication error');
