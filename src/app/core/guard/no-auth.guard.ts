@@ -16,8 +16,8 @@ export class NoAuthGuard implements CanActivate {
   canActivate() {
     return this.sessionService.getAuthState().pipe(
       take(1),
-      map(user => {
-        if (user) {
+      map(session => {
+        if (session) {
           this.router.navigate(['/home']);
           return false;
         }

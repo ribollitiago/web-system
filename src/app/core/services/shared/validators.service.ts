@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { RegisterData } from '../components/register.service';
-import { FirebaseService } from '../database/firebase.service';
+import { DatabaseService } from '../database/database.service';
 
 export interface ValidationResult {
   valid: boolean;
@@ -17,7 +17,7 @@ export class ValidatorsService {
   // ------------------------------------------------------
 
   constructor(
-    private firebaseService: FirebaseService
+    private databaseService: DatabaseService
   ) { }
 
   // ------------------------------------------------------
@@ -102,11 +102,16 @@ export class ValidatorsService {
 
     const normalizedEmail = value.toLowerCase();
 
-    const emailExists = await this.firebaseService.getByField(
-      'users',
-      'email',
-      normalizedEmail
-    );
+    let emailExists: any[] = [];
+
+    try {
+      const users = await this.databaseService.getList('users') as any[];
+      emailExists = (users ?? []).filter(
+        (user) => String(user?.email ?? '').toLowerCase() === normalizedEmail,
+      );
+    } catch {
+      emailExists = [];
+    }
 
     if (emailExists.length) {
       return { valid: false, error: 'EMAIL_ALREADY_EXISTS' };
@@ -133,11 +138,16 @@ export class ValidatorsService {
       return { valid: false, error: 'EMPTY_ENROLLMENT' };
     }
 
-    const exists = await this.firebaseService.getByField(
-      'users',
-      'enrollment',
-      value
-    );
+    let exists: any[] = [];
+
+    try {
+      const users = await this.databaseService.getList('users') as any[];
+      exists = (users ?? []).filter(
+        (user) => String(user?.enrollment ?? '') === String(value),
+      );
+    } catch {
+      exists = [];
+    }
 
     if (exists.length) {
       return { valid: false, error: 'ENROLLMENT_ALREADY_EXISTS' };

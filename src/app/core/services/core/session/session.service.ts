@@ -1,92 +1,111 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
-import { Auth, getAuth, signOut, onAuthStateChanged, User } from 'firebase/auth';
+import { DatabaseService } from '../../database/database.service';
+import { RealtimeService } from '../../database/realtime.service';
 
-import firebaseApp from '../../../../firebase.config';
-import { FirebaseService } from '../../database/firebase.service';
-import { PresenceService } from '../application/presence.service';
-import { formatDateShortBR } from '../../../utils/date.utils';
-import { OnlineLimitService } from '../application/online-limite.service';
-
-type SessionExpireReason = 'TIMEOUT' | 'MAX_SESSION' | null;
+type SessionExpireReason =
+  | 'TIMEOUT'
+  | 'MAX_SESSION'
+  | 'OTHER_SESSION'
+  | 'SERVER_INVALIDATED'
+  | null;
 
 export type SessionEvent =
   | { type: 'SUCCESS'; message?: string }
   | { type: 'ERROR'; message: string }
   | { type: 'LOGOUT'; reason?: SessionExpireReason };
 
+type JwtPayload = {
+  sub?: number;
+  sid?: string;
+  email?: string;
+  exp?: number;
+};
+
+type SessionInfo = {
+  userId: number;
+  sessionId: string;
+  email: string;
+  exp?: number;
+};
+
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SessionService {
-
-  // -----------------------------
-  // CONSTANTS
-  // -----------------------------
   private readonly STORAGE = {
     LAST_LOGIN: 'last-login-time',
     LAST_ACTIVITY: 'last-user-activity',
-    SESSION_ID: 'session-id'
+    ACCESS_TOKEN: 'access-token',
+    SESSION_ID: 'session-id',
   };
 
   private readonly TIME = {
-    IDLE_TIMEOUT: 30 * 60 * 1000,          // 30s para teste, ajustar para 30*60*1000 produção
-    MAX_SESSION: 8 * 60 * 60 * 1000,  // 30s para teste, ajustar para 8*60*60*1000 produção
-    CHECK_INTERVAL: 5 * 1000          // checa a cada 5s
+    IDLE_TIMEOUT: 30 * 60 * 1000,
+    MAX_SESSION: 8 * 60 * 60 * 1000,
+    CHECK_INTERVAL: 5 * 1000,
   };
 
-  // -----------------------------
-  // STATE
-  // -----------------------------
-  private groups: any[] | undefined;
-  private userSubscriptionPath?: string;
   private sessionCheckInterval?: ReturnType<typeof setInterval>;
+  private activityListenersAttached = false;
+  private realtimeListenersAttached = false;
 
-  private readonly auth: Auth = getAuth(firebaseApp);
   private userSubject = new BehaviorSubject<any | null>(null);
   public readonly user$ = this.userSubject.asObservable();
+
+  private authSubject = new BehaviorSubject<SessionInfo | null>(null);
+  public readonly auth$ = this.authSubject.asObservable();
 
   private sessionSubject = new ReplaySubject<SessionEvent | null>(1);
   public readonly sessionEvents$ = this.sessionSubject.asObservable();
 
-  // -----------------------------
-  // CONSTRUCTOR
-  // -----------------------------
+  private readonly handleSessionInvalidated = (payload: any) => {
+    const currentSessionId = this.getSessionId();
+
+    if (!payload) return;
+    if (payload.sessionId && payload.sessionId !== currentSessionId) return;
+
+    this.sessionSubject.next({
+      type: 'LOGOUT',
+      reason: 'SERVER_INVALIDATED',
+    });
+
+    this.performLocalLogout('SERVER_INVALIDATED');
+  };
+
+  private readonly handlePermissionsUpdated = (payload: any) => {
+    if (!payload?.permissions) return;
+
+    const current = this.userSubject.value;
+    if (!current) return;
+
+    this.userSubject.next({
+      ...current,
+      permissions: payload.permissions,
+    });
+  };
+
   constructor(
     private router: Router,
-    private firebaseService: FirebaseService,
-    private presenceService: PresenceService,
-    private onlineLimitService: OnlineLimitService
+    private databaseService: DatabaseService,
+    private realtimeService: RealtimeService,
   ) {
-    this.initializeSession();
-    this.setupAuthSync();
+    this.restoreSessionFromStorage();
   }
 
-  // -----------------------------
-  // SESSION INIT
-  // -----------------------------
-  private initializeSession(): void {
-    const expiredReason = this.isSessionExpired();
-    if (expiredReason) {
-      this.sessionSubject.next({ type: 'LOGOUT', reason: expiredReason });
-      this.logout();
-      return;
-    }
-  }
-
-  // -----------------------------
-  // SESSION EXPIRATION
-  // -----------------------------
   isSessionExpired(): SessionExpireReason {
-    const lastActivity = localStorage.getItem(this.STORAGE.LAST_ACTIVITY);
-    const lastLogin = localStorage.getItem(this.STORAGE.LAST_LOGIN);
-
-    if (!lastLogin) return null;
+    const tokenPayload = this.getTokenPayload();
+    if (!tokenPayload?.exp) return null;
 
     const now = Date.now();
-    const sessionStart = new Date(lastLogin).getTime();
+    if (tokenPayload.exp * 1000 < now) return 'MAX_SESSION';
 
+    const lastActivity = localStorage.getItem(this.STORAGE.LAST_ACTIVITY);
+    const lastLogin = localStorage.getItem(this.STORAGE.LAST_LOGIN);
+    if (!lastLogin) return null;
+
+    const sessionStart = new Date(lastLogin).getTime();
     if (now - sessionStart > this.TIME.MAX_SESSION) return 'MAX_SESSION';
 
     const reference = lastActivity ? new Date(lastActivity).getTime() : sessionStart;
@@ -95,29 +114,17 @@ export class SessionService {
     return null;
   }
 
-  private checkTokenExpiration(): void {
-    const reason = this.isSessionExpired();
-    if (reason) {
-      this.sessionSubject.next({ type: 'LOGOUT', reason });
-      this.logout();
-    }
-  }
-
   public startTokenExpirationWatcher(): void {
     this.stopTokenExpirationWatcher();
-    this.sessionCheckInterval = setInterval(() => this.checkTokenExpiration(), this.TIME.CHECK_INTERVAL);
+    this.sessionCheckInterval = setInterval(
+      () => this.checkTokenExpiration(),
+      this.TIME.CHECK_INTERVAL,
+    );
   }
 
-  private stopTokenExpirationWatcher(): void {
-    if (!this.sessionCheckInterval) return;
-    clearInterval(this.sessionCheckInterval);
-    this.sessionCheckInterval = undefined;
-  }
-
-  // -----------------------------
-  // USER ACTIVITY
-  // -----------------------------
   public trackUserActivity(): void {
+    if (this.activityListenersAttached) return;
+
     const events = ['click', 'mousemove', 'keydown', 'scroll', 'touchstart'];
     let lastWrite = 0;
 
@@ -128,52 +135,39 @@ export class SessionService {
       lastWrite = now;
     };
 
-    events.forEach(event => window.addEventListener(event, updateActivity, { passive: true }));
+    events.forEach((event) => {
+      window.addEventListener(event, updateActivity, { passive: true });
+    });
+
+    this.activityListenersAttached = true;
   }
 
-  // -----------------------------
-  // LOGOUT
-  // -----------------------------
-  async logout(reason?: 'OTHER_SESSION') {
+  async logout(reason?: 'OTHER_SESSION'): Promise<void> {
+    const token = this.getAccessToken();
+    const shouldCallServer = !!token && reason !== 'OTHER_SESSION';
 
     try {
-
-      if (this.auth.currentUser && reason !== 'OTHER_SESSION') {
-        await this.onlineLimitService.remove(this.auth.currentUser.uid);
+      if (shouldCallServer) {
+        await this.databaseService.logout();
       }
-
-      await signOut(this.auth);
-
     } finally {
-      await this.performLocalLogout(reason);
+      await this.performLocalLogout(reason ?? null);
     }
   }
 
-  private async performLocalLogout(reason: string | undefined): Promise<void> {
-    if (reason !== 'OTHER_SESSION') {
-      this.presenceService.stop();
-    }
-    await this.clearSessionStorage();
-    this.router.navigate(['/login']);
-  }
-
-  // -----------------------------
-  // SESSION STORAGE
-  // -----------------------------
-  async clearSessionStorage() {
+  async clearSessionStorage(): Promise<void> {
     this.userSubject.next(null);
+    this.authSubject.next(null);
     this.sessionSubject.next(null);
-
-    if (this.userSubscriptionPath) {
-      this.firebaseService.unsubscribe(this.userSubscriptionPath);
-      this.userSubscriptionPath = undefined;
-    }
 
     localStorage.removeItem(this.STORAGE.LAST_LOGIN);
     localStorage.removeItem(this.STORAGE.LAST_ACTIVITY);
+    localStorage.removeItem(this.STORAGE.ACCESS_TOKEN);
     localStorage.removeItem(this.STORAGE.SESSION_ID);
 
     this.stopTokenExpirationWatcher();
+    this.detachRealtimeListeners();
+    this.realtimeService.disconnect();
   }
 
   setLastLoginTime(): void {
@@ -182,213 +176,197 @@ export class SessionService {
     localStorage.setItem(this.STORAGE.LAST_ACTIVITY, now);
   }
 
-  // -----------------------------
-  // AUTH SYNC
-  // -----------------------------
-  private setupAuthSync(): void {
-    onAuthStateChanged(this.auth, (user) => {
-      if (!user) {
-        this.clearSessionStorage();
-        this.router.navigate(['/login']);
-      }
+  getAuthState(): Observable<SessionInfo | null> {
+    return this.auth$;
+  }
+
+  isAuthenticated(): boolean {
+    return !!this.authSubject.value && !!this.getAccessToken();
+  }
+
+  getAccessToken(): string | null {
+    return localStorage.getItem(this.STORAGE.ACCESS_TOKEN);
+  }
+
+  getSessionId(): string | null {
+    return localStorage.getItem(this.STORAGE.SESSION_ID);
+  }
+
+  getCurrentUserId(): number | null {
+    return this.authSubject.value?.userId ?? null;
+  }
+
+  async startAuthenticatedSession(accessToken: string, sessionId: string): Promise<void> {
+    localStorage.setItem(this.STORAGE.ACCESS_TOKEN, accessToken);
+    localStorage.setItem(this.STORAGE.SESSION_ID, sessionId);
+
+    this.setLastLoginTime();
+    this.startTokenExpirationWatcher();
+    this.trackUserActivity();
+
+    const payload = this.parseJwt(accessToken);
+    if (!payload?.sub || !payload?.sid || !payload?.email) {
+      await this.performLocalLogout(null);
+      throw new Error('Invalid token payload');
+    }
+
+    this.authSubject.next({
+      userId: payload.sub,
+      sessionId: payload.sid,
+      email: payload.email,
+      exp: payload.exp,
     });
-  }
 
-  getAuthInstance(): Auth {
-    return this.auth;
-  }
-
-  getAuthState(): Observable<User | null> {
-    return new Observable(subscriber => {
-      const unsubscribe = onAuthStateChanged(this.auth, user => {
-        if (!user) this.clearSessionStorage();
-        subscriber.next(user);
-      });
-      return () => unsubscribe();
+    this.userSubject.next({
+      id: payload.sub,
+      email: payload.email,
+      name: payload.email,
+      uid: null,
+      enrollment: null,
+      permissions: [],
     });
-  }
 
-  // -----------------------------
-  // REALTIME USER SESSION
-  // -----------------------------
-  async loadAndSetUser(uid: string): Promise<void> {
+    this.realtimeService.connect(accessToken);
+    this.attachRealtimeListeners();
 
-    this.userSubscriptionPath = `users/${uid}`;
-    const sessionId = this.ensureSessionId();
-
-    let isFirstEmission = true;
-    let resolved = false;
-
-    return new Promise((resolve, reject) => {
-
-      const handleUserData = async (userData: any) => {
-
-        try {
-
-          await this.validateUserAccess(userData);
-
-          if (isFirstEmission) {
-            isFirstEmission = false;
-            await this.bootstrapSession(uid, sessionId, userData);
-          } else {
-            await this.validateActiveSession(userData, sessionId);
-          }
-
-          await this.publishUserState(userData);
-
-          if (!resolved) {
-            resolved = true;
-            this.emitSuccess();
-            resolve();
-          }
-
-        } catch (error: unknown) {
-
-          const msg = this.normalizeError(error);
-          this.emitError(msg);
-          reject(error);
-        }
-      };
-
-      this.firebaseService.subscribe(this.userSubscriptionPath!, handleUserData);
-    });
-  }
-
-  // -----------------------------
-  // SESSION VALIDATION
-  // -----------------------------
-  private async validateUserAccess(userData: any) {
-    if (!userData) {
-      await this.logout();
-      throw 'USER_NOT_FOUND';
-    }
-
-    if (userData.session?.blocked) {
-      await this.logout();
-      throw 'BLOCKED';
-    }
-  }
-
-  private async validateActiveSession(
-    userData: any,
-    sessionId: string
-  ) {
-
-    if (userData.session?.id !== sessionId) {
-      await this.logout('OTHER_SESSION');
-      throw 'OTHER_SESSION';
-    }
-
-    if (userData.session?.revoked) {
-      await this.logout();
-      throw 'REVOKED';
-    }
-  }
-
-  // -----------------------------
-  // SESSION LIFECYCLE
-  // -----------------------------
-  private async bootstrapSession(
-    uid: string,
-    sessionId: string,
-    userData: any
-  ) {
-
-    const isMySession = userData.session?.id === sessionId;
-
-    await this.ensureOnlineLimit(sessionId);
-
-    if (!isMySession) {
-      await this.createSession(uid, sessionId);
-    }
-
-    await this.onlineLimitService.add(uid, sessionId);
-    this.presenceService.start(uid);
-  }
-
-  private async createSession(uid: string, sessionId: string) {
-    await this.firebaseService.write(`users/${uid}/session`, {
-      id: sessionId,
-      lastLogin: formatDateShortBR(new Date()),
-      device: navigator.userAgent
-    }, 'update');
-  }
-
-  private async ensureOnlineLimit(sessionId: any) {
-    const canEnter = await this.onlineLimitService.canEnter(sessionId);
-
-    if (!canEnter) {
-      await this.logout();
-      throw 'MAX_ONLINE_REACHED';
-    }
-  }
-
-  // -----------------------------
-  // SESSION EMIT
-  // -----------------------------
-  private emitSuccess() {
     this.sessionSubject.next({
       type: 'SUCCESS',
-      message: 'Sessão carregada com sucesso!'
+      message: 'Sessao iniciada com sucesso!',
     });
   }
 
-  private emitError(message: string) {
-    this.sessionSubject.next({
-      type: 'ERROR',
-      message
-    });
-  }
+  async validateCurrentSession(): Promise<boolean> {
+    const token = this.getAccessToken();
+    const sessionId = this.getSessionId();
 
-  // -----------------------------
-  // HELPERS
-  // -----------------------------
-  private ensureSessionId(): string {
-    let sessionId = localStorage.getItem(this.STORAGE.SESSION_ID);
-    if (!sessionId) {
-      sessionId = crypto.randomUUID();
-      localStorage.setItem(this.STORAGE.SESSION_ID, sessionId);
+    if (!token || !sessionId) return false;
+    if (this.isSessionExpired()) return false;
+
+    try {
+      const sessions = (await this.databaseService.getList('auth/sessions')) as any[];
+      if (!Array.isArray(sessions)) return false;
+
+      const current = sessions.find((item) => item.id === sessionId);
+      return !!current && !current.revoked;
+    } catch {
+      return false;
     }
-    return sessionId;
   }
 
-  private normalizeError(error: unknown): string {
-    if (typeof error === 'string') return error;
-    if (error instanceof Error) return error.message;
-    return 'UNKNOWN_ERROR';
+  async loadAndSetUser(): Promise<void> {
+    const currentUser = this.userSubject.value;
+    if (!currentUser?.email) return;
+
+    try {
+      const users = (await this.databaseService.getList('users')) as any[];
+      const user = users.find(
+        (item) =>
+          item.email === currentUser.email ||
+          (typeof item.uid === 'string' && item.uid === currentUser.uid),
+      );
+      if (!user) return;
+
+      this.userSubject.next({
+        ...currentUser,
+        uid: user.uid ?? currentUser.uid,
+        enrollment: user.enrollment ?? currentUser.enrollment,
+        name: user.name ?? currentUser.name,
+        email: user.email ?? currentUser.email,
+      });
+    } catch {
+      // User list can be protected by permission; keep token data as fallback.
+    }
   }
 
-  // -----------------------------
-  // USER STATE
-  // -----------------------------
-  private async publishUserState(userData: any) {
+  private restoreSessionFromStorage(): void {
+    const token = this.getAccessToken();
+    const sessionId = this.getSessionId();
+    if (!token || !sessionId) return;
+
+    const payload = this.parseJwt(token);
+    if (!payload?.sub || !payload?.sid || !payload?.email) {
+      this.clearSessionStorage();
+      return;
+    }
+
+    this.authSubject.next({
+      userId: payload.sub,
+      sessionId: payload.sid,
+      email: payload.email,
+      exp: payload.exp,
+    });
+
     this.userSubject.next({
-      ...userData,
-      permissions: await this.resolveMergedPermissions(userData)
+      id: payload.sub,
+      email: payload.email,
+      name: payload.email,
+      uid: null,
+      enrollment: null,
+      permissions: [],
     });
+
+    this.startTokenExpirationWatcher();
+    this.trackUserActivity();
+    this.realtimeService.connect(token);
+    this.attachRealtimeListeners();
+    this.loadAndSetUser();
   }
 
-  private async resolveMergedPermissions(userData: any): Promise<string[]> {
-    const groupIds: string[] = Array.isArray(userData.groups)
-      ? userData.groups
-      : userData.group
-        ? [userData.group]
-        : [];
+  private async performLocalLogout(reason: SessionExpireReason): Promise<void> {
+    await this.clearSessionStorage();
+    this.router.navigate(['/login']);
 
-    const groupPermissions = await this.resolveGroupPermissions(groupIds);
-    return Array.from(new Set([...(groupPermissions ?? []), ...(userData.permissions ?? [])]));
-  }
-
-  private async resolveGroupPermissions(groupIds: string[]): Promise<string[]> {
-    if (!this.groups) {
-      this.groups = await this.firebaseService.getList('groups');
+    if (reason) {
+      this.sessionSubject.next({ type: 'LOGOUT', reason });
     }
+  }
 
-    return Array.from(new Set(
-      groupIds
-        .map(id => this.groups?.find(g => g['id'] === id))
-        .filter(g => g?.permissions?.length)
-        .flatMap(g => g!.permissions)
-    ));
+  private checkTokenExpiration(): void {
+    const reason = this.isSessionExpired();
+    if (!reason) return;
+
+    this.sessionSubject.next({ type: 'LOGOUT', reason });
+    this.logout();
+  }
+
+  private stopTokenExpirationWatcher(): void {
+    if (!this.sessionCheckInterval) return;
+    clearInterval(this.sessionCheckInterval);
+    this.sessionCheckInterval = undefined;
+  }
+
+  private attachRealtimeListeners(): void {
+    if (this.realtimeListenersAttached) return;
+
+    this.realtimeService.on('session_invalidated', this.handleSessionInvalidated);
+    this.realtimeService.on('permissions_updated', this.handlePermissionsUpdated);
+    this.realtimeListenersAttached = true;
+  }
+
+  private detachRealtimeListeners(): void {
+    if (!this.realtimeListenersAttached) return;
+
+    this.realtimeService.off('session_invalidated', this.handleSessionInvalidated);
+    this.realtimeService.off('permissions_updated', this.handlePermissionsUpdated);
+    this.realtimeListenersAttached = false;
+  }
+
+  private getTokenPayload(): JwtPayload | null {
+    const token = this.getAccessToken();
+    if (!token) return null;
+    return this.parseJwt(token);
+  }
+
+  private parseJwt(token: string): JwtPayload | null {
+    try {
+      const [, base64Payload] = token.split('.');
+      if (!base64Payload) return null;
+
+      const normalized = base64Payload.replace(/-/g, '+').replace(/_/g, '/');
+      const payload = JSON.parse(atob(normalized)) as JwtPayload;
+      return payload;
+    } catch {
+      return null;
+    }
   }
 }

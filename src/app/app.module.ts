@@ -1,13 +1,10 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { AngularFireModule } from '@angular/fire/compat';
-import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
-import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 
 import { LoginComponent } from './pages/login/login.component';
@@ -26,8 +23,6 @@ import {MatTooltipModule} from '@angular/material/tooltip';
   ],
   imports: [
     BrowserModule,
-    AngularFireModule.initializeApp(environment.firebaseConfig),
-    AngularFireDatabaseModule,
     ToastrModule.forRoot(),
     BrowserAnimationsModule,
     FormsModule,

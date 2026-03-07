@@ -150,6 +150,21 @@ export class LoginComponent implements OnInit, OnDestroy {
   // ERROS CENTRALIZADOS
   // ------------------------------------------------------
   private handleAuthError(error: any, isRecovery = false): void {
+    if (error?.message === 'PASSWORD_RECOVERY_NOT_AVAILABLE') {
+      this.toast.error(this.messages.loginEmailRecoveryError || 'Funcao indisponivel no momento.');
+      return;
+    }
+
+    if (error?.status === 401) {
+      this.toast.error(this.messages.loginInvalid);
+      return;
+    }
+
+    if (error?.status === 403) {
+      this.toast.error(this.messages.loginBlockedUser || this.messages.loginError);
+      return;
+    }
+
     const code = error?.code || error?.error;
 
     switch (code) {
@@ -202,10 +217,26 @@ export class LoginComponent implements OnInit, OnDestroy {
           break;
 
         case 'LOGOUT':
+          if (event.reason === 'TIMEOUT') {
+            this.toast.warning(
+              this.messages.sessionTimeout || 'Sua sessao expirou por inatividade.',
+              undefined,
+              toastOptions
+            );
+            break;
+          }
+
+          if (event.reason === 'SERVER_INVALIDATED' || event.reason === 'OTHER_SESSION') {
+            this.toast.warning(
+              this.messages.sessionRevoked || 'Sua sessao foi invalidada.',
+              undefined,
+              toastOptions
+            );
+            break;
+          }
+
           this.toast.warning(
-            event.reason === 'TIMEOUT'
-              ? this.messages.sessionTimeout || 'Sua sessão expirou por inatividade.'
-              : this.messages.sessionMaxTime || 'Sua sessão expirou por tempo máximo de uso.',
+            this.messages.sessionMaxTime || 'Sua sessao expirou por tempo maximo de uso.',
             undefined,
             toastOptions
           );

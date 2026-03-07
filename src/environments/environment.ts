@@ -8,5 +8,6 @@ export const environment = {
         storageBucket: "student-angular-19ff6.firebasestorage.app",
         messagingSenderId: "995961544166",
         appId: "1:995961544166:web:d4f237e7c295c58f848a27"
-    }
+    },
+    api: "http://localhost:3000"
 }

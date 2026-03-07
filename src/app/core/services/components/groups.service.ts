@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { FirebaseService } from '../database/firebase.service';
+import { DatabaseService } from '../database/database.service';
+import { RealtimeService } from '../database/realtime.service';
 
 export interface Group {
   id: string;
@@ -13,51 +14,43 @@ export interface Group {
   providedIn: 'root'
 })
 export class GroupsService {
-
-  // ------------------------------------------------------
-  // STATE
-  // ------------------------------------------------------
-
   private groupsSubject = new BehaviorSubject<Group[]>([]);
   groups$ = this.groupsSubject.asObservable();
 
   private groups: Group[] = [];
   private selectedGroups = new Set<string>();
+  private realtimeSubscribed = false;
 
-  constructor(private firebaseService: FirebaseService) { }
+  private readonly handleGroupChanged = () => {
+    this.refreshGroups();
+  };
 
-  // ------------------------------------------------------
-  // REALTIME SUBSCRIBE
-  // ------------------------------------------------------
+  constructor(
+    private databaseService: DatabaseService,
+    private realtimeService: RealtimeService
+  ) { }
 
   async subscribe(): Promise<void> {
-
-    this.firebaseService.subscribe('groups', (groups: any[]) => {
-
-      this.groups = this.formatGroups(groups || []);
-      this.groupsSubject.next(this.groups);
-
-    });
+    await this.refreshGroups();
+    this.attachRealtime();
   }
 
   unSubscribe(): void {
-    this.firebaseService.unsubscribe('groups');
+    if (!this.realtimeSubscribed) return;
+
+    this.realtimeService.off('group_created', this.handleGroupChanged);
+    this.realtimeService.off('group_updated', this.handleGroupChanged);
+    this.realtimeSubscribed = false;
   }
 
   async getGroupsOnce(): Promise<Group[]> {
-
-    const groups = await this.firebaseService.getList('groups') ?? [];
-
+    const groups = await this.databaseService.getList('groups') as any[] ?? [];
     return this.formatGroups(groups);
   }
-  
+
   getGroups(): readonly Group[] {
     return this.groups;
   }
-
-  // ------------------------------------------------------
-  // SELECTION CONTROL
-  // ------------------------------------------------------
 
   selectGroup(groupId: string): void {
     this.selectedGroups.add(groupId);
@@ -87,12 +80,7 @@ export class GroupsService {
     return this.groups.filter(g => this.selectedGroups.has(g.id));
   }
 
-  // ------------------------------------------------------
-  // PERMISSIONS
-  // ------------------------------------------------------
-
   getPermissionsFromGroups(): string[] {
-
     const permissionSet = new Set<string>();
 
     this.getSelectedGroups().forEach(group => {
@@ -109,16 +97,38 @@ export class GroupsService {
     };
   }
 
-  // ------------------------------------------------------
-  // MAPPER
-  // ------------------------------------------------------
+  private async refreshGroups() {
+    const rawGroups = await this.databaseService.getList('groups') as any[] ?? [];
+    this.groups = this.formatGroups(rawGroups);
+    this.groupsSubject.next(this.groups);
+  }
+
+  private attachRealtime() {
+    if (this.realtimeSubscribed) return;
+
+    this.realtimeService.on('group_created', this.handleGroupChanged);
+    this.realtimeService.on('group_updated', this.handleGroupChanged);
+    this.realtimeSubscribed = true;
+  }
 
   private formatGroups(groups: any[]): Group[] {
-    return groups.map(group => ({
-      id: group.id,
-      title: group.title,
-      description: group.description,
-      permissions: group.permissions ?? []
-    }));
+    return groups.map(group => {
+      const permissionCodes = Array.isArray(group.permissions)
+        ? group.permissions
+          .map((permissionRef: any) =>
+            typeof permissionRef === 'string'
+              ? permissionRef
+              : permissionRef?.permission?.code
+          )
+          .filter((code: unknown): code is string => typeof code === 'string')
+        : [];
+
+      return {
+        id: String(group.enrollment ?? ''),
+        title: group.title ?? '',
+        description: group.description ?? '',
+        permissions: permissionCodes
+      };
+    });
   }
 }
