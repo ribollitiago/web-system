@@ -9,12 +9,18 @@ type SessionExpireReason =
   | 'MAX_SESSION'
   | 'OTHER_SESSION'
   | 'SERVER_INVALIDATED'
+  | 'IDLE_TIMEOUT'
+  | 'SESSION_LIMIT'
+  | 'USER_BLOCKED'
+  | 'USER_INVISIBLE'
+  | 'PASSWORD_CHANGED'
+  | 'PERMISSIONS_CHANGED'
   | null;
 
 export type SessionEvent =
   | { type: 'SUCCESS'; message?: string }
   | { type: 'ERROR'; message: string }
-  | { type: 'LOGOUT'; reason?: SessionExpireReason };
+  | { type: 'LOGOUT'; reason?: SessionExpireReason; message?: string };
 
 type JwtPayload = {
   sub?: number;
@@ -45,11 +51,17 @@ export class SessionService {
     IDLE_TIMEOUT: 30 * 60 * 1000,
     MAX_SESSION: 8 * 60 * 60 * 1000,
     CHECK_INTERVAL: 5 * 1000,
+    HEARTBEAT_INTERVAL: 60 * 1000,
+    SESSION_VALIDATE_INTERVAL: 15 * 1000,
   };
 
   private sessionCheckInterval?: ReturnType<typeof setInterval>;
   private activityListenersAttached = false;
   private realtimeListenersAttached = false;
+  private lastHeartbeatAt = 0;
+  private lastSessionValidationAt = 0;
+  private validatingSession = false;
+  private lastActivityAt = Date.now();
 
   private userSubject = new BehaviorSubject<any | null>(null);
   public readonly user$ = this.userSubject.asObservable();
@@ -66,12 +78,16 @@ export class SessionService {
     if (!payload) return;
     if (payload.sessionId && payload.sessionId !== currentSessionId) return;
 
+    const reason = this.mapServerInvalidationReason(payload?.reason);
+    const message = this.mapServerInvalidationMessage(payload?.reason);
+
     this.sessionSubject.next({
       type: 'LOGOUT',
-      reason: 'SERVER_INVALIDATED',
+      reason,
+      message,
     });
 
-    this.performLocalLogout('SERVER_INVALIDATED');
+    this.performLocalLogout(reason);
   };
 
   private readonly handlePermissionsUpdated = (payload: any) => {
@@ -130,6 +146,7 @@ export class SessionService {
 
     const updateActivity = () => {
       const now = Date.now();
+      this.lastActivityAt = now;
       if (now - lastWrite < 5000) return;
       localStorage.setItem(this.STORAGE.LAST_ACTIVITY, new Date().toISOString());
       lastWrite = now;
@@ -164,6 +181,9 @@ export class SessionService {
     localStorage.removeItem(this.STORAGE.LAST_ACTIVITY);
     localStorage.removeItem(this.STORAGE.ACCESS_TOKEN);
     localStorage.removeItem(this.STORAGE.SESSION_ID);
+    this.lastHeartbeatAt = 0;
+    this.lastSessionValidationAt = 0;
+    this.validatingSession = false;
 
     this.stopTokenExpirationWatcher();
     this.detachRealtimeListeners();
@@ -174,6 +194,7 @@ export class SessionService {
     const now = new Date().toISOString();
     localStorage.setItem(this.STORAGE.LAST_LOGIN, now);
     localStorage.setItem(this.STORAGE.LAST_ACTIVITY, now);
+    this.lastActivityAt = Date.now();
   }
 
   getAuthState(): Observable<SessionInfo | null> {
@@ -307,6 +328,11 @@ export class SessionService {
 
     this.startTokenExpirationWatcher();
     this.trackUserActivity();
+    const lastActivity = localStorage.getItem(this.STORAGE.LAST_ACTIVITY);
+    const parsedLastActivity = lastActivity ? new Date(lastActivity).getTime() : NaN;
+    if (!Number.isNaN(parsedLastActivity)) {
+      this.lastActivityAt = parsedLastActivity;
+    }
     this.realtimeService.connect(token);
     this.attachRealtimeListeners();
     this.loadAndSetUser();
@@ -323,10 +349,14 @@ export class SessionService {
 
   private checkTokenExpiration(): void {
     const reason = this.isSessionExpired();
-    if (!reason) return;
+    if (reason) {
+      this.sessionSubject.next({ type: 'LOGOUT', reason });
+      this.logout();
+      return;
+    }
 
-    this.sessionSubject.next({ type: 'LOGOUT', reason });
-    this.logout();
+    this.sendHeartbeatIfNeeded();
+    this.validateSessionIfNeeded();
   }
 
   private stopTokenExpirationWatcher(): void {
@@ -367,6 +397,90 @@ export class SessionService {
       return payload;
     } catch {
       return null;
+    }
+  }
+
+  private sendHeartbeatIfNeeded(): void {
+    if (!this.isAuthenticated()) return;
+
+    const now = Date.now();
+    if (now - this.lastHeartbeatAt < this.TIME.HEARTBEAT_INTERVAL) return;
+
+    if (now - this.lastActivityAt > this.TIME.HEARTBEAT_INTERVAL) return;
+
+    this.lastHeartbeatAt = now;
+    this.databaseService.heartbeat().catch(() => {
+      const reason: SessionExpireReason = 'SERVER_INVALIDATED';
+      this.sessionSubject.next({
+        type: 'LOGOUT',
+        reason,
+      });
+      this.performLocalLogout(reason);
+    });
+  }
+
+  private validateSessionIfNeeded(): void {
+    if (!this.isAuthenticated() || this.validatingSession) return;
+
+    const now = Date.now();
+    if (now - this.lastSessionValidationAt < this.TIME.SESSION_VALIDATE_INTERVAL) {
+      return;
+    }
+
+    this.lastSessionValidationAt = now;
+    this.validatingSession = true;
+
+    this.validateCurrentSession()
+      .then((isValid) => {
+        if (isValid) return;
+        this.sessionSubject.next({
+          type: 'LOGOUT',
+          reason: 'SERVER_INVALIDATED',
+        });
+        this.performLocalLogout('SERVER_INVALIDATED');
+      })
+      .finally(() => {
+        this.validatingSession = false;
+      });
+  }
+
+  private mapServerInvalidationReason(reason: unknown): SessionExpireReason {
+    switch (reason) {
+      case 'idle_timeout':
+        return 'IDLE_TIMEOUT';
+      case 'session_limit':
+        return 'SESSION_LIMIT';
+      case 'user_blocked':
+        return 'USER_BLOCKED';
+      case 'user_invisible':
+        return 'USER_INVISIBLE';
+      case 'password_changed':
+        return 'PASSWORD_CHANGED';
+      case 'permissions_changed':
+      case 'group_permissions_changed':
+        return 'PERMISSIONS_CHANGED';
+      default:
+        return 'SERVER_INVALIDATED';
+    }
+  }
+
+  private mapServerInvalidationMessage(reason: unknown): string | undefined {
+    switch (reason) {
+      case 'idle_timeout':
+        return 'Sua sessao foi revogada por inatividade.';
+      case 'session_limit':
+        return 'Sua sessao foi encerrada por limite de dispositivos.';
+      case 'user_blocked':
+        return 'Seu usuario foi bloqueado.';
+      case 'user_invisible':
+        return 'Seu usuario foi ocultado e bloqueado.';
+      case 'password_changed':
+        return 'Sua senha foi alterada. Faca login novamente.';
+      case 'permissions_changed':
+      case 'group_permissions_changed':
+        return 'Suas permissoes mudaram. Faca login novamente.';
+      default:
+        return undefined;
     }
   }
 }

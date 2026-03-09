@@ -75,7 +75,6 @@ export class ListUsersComponent implements OnInit, OnDestroy {
     this.usersService.subscribe();
 
     this.usersService.users$.subscribe(users => {
-      console.log(users)
       this.users = users;
       this.filterUsers();
     });

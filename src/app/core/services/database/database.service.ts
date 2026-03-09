@@ -36,6 +36,12 @@ export class DatabaseService {
         );
     }
 
+    heartbeat() {
+        return firstValueFrom(
+            this.http.post(`${this.API}/auth/heartbeat`, {}, this.withAuth()),
+        );
+    }
+
     // -----------------------
     // GET LIST
     // -----------------------
