@@ -1,9 +1,9 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, Input, Output, EventEmitter, ElementRef, HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-export-list',
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './export-list.component.html',
   styleUrl: './export-list.component.scss'
 })

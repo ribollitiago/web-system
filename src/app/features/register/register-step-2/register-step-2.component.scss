@@ -165,9 +165,9 @@
       border: 0.5px solid $rg-border-chip !important;
       border-radius: 10px !important;
 
-      --mdc-chip-label-text-color: $text-color;
-      --mdc-chip-with-icon-icon-color: $text-color;
-      --mdc-chip-outline-color: transparent;
+      --mat-chip-label-text-color: $text-color;
+      --mat-chip-with-icon-icon-color: $text-color;
+      --mat-chip-outline-color: transparent;
 
       .mat-mdc-chip-action-label {
         font-size: 12px !important;

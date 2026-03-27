@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, forwardRef, Input, OnInit, ViewChild } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { MatTooltipModule, MatTooltip } from '@angular/material/tooltip';
@@ -9,10 +9,9 @@ type InputTypes = "text" | "email" | "password";
   selector: 'app-primary-input',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatTooltipModule
-  ],
+],
   providers: [{
     provide: NG_VALUE_ACCESSOR,
     useExisting: forwardRef(() => PrimaryInputComponent),

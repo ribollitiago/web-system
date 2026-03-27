@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   FormControl,
@@ -21,11 +21,10 @@ import {
   selector: 'app-login',
   standalone: true,
   imports: [
-    CommonModule,
     DefaultLoginLayoutComponent,
     PrimaryInputComponent,
-    ReactiveFormsModule,
-  ],
+    ReactiveFormsModule
+],
   providers: [LoginService],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, EventEmitter, Output, Input, ViewChild, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { SearchInputComponent } from '../../shared/components/input/search-input/search-input.component';
@@ -18,7 +18,7 @@ interface SidebarItem {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterModule, CommonModule, SearchInputComponent, MatTooltipModule],
+  imports: [RouterModule, SearchInputComponent, MatTooltipModule],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
   providers: [TranslationService]

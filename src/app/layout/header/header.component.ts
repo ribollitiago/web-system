@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslationService } from '../../core/services/shared/translate.service';
@@ -8,7 +8,7 @@ import { DefaultPopupComponent } from "../../shared/components/popup/default-pop
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, DefaultPopupComponent],
+  imports: [DefaultPopupComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })

@@ -1,7 +1,7 @@
 // ------------------------------------------------------
 // IMPORTS
 // ------------------------------------------------------
-import { CommonModule } from '@angular/common';
+
 import { Component, Input, Output, EventEmitter, SimpleChanges, OnChanges, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -18,11 +18,10 @@ import { TranslationService } from '../../../core/services/shared/translate.serv
   selector: 'app-steps-filter',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     MatTooltipModule,
     MatMenuModule
-  ],
+],
   templateUrl: './steps-filter.component.html',
   styleUrls: ['./steps-filter.component.scss']
 })

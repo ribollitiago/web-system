@@ -6,66 +6,73 @@
         <div class="notification-tooltip">{{ tooltipNotifications }}</div>
       </div>
       <img #userToggler src="assets/user-photo.png" alt="User" class="user-toggler" (click)="toggleMenu()" />
-      <div class="menu" *ngIf="isMenuOpened" #menu>
-        <div class="menu-item-user">
-          <img src="assets/user-photo.png" alt>
-          <h2 class="name" [title]="userName">
-            {{ truncateText(userName) }}
-          </h2>
-          <h2 class="email" [title]="userEmail">
-            {{ truncateText(userEmail) }}
-          </h2>
+      @if (isMenuOpened) {
+        <div class="menu" #menu>
+          <div class="menu-item-user">
+            <img src="assets/user-photo.png" alt>
+            <h2 class="name" [title]="userName">
+              {{ truncateText(userName) }}
+            </h2>
+            <h2 class="email" [title]="userEmail">
+              {{ truncateText(userEmail) }}
+            </h2>
+          </div>
+          <div class="divider"></div>
+          <div class="menu-item">
+            <img class="icon" src="assets/svg/icon/header/user.svg" alt>
+            <h4>{{account}}</h4>
+          </div>
+          <div class="menu-item" (click)="handleOpenDialog()">
+            <img class="icon" src="assets/svg/icon/header/logout.svg" alt>
+            <h4>{{signout}}</h4>
+          </div>
+          <div class="divider"></div>
+          <div class="menu-item" (click)="toggleMenuLanguage(); $event.stopPropagation()" #languageToggler>
+            <img class="icon" src="assets/svg/icon/header/language.svg" alt>
+            <h4>{{language}}</h4>
+            <img class="arrow" src="assets/svg/icon/header/arrow.svg" alt>
+          </div>
+          <div class="menu-item">
+            <img class="icon" src="assets/svg/icon/header/dark-mode.svg" alt>
+            <h4>{{apparence}}</h4>
+          </div>
+          <div class="divider"></div>
+          <div class="menu-item">
+            <img class="icon" src="assets/svg/icon/header/config.svg" alt>
+            <h4>{{settings}}</h4>
+          </div>
+          <div class="divider"></div>
+          <div class="menu-item">
+            <img class="icon" src="assets/svg/icon/header/help.svg" alt>
+            <h4>{{help}}</h4>
+          </div>
+          <div class="menu-item">
+            <img src="assets/svg/icon/header/send-feedback.svg" alt>
+            <h4>{{feedback}}</h4>
+          </div>
+          <div class="menu-item-description"></div>
         </div>
-        <div class="divider"></div>
-        <div class="menu-item">
-          <img class="icon" src="assets/svg/icon/header/user.svg" alt>
-          <h4>{{account}}</h4>
-        </div>
-        <div class="menu-item" (click)="handleOpenDialog()">
-          <img class="icon" src="assets/svg/icon/header/logout.svg" alt>
-          <h4>{{signout}}</h4>
-        </div>
-        <div class="divider"></div>
-        <div class="menu-item" (click)="toggleMenuLanguage(); $event.stopPropagation()" #languageToggler>
-          <img class="icon" src="assets/svg/icon/header/language.svg" alt>
-          <h4>{{language}}</h4>
-          <img class="arrow" src="assets/svg/icon/header/arrow.svg" alt>
-        </div>
-
-        <div class="menu-item">
-          <img class="icon" src="assets/svg/icon/header/dark-mode.svg" alt>
-          <h4>{{apparence}}</h4>
-        </div>
-        <div class="divider"></div>
-        <div class="menu-item">
-          <img class="icon" src="assets/svg/icon/header/config.svg" alt>
-          <h4>{{settings}}</h4>
-        </div>
-        <div class="divider"></div>
-        <div class="menu-item">
-          <img class="icon" src="assets/svg/icon/header/help.svg" alt>
-          <h4>{{help}}</h4>
-        </div>
-        <div class="menu-item">
-          <img src="assets/svg/icon/header/send-feedback.svg" alt>
-          <h4>{{feedback}}</h4>
-        </div>
-        <div class="menu-item-description"></div>
-      </div>
+      }
     </div>
-    <div class="menu-language" *ngIf="isMenuOpenedLanguage" #menuLanguage>
-      <div class="menu-item-header">
-        <div class="arrow-container" (click)="toggleMenu(); $event.stopPropagation()">
-          <img class="arrow" src="assets/svg/icon/header/arrow.svg" alt>
+    @if (isMenuOpenedLanguage) {
+      <div class="menu-language" #menuLanguage>
+        <div class="menu-item-header">
+          <div class="arrow-container" (click)="toggleMenu(); $event.stopPropagation()">
+            <img class="arrow" src="assets/svg/icon/header/arrow.svg" alt>
+          </div>
+          <h2 class="name">{{titleLanguage}}</h2>
         </div>
-        <h2 class="name">{{titleLanguage}}</h2>
+        <div class="divider"></div>
+        @for (lang of supportedLanguages; track lang) {
+          <div class="menu-item-language" (click)="onLanguageChange(lang.code)">
+            @if (selectedLanguage === lang.code) {
+              <img class="check" src="assets/svg/icon/header/check.svg" alt>
+            }
+            <h4>{{lang.name}}</h4>
+          </div>
+        }
       </div>
-      <div class="divider"></div>
-      <div class="menu-item-language" *ngFor="let lang of supportedLanguages" (click)="onLanguageChange(lang.code)">
-        <img class="check" src="assets/svg/icon/header/check.svg" *ngIf="selectedLanguage === lang.code" alt>
-        <h4>{{lang.name}}</h4>
-      </div>
-    </div>
+    }
   </div>
 </div>
 <app-default-popup

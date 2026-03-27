@@ -2,7 +2,7 @@
 // IMPORTS
 // ------------------------------------------------------
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 import { RegisterService } from '../../core/services/components/register.service';
 
@@ -20,15 +20,14 @@ import { TranslationService } from '../../core/services/shared/translate.service
   selector: 'app-register',
   standalone: true,
   imports: [
-    CommonModule,
     RegisterStep1Component,
     RegisterStep2Component,
     RegisterStep3Component,
     RegisterStep4Component,
     DefaultPopupComponent
-  ],
+],
   template: `
-    <app-default-popup 
+    <app-default-popup
       title={{this.dialogTitle}}
       description={{this.dialogDescription}}
       buttonLeftTitle={{this.dialogBtnLeft}}
@@ -37,12 +36,20 @@ import { TranslationService } from '../../core/services/shared/translate.service
       buttonRightColor={{this.popupBtnRightColor}}
       (closeDialog)="cancelRegistration()">
     </app-default-popup>
-
-    <app-register-step-1 *ngIf="currentStep === 1" [attr.data-key]="renderKey"></app-register-step-1>
-    <app-register-step-2 *ngIf="currentStep === 2" [attr.data-key]="renderKey"></app-register-step-2>
-    <app-register-step-3 *ngIf="currentStep === 3" [attr.data-key]="renderKey"></app-register-step-3>
-    <app-register-step-4 *ngIf="currentStep === 4" [attr.data-key]="renderKey"></app-register-step-4>
-  `
+    
+    @if (currentStep === 1) {
+      <app-register-step-1 [attr.data-key]="renderKey"></app-register-step-1>
+    }
+    @if (currentStep === 2) {
+      <app-register-step-2 [attr.data-key]="renderKey"></app-register-step-2>
+    }
+    @if (currentStep === 3) {
+      <app-register-step-3 [attr.data-key]="renderKey"></app-register-step-3>
+    }
+    @if (currentStep === 4) {
+      <app-register-step-4 [attr.data-key]="renderKey"></app-register-step-4>
+    }
+    `
 })
 export class RegisterComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(DefaultPopupComponent) popup!: DefaultPopupComponent;

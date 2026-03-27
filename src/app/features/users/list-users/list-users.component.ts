@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 
 import { Subscription } from 'rxjs';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 
 import { TranslationService } from '../../../core/services/shared/translate.service';
@@ -28,13 +28,12 @@ import { detectDeviceFromUserAgent } from '../../../core/utils/device.utils';
   selector: 'app-list-users',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     SituationChipComponent,
     GroupChipComponent,
     DefaultListComponent,
     StatusChipComponent
-  ],
+],
   templateUrl: './list-users.component.html',
   styleUrl: './list-users.component.scss'
 })

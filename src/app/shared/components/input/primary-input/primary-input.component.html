@@ -16,13 +16,15 @@
       (keydown)="onKeyDown($event, t)"
       />
 
-    <div *ngIf="isPassword" class="toggle-icon" (click)="toggleFieldTextType()">
-      <img
-        [src]="fieldTextType ? 'assets/svg/icon/input/eye-off.svg' : 'assets/svg/icon/input/eye-on.svg'">
-    </div>
+      @if (isPassword) {
+        <div class="toggle-icon" (click)="toggleFieldTextType()">
+          <img
+            [src]="fieldTextType ? 'assets/svg/icon/input/eye-off.svg' : 'assets/svg/icon/input/eye-on.svg'">
+          </div>
+        }
 
-    <div class="icon">
-      <ng-content></ng-content>
+        <div class="icon">
+          <ng-content></ng-content>
+        </div>
+      </div>
     </div>
-  </div>
-</div>

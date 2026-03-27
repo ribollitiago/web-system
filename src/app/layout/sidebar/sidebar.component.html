@@ -3,69 +3,75 @@
   [class.sidenav-overlay-open]="isOverlayExpanded"
   (mouseleave)="onSidebarMouseLeave()">
   <div class="logo-container">
-    <div class="logo-text" *ngIf="!isSidebarVisuallyCollapsed">GT System</div>
+    @if (!isSidebarVisuallyCollapsed) {
+      <div class="logo-text">GT System</div>
+    }
     <button class="menu" (click)="toggleSidebar()">
       <img [src]="isLeftSidebarCollapsed ?
            'assets/svg/icon/sidebar/sidebar-open.svg' :
            'assets/svg/icon/sidebar/sidebar-close.svg'" class="nav-icon"
         alt="Menu" />
-      <div class="menu-tooltip">
-        {{ isLeftSidebarCollapsed ? tooltipMenuOpen : tooltipMenuClose }}
-      </div>
-    </button>
-  </div>
-  <app-search-input class="search-input" [placeholder]="inputSearch"
-    [isCollapsed]="isSidebarVisuallyCollapsed"
-    (iconClick)="handleSearchIconClick()"
-    (searchChange)="onSearchInput($event)"
-    [matTooltip]="inputSearch"
-    matTooltipPosition="right"
-    [matTooltipDisabled]="!isSidebarVisuallyCollapsed">
-    <img src="assets/svg/icon/input/search.svg" alt>
-  </app-search-input>
-  <div class="divider"></div>
-  <div class="sidenav-nav">
-    @for (item of filteredItems; track $index; let idx = $index) {
-    <li class="sidenav-nav-item" [class.has-submenu]="item.submenu"
-      [class.parent-active]="activeParentIndex === idx">
-      <a class="sidenav-nav-link"
-        [routerLink]="!item.submenu ? item.routeLink : null"
-        (click)="onParentMenuClick(item, idx)" routerLinkActive="active"
-        [matTooltip]="item.label"
-        matTooltipPosition="right"
-        [matTooltipDisabled]="!isSidebarVisuallyCollapsed"
-        [routerLinkActiveOptions]="{ exact: true }">
-        <span class="sidenav-link-icon"
-          [style.mask-image]="'url(' + item.icon + ')'"
-          [attr.aria-label]="item.label"></span>
-        <span class="sidenav-link-text" *ngIf="!isSidebarVisuallyCollapsed">
-          <span [innerHTML]="highlightMatches(item.label)"></span>
-        </span>
-        @if (item.submenu && !isSidebarVisuallyCollapsed) {
-        <span class="submenu-icon" *ngIf="!isSidebarVisuallyCollapsed">
-          <img src="assets/svg/icon/header/arrow.svg" class="arrow-icon"
-            [class.rotated]="openedSubmenuIndex === idx" />
-        </span>
-        }
-      </a>
-
-      @if (item.submenu && shouldOpenSubmenu(item, idx)) {
-      <ul class="submenu">
-        @for (subItem of item.itemsSubMenu; track $index) {
-        <li class="sidenav-nav-item">
-          <a class="sidenav-nav-link submenu-link"
-            [routerLink]="subItem.routeLink" routerLinkActive="active"
+        <div class="menu-tooltip">
+          {{ isLeftSidebarCollapsed ? tooltipMenuOpen : tooltipMenuClose }}
+        </div>
+      </button>
+    </div>
+    <app-search-input class="search-input" [placeholder]="inputSearch"
+      [isCollapsed]="isSidebarVisuallyCollapsed"
+      (iconClick)="handleSearchIconClick()"
+      (searchChange)="onSearchInput($event)"
+      [matTooltip]="inputSearch"
+      matTooltipPosition="right"
+      [matTooltipDisabled]="!isSidebarVisuallyCollapsed">
+      <img src="assets/svg/icon/input/search.svg" alt>
+    </app-search-input>
+    <div class="divider"></div>
+    <div class="sidenav-nav">
+      @for (item of filteredItems; track $index; let idx = $index) {
+        <li class="sidenav-nav-item" [class.has-submenu]="item.submenu"
+          [class.parent-active]="activeParentIndex === idx">
+          <a class="sidenav-nav-link"
+            [routerLink]="!item.submenu ? item.routeLink : null"
+            (click)="onParentMenuClick(item, idx)" routerLinkActive="active"
+            [matTooltip]="item.label"
+            matTooltipPosition="right"
+            [matTooltipDisabled]="!isSidebarVisuallyCollapsed"
             [routerLinkActiveOptions]="{ exact: true }">
             <span class="sidenav-link-icon"
-              [style.mask-image]="'url(' + subItem.icon + ')'"
-              [attr.aria-label]="subItem.label"></span>
-            <span class="sidenav-link-text">{{ subItem.label }}</span>
-          </a>
-        </li>
+              [style.mask-image]="'url(' + item.icon + ')'"
+            [attr.aria-label]="item.label"></span>
+            @if (!isSidebarVisuallyCollapsed) {
+              <span class="sidenav-link-text">
+                <span [innerHTML]="highlightMatches(item.label)"></span>
+              </span>
+            }
+            @if (item.submenu && !isSidebarVisuallyCollapsed) {
+              @if (!isSidebarVisuallyCollapsed) {
+                <span class="submenu-icon">
+                  <img src="assets/svg/icon/header/arrow.svg" class="arrow-icon"
+                    [class.rotated]="openedSubmenuIndex === idx" />
+                  </span>
+                }
+              }
+            </a>
+
+            @if (item.submenu && shouldOpenSubmenu(item, idx)) {
+              <ul class="submenu">
+                @for (subItem of item.itemsSubMenu; track $index) {
+                  <li class="sidenav-nav-item">
+                    <a class="sidenav-nav-link submenu-link"
+                      [routerLink]="subItem.routeLink" routerLinkActive="active"
+                      [routerLinkActiveOptions]="{ exact: true }">
+                      <span class="sidenav-link-icon"
+                        [style.mask-image]="'url(' + subItem.icon + ')'"
+                      [attr.aria-label]="subItem.label"></span>
+                      <span class="sidenav-link-text">{{ subItem.label }}</span>
+                    </a>
+                  </li>
+                }
+              </ul>
+            }
+          </li>
         }
-      </ul>
-      }
-    </li>
-    }
-  </div>
-</div>
+      </div>
+    </div>

@@ -4,29 +4,32 @@
     <span class="group-label">{{ field.label }}</span>
 
     <span class="group-meta">
-      <span *ngIf="selected.length" class="group-badge">{{ selected.length
+      @if (selected.length) {
+        <span class="group-badge">{{ selected.length
         }}</span>
+      }
       <span class="group-arrow" [class.open]="isOpen">›</span>
     </span>
   </div>
 
-  <div class="group-submenu" *ngIf="isOpen" (click)="$event.stopPropagation()">
-    <div class="submenu-title">{{ field.label }}</div>
-    <hr class="submenu-divider" />
+  @if (isOpen) {
+    <div class="group-submenu" (click)="$event.stopPropagation()">
+      <div class="submenu-title">{{ field.label }}</div>
+      <hr class="submenu-divider" />
+      <div class="submenu-options">
+        @for (opt of field.options; track opt) {
+          <label class="submenu-option">
+            <input
+              [type]="mode === 'radio' ? 'radio' : 'checkbox'"
+              [name]="field.key"
+              [checked]="isChecked(opt.value)"
+              (change)="mode === 'checkbox' ? onToggle(opt.value, $any($event.target).checked) : onToggle(opt.value, $any($event.target).checked)"
+              (click)="mode === 'radio' ? onOptionClick(opt.value) : null" />
+              {{ opt.label }}
+            </label>
+          }
+        </div>
+      </div>
+    }
 
-    <div class="submenu-options">
-      <ng-container *ngFor="let opt of field.options">
-        <label class="submenu-option">
-          <input
-            [type]="mode === 'radio' ? 'radio' : 'checkbox'"
-            [name]="field.key"
-            [checked]="isChecked(opt.value)"
-            (change)="mode === 'checkbox' ? onToggle(opt.value, $any($event.target).checked) : onToggle(opt.value, $any($event.target).checked)"
-            (click)="mode === 'radio' ? onOptionClick(opt.value) : null" />
-          {{ opt.label }}
-        </label>
-      </ng-container>
-    </div>
   </div>
-
-</div>

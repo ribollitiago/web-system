@@ -1,13 +1,13 @@
 import { Component, HostListener, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TranslationService } from './core/services/shared/translate.service';
-import { CommonModule } from '@angular/common';
+
 import { SidebarComponent } from './layout/sidebar/sidebar.component';
 import { HeaderComponent } from "./layout/header/header.component";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })

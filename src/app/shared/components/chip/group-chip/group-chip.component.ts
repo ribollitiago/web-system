@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 export interface Group {
   title: string;
@@ -9,7 +9,7 @@ export interface Group {
 @Component({
   selector: 'app-group-chip',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './group-chip.component.html',
   styleUrl: './group-chip.component.scss'
 })

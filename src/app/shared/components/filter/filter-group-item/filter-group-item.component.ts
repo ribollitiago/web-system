@@ -1,5 +1,5 @@
 // adicione HostListener para fechar ao clicar fora
-import { CommonModule } from '@angular/common';
+
 import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
 import { DefaultFilterOption } from '../default-filter-list/default-filter-list.component';
 
@@ -21,7 +21,7 @@ export interface DefaultFilterGroupField {
 @Component({
   selector: 'app-filter-group-item',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './filter-group-item.component.html',
   styleUrl: './filter-group-item.component.scss'
 })

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, ElementRef, EventEmitter, forwardRef, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { PrimaryInputComponent } from '../primary-input/primary-input.component';
@@ -9,9 +9,8 @@ type InputTypes = "text" | "email" | "password";
   selector: 'app-search-input',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule
-  ],
+],
   providers: [{
     provide: NG_VALUE_ACCESSOR,
     useExisting: forwardRef(() => PrimaryInputComponent),

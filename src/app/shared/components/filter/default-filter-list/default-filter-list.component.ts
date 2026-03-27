@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { DefaultFilterGroupField, FilterGroupItemComponent } from '../filter-group-item/filter-group-item.component';
 
@@ -44,7 +44,7 @@ export interface DefaultFixedDateConfig {
 @Component({
   selector: 'app-default-filter-list',
   standalone: true,
-  imports: [CommonModule, FilterGroupItemComponent],
+  imports: [FilterGroupItemComponent],
   templateUrl: './default-filter-list.component.html',
   styleUrl: './default-filter-list.component.scss'
 })

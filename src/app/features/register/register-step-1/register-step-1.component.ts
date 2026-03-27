@@ -2,7 +2,7 @@
 // IMPORTS
 // ------------------------------------------------------
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 
 import { PrimaryInputComponent } from '../../../shared/components/input/primary-input/primary-input.component';
@@ -37,12 +37,11 @@ interface FieldErrorState {
   selector: 'app-register-step-1',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     PrimaryInputComponent,
     DefaultStepComponent,
     MatTooltipModule
-  ],
+],
   templateUrl: './register-step-1.component.html',
   styleUrl: './register-step-1.component.scss'
 })

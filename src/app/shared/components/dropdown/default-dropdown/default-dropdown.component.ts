@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 export interface DropdownOption {
   label: string;
@@ -10,9 +10,7 @@ export interface DropdownOption {
 @Component({
   selector: 'app-default-dropdown',
   standalone: true,
-  imports: [
-    CommonModule,
-  ],
+  imports: [],
   templateUrl: './default-dropdown.component.html',
   styleUrl: './default-dropdown.component.scss'
 })

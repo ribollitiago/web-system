@@ -11,8 +11,8 @@
       </app-search-input>
       <div class="filters-container">
         <button class="filters" (click)="toggleFiltersPopup()"><img
-            src="assets/svg/icon/users/filters.svg">{{
-          btnFilters }}</button>
+          src="assets/svg/icon/users/filters.svg">{{
+        btnFilters }}</button>
         <app-default-filter-list
           [isOpen]="isFilterOpen"
           [sections]="filtersSections"
@@ -25,8 +25,8 @@
       </div>
       <div class="export-container" (click)="$event.stopPropagation()">
         <button class="export" (click)="toggleExportPopup()"><img
-            src="assets/svg/icon/users/export.svg">{{
-          btnExport }}</button>
+          src="assets/svg/icon/users/export.svg">{{
+        btnExport }}</button>
         <app-export-list
           [isOpen]="isExportOpen"
           (closed)="isExportOpen = false"
@@ -34,10 +34,12 @@
           (exportAll)="exportAllUsers()">
         </app-export-list>
       </div>
-      <div class="selected-count" *ngIf="currentSelectedCount > 0">
-        <label>{{ currentSelectedCount }} usuário(s) selecionado(s)</label>
-        <button (click)="clearSelectedUsers()"><img src="assets/svg/icon/input/clear.svg">Limpar</button>
-      </div>
+      @if (currentSelectedCount > 0) {
+        <div class="selected-count">
+          <label>{{ currentSelectedCount }} usuário(s) selecionado(s)</label>
+          <button (click)="clearSelectedUsers()"><img src="assets/svg/icon/input/clear.svg">Limpar</button>
+        </div>
+      }
     </div>
     <app-list-users
       [searchQuery]="currentSearchQuery"
@@ -47,87 +49,84 @@
     </app-list-users>
 
   </div>
-  <div class="users-container-details" [class.active]="isDetailsOpen"
-    *ngIf="selectedUser">
-    <div class="users-header">
-      <div class="line-header">
-        <div class="title">Details user</div>
-        <div class="close-icon" matTooltipPosition="above"
-          matTooltip="Fechar Menu" (click)="closeDetailsPanel()">
-          <img src="assets/svg/icon/input/clear.svg">
-        </div>
-      </div>
-
-      <div class="user-info-wrapper">
-        <img class="image-user" src="assets/user-photo.png" alt>
-        <div class="user-info-text">
-          <div class="user-line">
-            <span class="name">{{ selectedUser.name }}</span>
-            <app-situation-chip
-              [blocked]="selectedUser.session?.blocked">
-            </app-situation-chip>
+  @if (selectedUser) {
+    <div class="users-container-details" [class.active]="isDetailsOpen"
+      >
+      <div class="users-header">
+        <div class="line-header">
+          <div class="title">Details user</div>
+          <div class="close-icon" matTooltipPosition="above"
+            matTooltip="Fechar Menu" (click)="closeDetailsPanel()">
+            <img src="assets/svg/icon/input/clear.svg">
           </div>
-          <div class="email">{{ selectedUser.email }}</div>
         </div>
-      </div>
-      <div class="permissions-list">
-        <app-group-chip [groups]="selectedUser.groups" [maxDisplay]="2"
-          [allowExpand]="true">
-        </app-group-chip>
-      </div>
-      <div class="phone-and-enrollment">
-        <div class="phone">
-          <img src="assets/svg/icon/users/phone.svg">
-          {{ selectedUser.phone }}
-        </div>
-        <div class="enrollment">
-          <img src="assets/svg/icon/users/document.svg">
-          {{ selectedUser.enrollment }}
-        </div>
-      </div>
-      <div class="divider"></div>
-      <div class="permissions-container">
-        <div class="title">Permissions</div>
-        <div class="list-permissions">
-          <div class="permission"
-            *ngFor="let permission of permissionUserSelected">
-
-            <img [matTooltip]="getCriticalText(permission.critical)"
-              [matTooltipClass]="'tooltip'"
-              matTooltipPosition="above"
-              [src]="getSvgFileName(permission.critical)"
-              class="critical-icon" />
-
-            <span class="title" matTooltipPosition="above"
-              [matTooltipClass]="'tooltip'"
-              matTooltip="{{permission.title}}">{{ permission.title }}</span>
-
-            <div class="extra-information">
-              <div class="icon-wrapper" [matMenuTriggerFor]="detailsMenu">
-                <img src="assets/svg/icon/register/step-2/extra_info.svg"
-                  alt="Info" [matTooltip]="menuTooltip"
-                  matTooltipPosition="above" />
-              </div>
-
-              <mat-menu #detailsMenu="matMenu" class="permission-details-menu">
-                <div class="menu-content" (click)="$event.stopPropagation()">
-                  <div class="menu-title">{{ permission.title }}</div>
-                  <div class="menu-item">{{ permission.description }}</div>
-                </div>
-              </mat-menu>
+        <div class="user-info-wrapper">
+          <img class="image-user" src="assets/user-photo.png" alt>
+          <div class="user-info-text">
+            <div class="user-line">
+              <span class="name">{{ selectedUser.name }}</span>
+              <app-situation-chip
+                [blocked]="selectedUser.session?.blocked">
+              </app-situation-chip>
             </div>
-
+            <div class="email">{{ selectedUser.email }}</div>
           </div>
         </div>
+        <div class="permissions-list">
+          <app-group-chip [groups]="selectedUser.groups" [maxDisplay]="2"
+            [allowExpand]="true">
+          </app-group-chip>
+        </div>
+        <div class="phone-and-enrollment">
+          <div class="phone">
+            <img src="assets/svg/icon/users/phone.svg">
+            {{ selectedUser.phone }}
+          </div>
+          <div class="enrollment">
+            <img src="assets/svg/icon/users/document.svg">
+            {{ selectedUser.enrollment }}
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="permissions-container">
+          <div class="title">Permissions</div>
+          <div class="list-permissions">
+            @for (permission of permissionUserSelected; track permission) {
+              <div class="permission"
+                >
+                <img [matTooltip]="getCriticalText(permission.critical)"
+                  [matTooltipClass]="'tooltip'"
+                  matTooltipPosition="above"
+                  [src]="getSvgFileName(permission.critical)"
+                  class="critical-icon" />
+                  <span class="title" matTooltipPosition="above"
+                    [matTooltipClass]="'tooltip'"
+                  matTooltip="{{permission.title}}">{{ permission.title }}</span>
+                  <div class="extra-information">
+                    <div class="icon-wrapper" [matMenuTriggerFor]="detailsMenu">
+                      <img src="assets/svg/icon/register/step-2/extra_info.svg"
+                        alt="Info" [matTooltip]="menuTooltip"
+                        matTooltipPosition="above" />
+                      </div>
+                      <mat-menu #detailsMenu="matMenu" class="permission-details-menu">
+                        <div class="menu-content" (click)="$event.stopPropagation()">
+                          <div class="menu-title">{{ permission.title }}</div>
+                          <div class="menu-item">{{ permission.description }}</div>
+                        </div>
+                      </mat-menu>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+            <div class="divider"></div>
+            <div class="extra-info-container">
+              <h2 class="title">Extra Information</h2>
+              <p class="description">{{selectedUser.description}}</p>
+            </div>
+            <app-border-button label="Edit this account">
+              <img src="assets/svg/icon/default/edit.svg" alt></app-border-button>
+            </div>
+          </div>
+        }
       </div>
-      <div class="divider"></div>
-      <div class="extra-info-container">
-        <h2 class="title">Extra Information</h2>
-        <p class="description">{{selectedUser.description}}</p>
-      </div>
-
-      <app-border-button label="Edit this account">
-        <img src="assets/svg/icon/default/edit.svg" alt></app-border-button>
-    </div>
-  </div>
-</div>

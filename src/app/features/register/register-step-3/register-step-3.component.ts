@@ -2,7 +2,7 @@
 // IMPORTS
 // ------------------------------------------------------
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 
 import { TranslationService } from '../../../core/services/shared/translate.service';
@@ -16,10 +16,9 @@ import { DefaultStepComponent } from '../../../shared/layout/default-step/defaul
   selector: 'app-register-step-3',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     DefaultStepComponent
-  ],
+],
   templateUrl: './register-step-3.component.html',
   styleUrl: './register-step-3.component.scss'
 })

@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Subscription } from 'rxjs';
 
 import { SearchInputComponent } from '../../../shared/components/input/search-input/search-input.component';
@@ -29,7 +29,6 @@ import { ExportListComponent } from "../../../shared/components/export-list/expo
   selector: 'app-details-users',
   standalone: true,
   imports: [
-    CommonModule,
     SearchInputComponent,
     ListUsersComponent,
     MatTooltipModule,
@@ -39,7 +38,7 @@ import { ExportListComponent } from "../../../shared/components/export-list/expo
     BorderButtonComponent,
     DefaultFilterListComponent,
     ExportListComponent
-  ],
+],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
 })

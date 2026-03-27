@@ -8,15 +8,18 @@
         </svg>
       </span>
     </div>
-    <div class="dropdown-options" *ngIf="dropdownOpen">
-      <div
-        class="dropdown-option"
-        *ngFor="let opt of options"
-        [class.selected]="selectedValue === opt.value"
-        (click)="selectOption(opt)"
-      >
-        {{ opt.label }}
+    @if (dropdownOpen) {
+      <div class="dropdown-options">
+        @for (opt of options; track opt) {
+          <div
+            class="dropdown-option"
+            [class.selected]="selectedValue === opt.value"
+            (click)="selectOption(opt)"
+            >
+            {{ opt.label }}
+          </div>
+        }
       </div>
-    </div>
+    }
   </div>
 </div>

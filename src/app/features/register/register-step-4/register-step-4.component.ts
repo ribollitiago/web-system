@@ -2,7 +2,7 @@
 // IMPORTS
 // ------------------------------------------------------
 import { Component, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router } from '@angular/router';
 
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -26,12 +26,11 @@ import { DefaultPopupComponent } from "../../../shared/components/popup/default-
   standalone: true,
   imports: [
     DefaultStepComponent,
-    CommonModule,
     MatTooltipModule,
     MatMenuModule,
     GroupChipComponent,
     DefaultPopupComponent
-  ],
+],
   templateUrl: './register-step-4.component.html',
   styleUrl: './register-step-4.component.scss'
 })
